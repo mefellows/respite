@@ -15,22 +15,25 @@ REST should be easy - Respite is a reactive & modular micro-framework for REST a
 Fetch from Maven Central (to be confirmed), currently only Snapshots are available:
 
 In your build.{sbt, scala}:
-
-    libraryDependencies ++= Seq(
-      "au.com.onegeek" %% "respite" % "0.0.1-SNAPSHOT",
-      "com.typesafe.play" %% "play-json" % "2.2.3"
-    )
-
+```scala
+libraryDependencies ++= Seq(
+  "au.com.onegeek" %% "respite" % "0.0.1-SNAPSHOT",
+  "com.typesafe.play" %% "play-json" % "2.2.3"
+)
+```
 ### Create a Model
-
-    case class User(_id: Option[BSONObjectID] = Some(BSONObjectID.generate), username: String, firstName: String) extends Model
-    implicit val UserFormat = Macros.handler[User]
+```scala
+case class User(_id: Option[BSONObjectID] = Some(BSONObjectID.generate), username: String, firstName: String) extends Model
+implicit val UserFormat = Macros.handler[User]
+```
 
 ### Add RestController instance to your Scalatra Bootstrap
 
 Create an instance of RestController for a ```User``` in table "users" on path "/users/*":
 
-    context.mount(new RestController[User]("users"), "/users/*")
+```scala
+context.mount(new RestController[User]("users"), "/users/*")
+```
 
 ### Your done
 
