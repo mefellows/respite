@@ -1,3 +1,25 @@
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Matt Fellows (OneGeek)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package au.com.respite.api.actors
 
 import akka.actor.{Actor, ActorSystem}
@@ -24,24 +46,24 @@ import reactivemongo.api.DefaultDB
 /**
  * Created by mfellows on 24/04/2014.
  *
- * Bound to a case class of type ObjectType, and receives the MongoCollection
+ * Bound to a case class of type ModelType, and receives the MongoCollection
  * object that should be used instantiate a data access object (using the
  * com.novus.salat lib), which is in turn used to manage database
  * transactions.
  *
  * Inspects the sender's message and returns a serializable object or List.
  */
-class RestActor[ObjectType <: AnyRef](collection: JSONCollection)
-                                     (implicit val bindingModule: BindingModule, implicit val reader: Reads[ObjectType], implicit val writer: Writes[ObjectType]) extends Actor with Injectable {
+class RestActor[ModelType <: AnyRef](collection: JSONCollection)
+                                     (implicit val bindingModule: BindingModule, implicit val reader: Reads[ModelType], implicit val writer: Writes[ModelType]) extends Actor with Injectable {
 
   val logger =  LoggerFactory.getLogger(getClass)
 
-  val cache: Cache[Option[ObjectType]] = LruCache(maxCapacity = 500,
+  val cache: Cache[Option[ModelType]] = LruCache(maxCapacity = 500,
     initialCapacity = 16,
     timeToLive = Duration.Inf,
     timeToIdle = Duration.create(1.0, TimeUnit.MINUTES))
 
-  val listCache: Cache[List[ObjectType]] = LruCache(maxCapacity = 500,
+  val listCache: Cache[List[ModelType]] = LruCache(maxCapacity = 500,
     initialCapacity = 16,
     timeToLive = Duration.Inf,
     timeToIdle = Duration.create(1.0, TimeUnit.MINUTES))
@@ -57,7 +79,7 @@ class RestActor[ObjectType <: AnyRef](collection: JSONCollection)
 
     sender ! doGetSingle(objectId).map({ model =>
         model match {
-          case Some(model: ObjectType) => {
+          case Some(model: ModelType) => {
             println(Json.toJson(model))
             Json.toJson(model)
           }
@@ -86,11 +108,11 @@ class RestActor[ObjectType <: AnyRef](collection: JSONCollection)
     sender ! jsonList
   }
 
-  def doUpdate(objectId: String, modelInstance: ObjectType) = {
+  def doUpdate(objectId: String, modelInstance: ModelType) = {
     logger.debug("Updating something");
   }
 
-  def doCreate(modelInstance: ObjectType) = {
+  def doCreate(modelInstance: ModelType) = {
     logger.debug(s"Creating something ${modelInstance}");
     sender ! createEntity(modelInstance)
   }
@@ -98,9 +120,9 @@ class RestActor[ObjectType <: AnyRef](collection: JSONCollection)
   def receive = {
     case "all" => doAll()
     case Seq("get", objectId: String, None) => doGet(objectId)
-    case Seq("update", objectId: String, Some(modelInstance: ObjectType)) =>
+    case Seq("update", objectId: String, Some(modelInstance: ModelType)) =>
       doUpdate(objectId, modelInstance)
-    case Seq("create", modelInstance: ObjectType) => doCreate(modelInstance)
+    case Seq("create", modelInstance: ModelType) => doCreate(modelInstance)
     case _ =>
   }
 
@@ -112,7 +134,7 @@ class RestActor[ObjectType <: AnyRef](collection: JSONCollection)
    * @param id
    * @return
    */
-  def deleteEntity(id: String): Future[Option[ObjectType]] = {
+  def deleteEntity(id: String): Future[Option[ModelType]] = {
 
     for {
       e <- doGetSingle(id)
@@ -125,13 +147,13 @@ class RestActor[ObjectType <: AnyRef](collection: JSONCollection)
   /**
    * TODO: Wouldn't it be nice if I could do this....?
    *
-   * @param user The ObjectType to remove.
+   * @param user The ModelType to remove.
    */
-  //  def deleteEntity(user: ObjectType): Unit = cache.remove(user) {
+  //  def deleteEntity(user: ModelType): Unit = cache.remove(user) {
   //    deleteEntityFromDB(user)
   //  }
 
-  def deleteEntityFromDB(obj: Option[ObjectType]): Future[Option[ObjectType]] = {
+  def deleteEntityFromDB(obj: Option[ModelType]): Future[Option[ModelType]] = {
 
     obj match {
       case None => Future {
@@ -159,7 +181,7 @@ class RestActor[ObjectType <: AnyRef](collection: JSONCollection)
     }
   }
 
-  def createEntity(obj: ObjectType): Future[reactivemongo.core.commands.LastError] = {
+  def createEntity(obj: ModelType): Future[reactivemongo.core.commands.LastError] = {
     collection.insert(obj)
   }
 
@@ -168,19 +190,19 @@ class RestActor[ObjectType <: AnyRef](collection: JSONCollection)
    *
    * @return
    */
-  def doList: Future[List[ObjectType]] = listCache("list-users") {
+  def doList: Future[List[ModelType]] = listCache("list-users") {
     val query = BSONDocument()
-    val cursor = collection.find(query).cursor[ObjectType].collect[List](25)
+    val cursor = collection.find(query).cursor[ModelType].collect[List](25)
     cursor
   }
 
   //
-  def doGetSingle(id: String): Future[Option[ObjectType]] = cache(id) {
+  def doGetSingle(id: String): Future[Option[ModelType]] = cache(id) {
     logger.info("Fetching records!")
     val query = BSONDocument("_id" -> BSONObjectID(id))
 
     collection.
       find(query).
-      one[ObjectType]
+      one[ModelType]
   }
 }

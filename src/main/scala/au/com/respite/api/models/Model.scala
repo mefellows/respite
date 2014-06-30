@@ -20,11 +20,13 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package au.com.respite.api.controllers.support
+package au.com.respite.api.models
 
 /**
- * Created by mfellows on 23/06/2014.
+ * Created by mfellows on 30/06/2014.
+ *
+ *
  */
-trait PaginationSupport {
+trait Model {
 
 }
