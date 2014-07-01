@@ -1,0 +1,102 @@
+package au.com.onegeek.respite.security
+
+import org.scalatra.ScalatraBase
+import com.escalatesoft.subcut.inject.Injectable
+import org.slf4j.LoggerFactory
+import reactivemongo.api.DefaultDB
+import spray.caching.{LruCache, Cache}
+import scala.concurrent.duration.Duration
+import java.util.concurrent.TimeUnit
+import scala.concurrent.{ExecutionContext, Future, Await}
+import reactivemongo.bson.BSONDocument
+import scala.concurrent.duration._
+
+/**
+ * Created by mfellows on 11/05/2014.
+ */
+/**
+ * When this trait is used, the incoming request
+ * is checked for authentication based on the
+ * X-API-Key header.
+ */
+trait Authentication extends ScalatraBase with Injectable {
+
+  protected implicit def executor: ExecutionContext = ExecutionContext.global
+
+  val _log = LoggerFactory.getLogger(getClass)
+  val API_TOKENS_COLLECTION = "apitokens"
+  val API_KEY_HEADER = "X-API-Key";
+  val API_APP_HEADER = "X-API-Application";
+  val API_ERROR_HEADER = "X-API-Fault-Description";
+  val db: DefaultDB = inject[DefaultDB]
+  val keyCache: Cache[Option[BSONDocument]] = LruCache(maxCapacity = 500,
+    initialCapacity = 16,
+    timeToLive = Duration.Inf,
+    timeToIdle = Duration.create(1.0, TimeUnit.MINUTES))
+
+  /**
+   * A simple interceptor that checks for the existence
+   * of the correct headers. Down the track, this could also be an OAuth 2.0 implementation
+   */
+  before() {
+    // we check the host where the request is made
+    val serverName = request.serverName;
+    val header = Option(request.getHeader(API_KEY_HEADER));
+    val app = Option(request.getHeader(API_APP_HEADER));
+
+    _log.debug("Looking for some headers..." + header + ", " + app)
+
+    List(app, header) match {
+      case List(Some(x), Some(y)) => {
+        _log.debug("Awaiting a result...")
+        val key = Await.result(findKey(x, y), 100 millis)
+
+        key match {
+          case Some(k) => {
+            _log.debug(s"Found key: ${k}")
+          }
+          case None => {
+            _log.debug("" + key)
+            _log.debug(s"ok, somethihng else happened")
+            rejectRequest()
+          }
+        }
+      }
+      case _ => {
+        _log.debug("Oh oh, no headers!")
+        rejectRequest()
+      }
+    }
+  }
+
+  /**
+   * Rejects an API request with the standard 40x header and a human-friendly response message.
+   *
+   * @param reason
+   * @return
+   */
+  def rejectRequest(reason: String = s"Invalid authentication: X-API-* headers ('${API_KEY_HEADER}', '${API_APP_HEADER}') not provided or invalid") = {
+    halt(status = 401, headers = Map("WWW-Authenticate" -> "API-Key", API_ERROR_HEADER -> reason))
+  }
+
+  /**
+   * Check whether the secure API request is valid.
+   *
+   * This is done by checking the host against a database of keys.
+   */
+  final def findKey(appName: String, apiKey: String): Future[Option[BSONDocument]] = keyCache(appName+apiKey) {
+    _log.debug(s"Looking for a key...$appName, $apiKey")
+    val query = BSONDocument("app" -> appName, "key" -> apiKey)
+    val collection = db(API_TOKENS_COLLECTION)
+    collection.find(query).one
+  }
+
+  def removeKey(appName: String, apiKey: String): Unit = {
+    _log.debug(s"Removing key ${appName}, ${apiKey}}")
+    val query = BSONDocument("app" -> appName, "key" -> apiKey)
+    val collection = db(API_TOKENS_COLLECTION)
+    collection.remove(query)
+
+    keyCache.remove(appName+apiKey)
+  }
+}

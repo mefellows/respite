@@ -20,40 +20,22 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import _root_.akka.actor.ActorSystem
-import au.com.onegeek.respite.config.ProductionConfigurationModule
-import au.com.onegeek.respite.controllers.{RestController, UsersController}
-import au.com.onegeek.respite.models.AccountComponents.{User, Foo}
-import org.scalatra._
-import javax.servlet.ServletContext
-import org.slf4j.LoggerFactory
-import reactivemongo.api.MongoDriver
-import scala.concurrent.ExecutionContext
-import scala.util.Success
+package au.com.onegeek.respite.controllers
+
+import scala.concurrent._
+import reactivemongo.bson.BSONDocument
+import scala.util.{Success, Failure}
+import org.json4s.DefaultFormats
+import org.scalatra.AsyncResult
+import au.com.onegeek.respite.models.AccountComponents._
+import au.com.onegeek.respite.config.TestConfigurationModule
+import com.escalatesoft.subcut.inject.BindingModule
 import au.com.onegeek.respite.models.JsonFormats._
 import au.com.onegeek.respite.models.DefaultFormats._
 
-/**
- * Main Scalatra entry point.
- */
-class ScalatraBootstrap extends LifeCycle {
-  protected implicit def executor: ExecutionContext = ExecutionContext.global
+class UsersController(implicit override val bindingModule: BindingModule) extends RestController[User]("users") {
 
-  val logger = LoggerFactory.getLogger(getClass)
+  // Do something specific, override etc.
 
-  // Add implicit Binding Module in here....
 
-  // Get a handle to an ActorSystem and a reference to one of your actors
-  val system = ActorSystem()
-  override def init(context: ServletContext) {
-    implicit val bindingModule = ProductionConfigurationModule
-
-//    context.mount(new UsersController, "/users/*")
-    context.mount(new RestController[User]("users"), "/users/*")
-  }
-
-  // Make sure you shut down
-  override def destroy(context:ServletContext) {
-    system.shutdown()
-  }
 }
