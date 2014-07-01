@@ -20,32 +20,29 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import _root_.akka.actor.ActorSystem
-import au.com.onegeek.respite.config.ProductionConfigurationModule
-import org.scalatra._
-import javax.servlet.ServletContext
-import org.slf4j.LoggerFactory
-import scala.concurrent.ExecutionContext
+package au.com.onegeek.respite.security
+
+import scala.concurrent.{ExecutionContext, Future}
+import au.com.onegeek.respite.models.ApiKey
 
 /**
- * Main Scalatra entry point.
+ * Created by mfellows on 1/07/2014.
  */
-class ScalatraBootstrap extends LifeCycle {
-  protected implicit def executor: ExecutionContext = ExecutionContext.global
+trait ConfigAuthenticationStrategy extends AuthenticationStrategy {
 
-  val logger = LoggerFactory.getLogger(getClass)
+  type Key = String
+  protected val keys: Map[Key, ApiKey]
 
-  // Add implicit Binding Module in here....
-
-  // Get a handle to an ActorSystem and a reference to one of your actors
-  val system = ActorSystem()
-  override def init(context: ServletContext) {
-    implicit val bindingModule = ProductionConfigurationModule
-
+  override def authenticate(appName: String, apiKey: Key)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = {
+    Future {
+      keys.get(apiKey) filter { _.application == appName }
+    }
   }
 
-  // Make sure you shut down
-  override def destroy(context:ServletContext) {
-    system.shutdown()
+  override def revokeKey(apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = {
+    Future {
+      // Cannot revoke Keys as it's config based
+      None
+    }
   }
 }

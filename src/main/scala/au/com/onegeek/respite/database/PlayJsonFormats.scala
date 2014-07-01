@@ -20,32 +20,29 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import _root_.akka.actor.ActorSystem
-import au.com.onegeek.respite.config.ProductionConfigurationModule
-import org.scalatra._
-import javax.servlet.ServletContext
-import org.slf4j.LoggerFactory
-import scala.concurrent.ExecutionContext
+package au.com.onegeek.respite.database
+
+import play.api.libs.json._
+import reactivemongo.bson.BSONObjectID
 
 /**
- * Main Scalatra entry point.
+ * Created by mfellows on 30/06/2014.
  */
-class ScalatraBootstrap extends LifeCycle {
-  protected implicit def executor: ExecutionContext = ExecutionContext.global
+object PlayJsonFormats {
+  def read[T](json: JsValue)(implicit reader: Reads[T]): JsResult[T] = reader.reads(json)
+  def write[T](obj: T)(implicit writer: Writes[T]): JsValue = writer.writes(obj)
+}
 
-  val logger = LoggerFactory.getLogger(getClass)
+trait PlayJsonFormats { self: PlayJsonFormats =>
+  implicit val objectIdFormat = Format[BSONObjectID](
+    (__ \ "$oid").read[String].map( obj => new BSONObjectID(obj) ),
+    Writes[BSONObjectID]{ s => Json.obj( "$oid" -> s.stringify ) }
+  )
+}
 
-  // Add implicit Binding Module in here....
+trait DefaultFormats extends java.lang.Object with PlayJsonFormats {
 
-  // Get a handle to an ActorSystem and a reference to one of your actors
-  val system = ActorSystem()
-  override def init(context: ServletContext) {
-    implicit val bindingModule = ProductionConfigurationModule
+}
+object DefaultFormats extends java.lang.Object with DefaultFormats {
 
-  }
-
-  // Make sure you shut down
-  override def destroy(context:ServletContext) {
-    system.shutdown()
-  }
 }

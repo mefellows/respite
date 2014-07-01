@@ -20,32 +20,21 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import _root_.akka.actor.ActorSystem
-import au.com.onegeek.respite.config.ProductionConfigurationModule
-import org.scalatra._
-import javax.servlet.ServletContext
-import org.slf4j.LoggerFactory
-import scala.concurrent.ExecutionContext
+package au.com.onegeek.respite.security
+
+import scala.concurrent.{ExecutionContext, Future}
+import au.com.onegeek.respite.models.ApiKey
 
 /**
- * Main Scalatra entry point.
+ * An API Authentication Strategy for the Authentication Trait.
+ *
+ * Not to be confused with Authorisation, which is something the `OAuth2Support` Mixin supports.
+ *
+ * The default Authentication strategy is to use an in-memory Map of Authentication keys, supplied by the environment itself.
+ *
+ * Created by mfellows on 1/07/2014.
  */
-class ScalatraBootstrap extends LifeCycle {
-  protected implicit def executor: ExecutionContext = ExecutionContext.global
-
-  val logger = LoggerFactory.getLogger(getClass)
-
-  // Add implicit Binding Module in here....
-
-  // Get a handle to an ActorSystem and a reference to one of your actors
-  val system = ActorSystem()
-  override def init(context: ServletContext) {
-    implicit val bindingModule = ProductionConfigurationModule
-
-  }
-
-  // Make sure you shut down
-  override def destroy(context:ServletContext) {
-    system.shutdown()
-  }
+trait AuthenticationStrategy {
+  def authenticate(appName: String, apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = ???
+  def revokeKey(apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = ???
 }

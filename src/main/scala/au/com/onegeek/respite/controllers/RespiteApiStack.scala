@@ -20,32 +20,23 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import _root_.akka.actor.ActorSystem
-import au.com.onegeek.respite.config.ProductionConfigurationModule
+package au.com.onegeek.respite.controllers
+
 import org.scalatra._
-import javax.servlet.ServletContext
-import org.slf4j.LoggerFactory
-import scala.concurrent.ExecutionContext
+import scalate.ScalateSupport
+import org.fusesource.scalate.TemplateEngine
+import org.fusesource.scalate.layout.DefaultLayoutStrategy
+import javax.servlet.http.HttpServletRequest
+import collection.mutable
+import org.json4s.{Formats, DefaultFormats}
+import org.scalatra.json.{JValueResult, JacksonJsonSupport}
+import au.com.onegeek.respite.controllers.support.PlayJsonSupport
 
-/**
- * Main Scalatra entry point.
- */
-class ScalatraBootstrap extends LifeCycle {
-  protected implicit def executor: ExecutionContext = ExecutionContext.global
+trait RespiteApiStack[T] extends ScalatraServlet with PlayJsonSupport[T] {
 
-  val logger = LoggerFactory.getLogger(getClass)
+  implicit protected val jsonFormats: Formats = DefaultFormats
 
-  // Add implicit Binding Module in here....
-
-  // Get a handle to an ActorSystem and a reference to one of your actors
-  val system = ActorSystem()
-  override def init(context: ServletContext) {
-    implicit val bindingModule = ProductionConfigurationModule
-
-  }
-
-  // Make sure you shut down
-  override def destroy(context:ServletContext) {
-    system.shutdown()
+  notFound {
+    resourceNotFound()
   }
 }

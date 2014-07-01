@@ -20,32 +20,13 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import _root_.akka.actor.ActorSystem
-import au.com.onegeek.respite.config.ProductionConfigurationModule
-import org.scalatra._
-import javax.servlet.ServletContext
-import org.slf4j.LoggerFactory
-import scala.concurrent.ExecutionContext
+package au.com.onegeek.respite.models
 
 /**
- * Main Scalatra entry point.
+ * Example adapter for the Slick
+ *
+ * Created by mfellows on 1/07/2014.
  */
-class ScalatraBootstrap extends LifeCycle {
-  protected implicit def executor: ExecutionContext = ExecutionContext.global
+class SlickRepository {
 
-  val logger = LoggerFactory.getLogger(getClass)
-
-  // Add implicit Binding Module in here....
-
-  // Get a handle to an ActorSystem and a reference to one of your actors
-  val system = ActorSystem()
-  override def init(context: ServletContext) {
-    implicit val bindingModule = ProductionConfigurationModule
-
-  }
-
-  // Make sure you shut down
-  override def destroy(context:ServletContext) {
-    system.shutdown()
-  }
 }

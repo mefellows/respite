@@ -20,32 +20,25 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import _root_.akka.actor.ActorSystem
-import au.com.onegeek.respite.config.ProductionConfigurationModule
-import org.scalatra._
-import javax.servlet.ServletContext
-import org.slf4j.LoggerFactory
-import scala.concurrent.ExecutionContext
+package au.com.onegeek.respite.models
+
+import uk.gov.hmrc.mongo.ReactiveMongoFormats
+import play.api.libs.json.Json
+import reactivemongo.bson.BSONObjectID
+import au.com.onegeek.respite.models.ModelJsonExtensions._
 
 /**
- * Main Scalatra entry point.
+ * Created by mfellows on 4/07/2014.
  */
-class ScalatraBootstrap extends LifeCycle {
-  protected implicit def executor: ExecutionContext = ExecutionContext.global
 
-  val logger = LoggerFactory.getLogger(getClass)
+case class ApiKey(id: BSONObjectID = BSONObjectID.generate, application: String, description: String, key: String) extends Model[BSONObjectID]
 
-  // Add implicit Binding Module in here....
+object ApiKey {
 
-  // Get a handle to an ActorSystem and a reference to one of your actors
-  val system = ActorSystem()
-  override def init(context: ServletContext) {
-    implicit val bindingModule = ProductionConfigurationModule
+  import au.com.onegeek.respite.models.ModelJsonExtensions._
+  import uk.gov.hmrc.mongo.ReactiveMongoFormats.objectIdFormats
 
-  }
-
-  // Make sure you shut down
-  override def destroy(context:ServletContext) {
-    system.shutdown()
+  implicit val format = modelFormat {
+    Json.format[ApiKey]
   }
 }

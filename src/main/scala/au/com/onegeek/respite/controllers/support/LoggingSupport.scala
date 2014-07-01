@@ -20,32 +20,16 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import _root_.akka.actor.ActorSystem
-import au.com.onegeek.respite.config.ProductionConfigurationModule
-import org.scalatra._
-import javax.servlet.ServletContext
+package au.com.onegeek.respite.controllers.support
+
 import org.slf4j.LoggerFactory
-import scala.concurrent.ExecutionContext
 
 /**
- * Main Scalatra entry point.
+ * Mixin this Trait into any class, Controller etc. to get a free Logger!
+ *
+ *
+ * Created by mfellows on 23/06/2014.
  */
-class ScalatraBootstrap extends LifeCycle {
-  protected implicit def executor: ExecutionContext = ExecutionContext.global
-
+trait LoggingSupport {
   val logger = LoggerFactory.getLogger(getClass)
-
-  // Add implicit Binding Module in here....
-
-  // Get a handle to an ActorSystem and a reference to one of your actors
-  val system = ActorSystem()
-  override def init(context: ServletContext) {
-    implicit val bindingModule = ProductionConfigurationModule
-
-  }
-
-  // Make sure you shut down
-  override def destroy(context:ServletContext) {
-    system.shutdown()
-  }
 }

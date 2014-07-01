@@ -1,16 +1,5 @@
-import com.mojolly.scalate.ScalatePlugin.Binding
-import com.mojolly.scalate.ScalatePlugin.TemplateConfig
+import sbt.Keys._
 import sbt._
-import Keys._
-import org.scalatra.sbt._
-import org.scalatra.sbt.PluginKeys._
-import com.mojolly.scalate.ScalatePlugin._
-import sbt.ScalaVersion
-import scala.collection.JavaConverters._
-import scala.Some
-import ScalateKeys._
-import com.earldouglas.xsbtwebplugin.WebPlugin
-import com.typesafe.sbt.SbtStartScript
 
 object RespiteBuild extends Build {
   val Organization = "au.com.onegeek"
@@ -19,14 +8,15 @@ object RespiteBuild extends Build {
   val ScalaVersion = "2.10.3"
   val ScalatraVersion = "2.2.2"
 
-  import com.typesafe.sbt.SbtStartScript
+//  import com.typesafe.sbt.SbtStartScript
 
-  seq(SbtStartScript.startScriptForClassesSettings: _*)
+//  seq(SbtStartScript.startScriptForClassesSettings: _*)
 
   lazy val project = Project (
     "respite",
     file("."),
-    settings = Seq(com.typesafe.sbt.SbtStartScript.startScriptForClassesSettings: _*) ++ Defaults.defaultSettings ++ ScalatraPlugin.scalatraWithJRebel ++ scalateSettings ++ Seq(
+//    settings = Seq(com.typesafe.sbt.SbtStartScript.startScriptForClassesSettings: _*) ++ Defaults.defaultSettings ++ ScalatraPlugin.scalatraWithJRebel ++ scalateSettings ++ Seq(
+    settings = Defaults.defaultSettings ++ Seq(
       organization := Organization,
       name := Name,
       version := Version,
@@ -54,21 +44,10 @@ object RespiteBuild extends Build {
         "org.reactivemongo" %% "play2-reactivemongo" % "0.10.2",
         "net.sf.ehcache" % "ehcache-core" % "2.6.8",
         "uk.gov.hmrc" %% "simple-reactivemongo" % "1.1.0",
-        "org.eclipse.jetty" % "jetty-webapp" % "8.1.10.v20130312" % "compile;container",
-        "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "compile;container;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar"))
-      ),
-      scalateTemplateConfig in Compile <<= (sourceDirectory in Compile){ base =>
-        Seq(
-          TemplateConfig(
-            base / "webapp" / "WEB-INF" / "templates",
-            Seq.empty,  /* default imports should be added here */
-            Seq(
-              Binding("context", "_root_.org.scalatra.scalate.ScalatraRenderContext", importMembers = true, isImplicit = true)
-            ),  /* add extra bindings here */
-            Some("templates")
-          )
-        )
-      }
+        "org.eclipse.jetty" % "jetty-webapp" % "8.1.10.v20130312" % "compile",
+        "com.github.simplyscala" %% "scalatest-embedmongo" % "0.2.1" % "test",
+        "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "compile;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar"))
+      )
     )
   )
 }
