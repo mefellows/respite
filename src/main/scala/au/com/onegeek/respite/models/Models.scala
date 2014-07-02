@@ -6,7 +6,10 @@ import play.api.libs.json.Reads._
 import au.com.onegeek.respite.models.AccountComponents.User
 import scala.Some
 import reactivemongo.bson.BSONString
-import au.com.onegeek.respite.models.AccountComponents.Foo
+import uk.gov.hmrc.mongo.{TupleFormats, ReactiveMongoFormats}
+import uk.gov.hmrc.mongo.ReactiveMongoFormats._
+import reactivemongo.bson.BSONString
+import scala.Some
 
 object AccountComponents {
 
@@ -24,12 +27,19 @@ object AccountComponents {
   case class User(_id: Option[BSONObjectID] = Some(BSONObjectID.generate), username: String, firstName: String) extends Model
 
   object User {
-    import uk.gov.hmrc.mongo.ReactiveMongoFormats._
-  }
+    }
 }
 
 // Authentication
 case class ApiKey(application: String, description: String, key: String)
+object ApiKey {
+  import ReactiveMongoFormats.mongoEntity
+
+  implicit val formats = {
+    import uk.gov.hmrc.mongo.ReactiveMongoFormats._
+    Json.format[ApiKey]
+  }
+}
 
 object BSONObjectIdFormats extends BSONObjectIdFormats
 
@@ -47,10 +57,12 @@ object JsonFormats {
 
 trait JsonFormats { self: JsonFormats =>
 
-  implicit val objectIdFormat = Format[BSONObjectID](
-    (__ \ "$oid").read[String].map( obj => new BSONObjectID(obj) ),
-    Writes[BSONObjectID]{ s => Json.obj( "$oid" -> s.stringify ) }
-  )
+//  implicit val objectIdFormat = Format[BSONObjectID](
+//    (__ \ "$oid").read[String].map( obj => new BSONObjectID(obj) ),
+//    Writes[BSONObjectID]{ s => Json.obj( "$oid" -> s.stringify ) }
+//  )
+
+  import uk.gov.hmrc.mongo.ReactiveMongoFormats._
 
   // Generates Writes and Reads for Models thanks to json Macros
   implicit val ApiKeysJsonFormat = Json.format[ApiKey]

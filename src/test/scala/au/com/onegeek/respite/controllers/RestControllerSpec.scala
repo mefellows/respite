@@ -11,7 +11,6 @@ import au.com.onegeek.respite.api.ServletTestsBase
 //import org.junit.runner.RunWith
 //@RunWith(classOf[JUnitRunner])
 class RestControllerSpec extends ServletTestsBase {
-  protected implicit def executor: ExecutionContext = ExecutionContext.global
   implicit val bindingModule = TestConfigurationModule
 
   addServlet(new UsersController, "/api/*")

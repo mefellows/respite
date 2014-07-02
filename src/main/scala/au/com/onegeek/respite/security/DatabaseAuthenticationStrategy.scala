@@ -22,12 +22,11 @@
  */
 package au.com.onegeek.respite.security
 
-import scala.concurrent.Future
-import reactivemongo.bson.BSONDocument
 import au.com.onegeek.respite.controllers.support.CachingSupport
-import uk.gov.hmrc.mongo.{Repository, ReactiveRepository}
-import org.scalatra.ScalatraServlet
-import au.com.onegeek.respite.models.{ApiKey, Repository}
+import uk.gov.hmrc.mongo.Repository
+import au.com.onegeek.respite.models.ApiKey
+import reactivemongo.bson.BSONObjectID
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * This class implements a Database persisted Authentication Strategy, with
@@ -35,31 +34,21 @@ import au.com.onegeek.respite.models.{ApiKey, Repository}
  *
  * Created by mfellows on 1/07/2014.
  */
-trait DatabaseAuthenticationStrategy extends AuthenticationStrategy with CachingSupport {
+class DatabaseAuthenticationStrategy(repository: Repository[ApiKey, BSONObjectID]) extends AuthenticationStrategy with CachingSupport {
 
-  val repository: Repository
   val API_TOKENS_COLLECTION = "apitokens"
 
-  /**
-   * Check whether the secure API request is valid.
-   *
-   * This is done by checking the host against a database of keys.
-   */
-//  final def findKey(appName: String, apiKey: String): Future[Option[BSONDocument]] = keyCache(appName+apiKey) {
-  def authenticate(appName: String, apiKey: String): Future[Option[ApiKey]] = {
-//    _log.debug(s"Looking for a key...$appName, $apiKey")
-    val query = BSONDocument("app" -> appName, "key" -> apiKey)
-//    val collection = db(API_TOKENS_COLLECTION)
-    collection.find(query).one
+  override def authenticate(appName: String, apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = {
+    println(s"Authenticating key: ${apiKey} and app: ${appName}")
+      for {
+        keys <- repository.find("key" -> apiKey, "application" -> appName)
+      } yield Some(keys.head)
   }
 
-  def removeKey(appName: String, apiKey: String): Future[Option[ApiKey]] = {
-//    _log.debug(s"Removing key ${appName}, ${apiKey}}")
-    val query = BSONDocument("app" -> appName, "key" -> apiKey)
-//    val collection = db(API_TOKENS_COLLECTION)
-    repository.remove()
-    collection.remove(query)
-
-    keyCache.remove(appName+apiKey)
+  override def revokeKey(apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = {
+    println(s"Revoking key: ${apiKey}")
+      for {
+        keys <- repository.find("key" -> apiKey)
+      } yield Some(keys.head)
   }
 }

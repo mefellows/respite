@@ -22,7 +22,7 @@
  */
 package au.com.onegeek.respite.security
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import au.com.onegeek.respite.models.ApiKey
 
 /**
@@ -35,6 +35,6 @@ import au.com.onegeek.respite.models.ApiKey
  * Created by mfellows on 1/07/2014.
  */
 trait AuthenticationStrategy {
-  def authenticate(appName: String, apiKey: String): Future[Option[ApiKey]]
-  def revokeKey(apiKey: String): Future[Option[ApiKey]]
+  def authenticate(appName: String, apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = ???
+  def revokeKey(apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = ???
 }

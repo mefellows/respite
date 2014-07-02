@@ -1,11 +1,10 @@
 package au.com.onegeek.respite.security
 
-import org.scalatra.ScalatraBase
+import org.scalatra.{AsyncResult, ScalatraBase}
 import com.escalatesoft.subcut.inject.Injectable
 import org.slf4j.LoggerFactory
 import reactivemongo.api.DefaultDB
 import spray.caching.{LruCache, Cache}
-import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
 import scala.concurrent.{ExecutionContext, Future, Await}
 import reactivemongo.bson.BSONDocument
@@ -27,16 +26,9 @@ trait Authentication extends ScalatraBase with Injectable {
   implicit val authenticationStrategy: AuthenticationStrategy = ConfigAuthenticationStrategy
 
   val _log = LoggerFactory.getLogger(getClass)
-  val API_TOKENS_COLLECTION = "apitokens"
   val API_KEY_HEADER = "X-API-Key";
   val API_APP_HEADER = "X-API-Application";
   val API_ERROR_HEADER = "X-API-Fault-Description";
-
-  val db: DefaultDB = inject[DefaultDB]
-  val keyCache: Cache[Option[BSONDocument]] = LruCache(maxCapacity = 500,
-    initialCapacity = 16,
-    timeToLive = Duration.Inf,
-    timeToIdle = Duration.create(1.0, TimeUnit.MINUTES))
 
   /**
    * A simple interceptor that checks for the existence
@@ -53,7 +45,7 @@ trait Authentication extends ScalatraBase with Injectable {
     List(app, header) match {
       case List(Some(x), Some(y)) => {
         _log.debug("Awaiting a result...")
-        val key = Await.result(findKey(x, y), 100 millis)
+        val key = Await.result(authenticationStrategy.authenticate(x, y), 100 millis)
 
         key match {
           case Some(k) => {
@@ -86,29 +78,19 @@ trait Authentication extends ScalatraBase with Injectable {
     halt(status = 401, headers = Map("WWW-Authenticate" -> "API-Key", API_ERROR_HEADER -> reason))
   }
 
-  /**
-   * Check whether the secure API request is valid.
-   *
-   * This is done by checking the host against a database of keys.
-   */
-  final def findKey(appName: String, apiKey: String): Future[Option[BSONDocument]] = keyCache(appName+apiKey) {
-    _log.debug(s"Looking for a key...$appName, $apiKey")
-    val query = BSONDocument("app" -> appName, "key" -> apiKey)
-    val collection = db(API_TOKENS_COLLECTION)
-    collection.find(query).one
-  }
+}
 
-  def removeKey(appName: String, apiKey: String): Unit = {
-    _log.debug(s"Removing key ${appName}, ${apiKey}}")
-    val query = BSONDocument("app" -> appName, "key" -> apiKey)
-    val collection = db(API_TOKENS_COLLECTION)
-    collection.remove(query)
-
-    keyCache.remove(appName+apiKey)
-  }
+trait AuthenticationApi extends Authentication { this: Authentication =>
 
   delete("/key/foo/:key") {
+    new AsyncResult {
     _log.debug("Removing a key")
-    "Removing a key"
+
+      val key = params.get("key").getOrElse(rejectRequest ("Invalid request, no key provided"))
+      val is = for {
+       result <- authenticationStrategy.revokeKey(key)
+      } yield result.orElse(rejectRequest ("Invalid or no key provided"))
+
+    }
   }
 }

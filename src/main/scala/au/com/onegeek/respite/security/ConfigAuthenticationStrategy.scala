@@ -22,9 +22,22 @@
  */
 package au.com.onegeek.respite.security
 
+import scala.concurrent.{ExecutionContext, Future}
+import au.com.onegeek.respite.models.ApiKey
+
 /**
  * Created by mfellows on 1/07/2014.
  */
 object ConfigAuthenticationStrategy extends AuthenticationStrategy {
+  override def authenticate(appName: String, apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = {
+    Future {
+      None
+    }
 
+  }
+  override def revokeKey(apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = {
+    Future {
+      None
+    }
+  }
 }

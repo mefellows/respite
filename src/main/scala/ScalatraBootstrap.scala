@@ -22,15 +22,12 @@
  */
 import _root_.akka.actor.ActorSystem
 import au.com.onegeek.respite.config.ProductionConfigurationModule
-import au.com.onegeek.respite.controllers.{RestController, UsersController}
-import au.com.onegeek.respite.models.AccountComponents.{User, Foo}
+import au.com.onegeek.respite.controllers.RestController
+import au.com.onegeek.respite.models.AccountComponents.User
 import org.scalatra._
 import javax.servlet.ServletContext
 import org.slf4j.LoggerFactory
-import reactivemongo.api.MongoDriver
 import scala.concurrent.ExecutionContext
-import scala.util.Success
-import au.com.onegeek.respite.models.JsonFormats._
 import au.com.onegeek.respite.models.DefaultFormats._
 
 /**

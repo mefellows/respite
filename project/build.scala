@@ -55,6 +55,7 @@ object RespiteBuild extends Build {
         "net.sf.ehcache" % "ehcache-core" % "2.6.8",
         "uk.gov.hmrc" %% "simple-reactivemongo" % "1.1.0",
         "org.eclipse.jetty" % "jetty-webapp" % "8.1.10.v20130312" % "compile;container",
+        "com.github.simplyscala" %% "scalatest-embedmongo" % "0.2.1" % "test",
         "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "compile;container;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar"))
       ),
       scalateTemplateConfig in Compile <<= (sourceDirectory in Compile){ base =>

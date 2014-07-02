@@ -13,7 +13,6 @@ class ConfigAuthenticationStrategyTests extends ServletTestsBase with ScalaFutur
   class TestServlet(implicit val bindingModule: BindingModule) extends ScalatraServlet with Injectable
 
   val authServlet = new TestServlet with Authentication {
-    override val db: DefaultDB = inject[DefaultDB]
 
     get("/") {
       "OK"

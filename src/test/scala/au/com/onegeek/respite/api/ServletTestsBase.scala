@@ -5,6 +5,9 @@ import org.scalatra.test.scalatest.{ScalatraSuite, ScalatraFlatSpec, ScalatraSpe
 import org.scalatest._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
+import scala.concurrent.ExecutionContext
 
 @RunWith(classOf[JUnitRunner])
-abstract class ServletTestsBase extends ScalatraSuite with WordSpecLike with Matchers with BeforeAndAfter
+class ServletTestsBase extends ScalatraSuite with WordSpecLike with Matchers with BeforeAndAfter {
+  protected implicit def executor: ExecutionContext = ExecutionContext.global
+}

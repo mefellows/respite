@@ -19,7 +19,7 @@ class AuthenticationTests extends ServletTestsBase with ScalaFutures {
   class TestServlet(implicit val bindingModule: BindingModule) extends ScalatraServlet with Injectable
 
   val authServlet = new TestServlet with Authentication {
-    override val db: DefaultDB = inject[DefaultDB]
+//    override val db: DefaultDB = inject[DefaultDB]
 
     get("/") {
       "OK"
@@ -59,20 +59,20 @@ class AuthenticationTests extends ServletTestsBase with ScalaFutures {
       }
     }
 
-    "find keys from database" in {
-      val key = authServlet.findKey("bill", "murray")
-      whenReady(key) {
-        res =>
-          res should be(defined)
-      }
-    }
-
-    "reject unknown API keys" in {
-      val key = authServlet.findKey("idon't", "exist")
-      whenReady(key) {
-        res =>
-          res should be(None)
-      }
-    }
+//    "find keys from database" in {
+//      val key = authServlet.au ("bill", "murray")
+//      whenReady(key) {
+//        res =>
+//          res should be(defined)
+//      }
+//    }
+//
+//    "reject unknown API keys" in {
+//      val key = authServlet.findKey("idon't", "exist")
+//      whenReady(key) {
+//        res =>
+//          res should be(None)
+//      }
+//    }
   }
 }
