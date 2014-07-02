@@ -22,21 +22,11 @@
  */
 package au.com.onegeek.respite.models
 
-import uk.gov.hmrc.mongo.ReactiveRepository
-
-
 /**
- * Canonical representation of a database Repository. Not tied with any specific implementation.
+ * Example adapter for the Slick
  *
- * This will be a wrapper for something like `ReactiveRepository` that can implement Mongo-specific behaviour.
- *
- * Created by mfellows on 30/06/2014.
+ * Created by mfellows on 1/07/2014.
  */
-trait RespiteRepository {
+class SlickRepository {
 
-}
-
-trait PageableRepository {
-
-  // Decorates a `Repository` instance with pagination data
 }

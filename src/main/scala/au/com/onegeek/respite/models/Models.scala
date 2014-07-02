@@ -26,8 +26,6 @@ object AccountComponents {
   object User {
     import uk.gov.hmrc.mongo.ReactiveMongoFormats._
   }
-  case class Foo(_id: Option[BSONObjectID]) extends  Model
-
 }
 
 // Authentication
@@ -49,25 +47,13 @@ object JsonFormats {
 
 trait JsonFormats { self: JsonFormats =>
 
-  //  implicit val objectIdRead: Reads[BSONObjectID] = __.read[String].map {
-  //    oid => BSONObjectID(oid)
-  //  }
-  //
-  //  implicit val objectIdWrite: Writes[BSONObjectID] = new Writes[BSONObjectID] {
-  //    def writes(oid: BSONObjectID): JsValue = JsString(oid.stringify)
-  //  }
-  //
-  //  implicit val objectIdFormats = Format(JsonFormats.objectIdRead, JsonFormats.objectIdWrite)
-
   implicit val objectIdFormat = Format[BSONObjectID](
     (__ \ "$oid").read[String].map( obj => new BSONObjectID(obj) ),
     Writes[BSONObjectID]{ s => Json.obj( "$oid" -> s.stringify ) }
   )
 
   // Generates Writes and Reads for Models thanks to json Macros
-  //  implicit val modelFmt = Json.format[Model]
   implicit val ApiKeysJsonFormat = Json.format[ApiKey]
-  implicit val FooJsonFormat = Json.format[Foo]
   implicit val UserJsonFormat = Json.format[User]
 }
 

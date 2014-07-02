@@ -20,23 +20,11 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package au.com.onegeek.respite.models
-
-import uk.gov.hmrc.mongo.ReactiveRepository
-
+package au.com.onegeek.respite.security
 
 /**
- * Canonical representation of a database Repository. Not tied with any specific implementation.
- *
- * This will be a wrapper for something like `ReactiveRepository` that can implement Mongo-specific behaviour.
- *
- * Created by mfellows on 30/06/2014.
+ * Created by mfellows on 1/07/2014.
  */
-trait RespiteRepository {
+object ConfigAuthenticationStrategy extends AuthenticationStrategy {
 
-}
-
-trait PageableRepository {
-
-  // Decorates a `Repository` instance with pagination data
 }

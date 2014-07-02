@@ -23,11 +23,15 @@ trait Authentication extends ScalatraBase with Injectable {
 
   protected implicit def executor: ExecutionContext = ExecutionContext.global
 
+  // Override this strategy for more explicit control
+  implicit val authenticationStrategy: AuthenticationStrategy = ConfigAuthenticationStrategy
+
   val _log = LoggerFactory.getLogger(getClass)
   val API_TOKENS_COLLECTION = "apitokens"
   val API_KEY_HEADER = "X-API-Key";
   val API_APP_HEADER = "X-API-Application";
   val API_ERROR_HEADER = "X-API-Fault-Description";
+
   val db: DefaultDB = inject[DefaultDB]
   val keyCache: Cache[Option[BSONDocument]] = LruCache(maxCapacity = 500,
     initialCapacity = 16,
@@ -56,7 +60,10 @@ trait Authentication extends ScalatraBase with Injectable {
             _log.debug(s"Found key: ${k}")
           }
           case None => {
-            _log.debug("" + key)
+            _log.debug(s"No or invalid API keys provided. Result of lookup ${key}")
+            rejectRequest()
+          }
+          case _ => {
             _log.debug(s"ok, somethihng else happened")
             rejectRequest()
           }
@@ -98,5 +105,10 @@ trait Authentication extends ScalatraBase with Injectable {
     collection.remove(query)
 
     keyCache.remove(appName+apiKey)
+  }
+
+  delete("/key/foo/:key") {
+    _log.debug("Removing a key")
+    "Removing a key"
   }
 }

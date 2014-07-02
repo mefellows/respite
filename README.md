@@ -78,3 +78,8 @@ Thanks to the following projects for making this so awesome:
 * Reactive Mongo
 * Play JSON library
 * Metrics
+
+
+## Contributing
+
+Simply fork the repo, create a feature branch and then submit a pull request.

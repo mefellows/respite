@@ -20,23 +20,21 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package au.com.onegeek.respite.models
+package au.com.onegeek.respite.security
 
-import uk.gov.hmrc.mongo.ReactiveRepository
-
+import scala.concurrent.Future
+import au.com.onegeek.respite.models.ApiKey
 
 /**
- * Canonical representation of a database Repository. Not tied with any specific implementation.
+ * An API Authentication Strategy for the Authentication Trait.
  *
- * This will be a wrapper for something like `ReactiveRepository` that can implement Mongo-specific behaviour.
+ * Not to be confused with Authorisation, which is something the `OAuth2Support` Mixin supports.
  *
- * Created by mfellows on 30/06/2014.
+ * The default Authentication strategy is to use an in-memory Map of Authentication keys, supplied by the environment itself.
+ *
+ * Created by mfellows on 1/07/2014.
  */
-trait RespiteRepository {
-
-}
-
-trait PageableRepository {
-
-  // Decorates a `Repository` instance with pagination data
+trait AuthenticationStrategy {
+  def authenticate(appName: String, apiKey: String): Future[Option[ApiKey]]
+  def revokeKey(apiKey: String): Future[Option[ApiKey]]
 }

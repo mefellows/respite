@@ -23,9 +23,16 @@
 package au.com.onegeek.respite.controllers.support
 
 /**
+ * Mixin this Trait into any class, Controller etc. to gain some extra caching magic.
+ *
+ *
  * Created by mfellows on 23/06/2014.
  */
-class CachingSupport {
+trait CachingSupport {
+
+//  implicit val cacheProvider: CachingStrategy = SprayCachingStrategy
+
+
 
   // Review the cruddy Cache implementation in the Controllers
 

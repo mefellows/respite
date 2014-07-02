@@ -23,9 +23,9 @@
 package au.com.onegeek.respite.models
 
 /**
+ * A canonical representation of a Persisted Model.
+ *
  * Created by mfellows on 30/06/2014.
- *
- *
  */
 trait Model {
 

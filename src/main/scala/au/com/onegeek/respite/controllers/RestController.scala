@@ -132,7 +132,7 @@ class RestController[ObjectType <: Model](collectionName: String)
   }
 
   get("/:id") {
-    logger.debug("Getting somsething")
+    logger.debug("Getting something")
     val id = params("id")
     doSingle(id, "get")
   }
