@@ -3,11 +3,12 @@ package au.com.onegeek.respite.controllers.support
 import au.com.onegeek.respite.api.ServletTestsBase
 import org.scalatest.concurrent.ScalaFutures
 import au.com.onegeek.respite.config.TestConfigurationModule
-import org.scalatra.ScalatraServlet
+import org.scalatra.{ApiFormats, ScalatraServlet}
 import au.com.onegeek.respite.models.DefaultFormats
 import play.api.libs.json._
 import play.api.libs.json.JsSuccess
 import au.com.onegeek.respite.models.AccountComponents.User
+import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.mongo._
 import au.com.onegeek.respite.test.Awaiting
 
@@ -21,25 +22,25 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
   class TestServlet extends ScalatraServlet
 
   val playServlet = new TestServlet with PlayJsonSupport[User] {
-//  override implicit val formats: JsonFormats = DefaultFormats
-     implicit val format: Format[User] = DefaultFormats.UserJsonFormat
+    implicit val format = User.formats
 
     get("/") {
-      JsSuccess(User(username="foo", firstName = "bar"))
+      JsSuccess(User(_id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar"))
+    }
+
+    get("/amodel") {
+      User(_id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar")
     }
 
     post("/") {
-      val postBody = request.get("myspecialkey")
-      println(postBody)
-      val u: JsResult[User] = parsedModel[User]
-
-      u match {
-        case model: JsSuccess[User] => {
-            model.get.firstName
-        }
-        case e: JsError => {
-          JsError.toFlatJson(e)
-        }
+      val obj = parsedModel[User]
+      obj match {
+        case model: JsSuccess[User] =>
+          println(model.get.firstName)
+          assert(model.get.firstName == "Matt")
+//          assert(model.get.firstName == "Matt" && model.get.username == "mfellows" && model.get._id.get == BSONObjectID("53aeb92ab65f2a89219ddcfb"))
+          model.get
+        case e: JsError => fail(s"Should not be an error. Error ${e.errors}")
       }
     }
 
@@ -58,9 +59,22 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
   "A JSON support servlet" should {
 
     "Transparently convert Models into JSON" in {
+      get("/amodel") {
+        status should equal(200)
+        body should equal("{\"_id\":{\"$oid\":\"53aeb92ab65f2a89219ddcfb\"},\"username\":\"foo\",\"firstName\":\"bar\"}")
+      }
+    }
+
+    "Transparently convert JsResult (JsSuccess) objects into JSON" in {
       get("/") {
         status should equal(200)
         println(body)
+      }
+    }
+
+    "Transparently convert JsFailure (JsError) objects into JSON" in {
+      get("/") {
+        fail("Not yet implemented")
       }
     }
 
@@ -79,16 +93,7 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
     "Store the validated Model object in the Request map" in {
       post("/", "{\"_id\":{\"$oid\":\"53af77a90100000100a16ffb\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"}", Map("Content-Type" -> "application/json")) {
         status should equal(200)
-        body should equal ("Matt")
-
-        ()
-      }
-    }
-
-    "Store a JsValue in the Request Map" in {
-      post("/foo", "{\"_id\":{\"$oid\":\"53af77a90100000100a16ffb\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"}", Map("Content-Type" -> "application/json")) {
-        status should equal(200)
-        ()
+        body should equal("{\"_id\":{\"$oid\":\"53af77a90100000100a16ffb\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"}")
       }
     }
   }

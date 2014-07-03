@@ -22,6 +22,8 @@
  */
 package au.com.onegeek.respite.controllers.support
 
+import au.com.onegeek.respite.models.AccountComponents.User
+import au.com.onegeek.respite.models.{JsonFormats, DefaultFormats}
 import org.scalatra._
 import scala.annotation.implicitNotFound
 import play.api.libs.json._
@@ -42,18 +44,22 @@ object PlayJsonSupport {
 @implicitNotFound(
   "No play JSON Reads/Writes defaults are in place. Try adding au.com.onegeek.respite.database.DefaultFormats or creating your own."
 )
-trait PlayJsonSupport[T] extends ScalatraBase {
+trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormats =>
 
   import PlayJsonSupport._
 
+  /**
+   * Set content-type header to JSON.
+   */
+  before() {
+    contentType = formats("json")
+  }
+
   // Hoping to be able to go back to this to avoid passing Type Parameters around in all subclasses. OK for now.
   //  implicit val formats: JsonFormats
-
-  // Put this back
   implicit val format: Format[T]
 
   private def shouldParseBody(fmt: String)(implicit request: HttpServletRequest) = (fmt == "json")
-
 
   override protected def invoke(matchedRoute: MatchedRoute) = {
     withRouteMultiParams(Some(matchedRoute)) {
@@ -80,22 +86,24 @@ trait PlayJsonSupport[T] extends ScalatraBase {
 
   override protected def renderPipeline = ({
     // Note the following from the JValueResult class -> Secret sauce is PartialFunctions?
-
-    //    case a: Any if isJValueResponse && customSerializer.isDefinedAt(a) =>
-    //      customSerializer.lift(a) match {
-    //        case Some(jv: JValue) => jv
-    //        case None => super.renderPipeline(a)
-    //      }
     case jv: JsResult[T] =>
+      val writer = response.writer
       // JSON is always UTF-8
       response.characterEncoding = Some(Codec.UTF8.name)
-      val writer = response.writer
       status = 200
       jv match {
-        case model: JsSuccess[T] => Json.toJson[T](model.get).toString
+        case model: JsSuccess[T] => writer.write(Json.toJson[T](model.get).toString)
         case e: JsError => writer.write(JsError.toFlatForm(e).toString)
       }
-
+      ()
+    case a: T if responseFormat == "json" =>
+      response.writer.write(renderJson(a))
+      ()
+    case a: Option[T] if responseFormat == "json" =>
+      a match {
+        case Some(model) => response.writer.write(renderJson(model))
+        case None =>
+      }
       ()
   }: RenderPipeline) orElse super.renderPipeline
 
@@ -108,7 +116,7 @@ trait PlayJsonSupport[T] extends ScalatraBase {
     val result: JsResult[T] = Json.parse(request.body).validate[T]
     result
   }
-
   def getParsedModel[T] = request.get(ParsedModelKey).orElse(None)
+
 }
 

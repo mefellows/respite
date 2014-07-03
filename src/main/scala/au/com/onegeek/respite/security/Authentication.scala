@@ -100,7 +100,6 @@ trait AuthenticationApi extends Authentication with FutureSupport { this: Authen
       val is = for {
        result <- authenticationStrategy.revokeKey(key)
       } yield result.orElse(keyNotFound("Invalid or no key provided"))
-
     }
   }
 }

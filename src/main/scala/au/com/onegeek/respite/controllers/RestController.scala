@@ -104,11 +104,6 @@ class RestController[ObjectType <: Model](collectionName: String)
 
   implicit val tOut = Timeout(Duration.create(10, SECONDS))
 
-
-  before() {
-    contentType = "application/json"
-  }
-
   def doSingle(id: String, method: String, modelInstance: Option[ObjectType] = None) = {
     try {
       //      val objectId = new ObjectId(id.asInstanceOf[String])
