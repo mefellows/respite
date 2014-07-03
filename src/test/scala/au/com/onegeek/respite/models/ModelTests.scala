@@ -28,6 +28,4 @@ class ModelTests extends UnitSpec with ScalaFutures {
 
     }
   }
-
-
 }

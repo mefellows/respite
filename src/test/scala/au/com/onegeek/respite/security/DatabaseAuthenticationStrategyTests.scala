@@ -92,13 +92,6 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
       }
     }
 
-    "provide a RESTful API to remove keys at runtime" in {
-      delete("/auth/key/foo/key", headers = validHeaders) {
-        status should equal (200)
-        body should equal ("Removing a key")
-      }
-    }
-
     "Store stuff in repo" in {
       val repository = new ApiKeyTestRepository
 
@@ -129,4 +122,21 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
     }
 
   }
+
+  "A Servlet with AuthenticationApi" should {
+
+    "provide a RESTful API to remove keys at runtime" in {
+      delete("/auth/key/foo/key", headers = validHeaders) {
+        status should equal (200)
+        body should equal ("Removing a key")
+      }
+    }
+
+    "reject a request with incorrect key" in {
+      delete("/auth/key/foo/notexist", headers = validHeaders) {
+        status should equal (404)
+      }
+    }
+  }
+
 }

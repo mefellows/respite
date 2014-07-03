@@ -1,6 +1,6 @@
 package au.com.onegeek.respite.security
 
-import org.scalatra.{AsyncResult, ScalatraBase}
+import org.scalatra.{FutureSupport, AsyncResult, ScalatraBase}
 import com.escalatesoft.subcut.inject.Injectable
 import org.slf4j.LoggerFactory
 import reactivemongo.api.DefaultDB
@@ -78,18 +78,28 @@ trait Authentication extends ScalatraBase with Injectable {
     halt(status = 401, headers = Map("WWW-Authenticate" -> "API-Key", API_ERROR_HEADER -> reason))
   }
 
+  /**
+   * Rejects an API request with the standard 40x header and a human-friendly response message.
+   *
+   * @param reason
+   * @return
+   */
+  def keyNotFound(reason: String = s"Key provided not found") = {
+    halt(status = 404, reason = reason)
+  }
+
 }
 
-trait AuthenticationApi extends Authentication { this: Authentication =>
+trait AuthenticationApi extends Authentication with FutureSupport { this: Authentication =>
 
   delete("/key/foo/:key") {
     new AsyncResult {
     _log.debug("Removing a key")
 
-      val key = params.get("key").getOrElse(rejectRequest ("Invalid request, no key provided"))
+      val key = params.get("key").getOrElse(keyNotFound("Invalid request, no key provided"))
       val is = for {
        result <- authenticationStrategy.revokeKey(key)
-      } yield result.orElse(rejectRequest ("Invalid or no key provided"))
+      } yield result.orElse(keyNotFound("Invalid or no key provided"))
 
     }
   }
