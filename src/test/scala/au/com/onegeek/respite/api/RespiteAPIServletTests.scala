@@ -1,17 +1,14 @@
 package au.com.onegeek.respite.api
 
 import org.scalatra.test.scalatest._
-import reactivemongo.api.MongoDriver
-import scala.util.Success
 import scala.concurrent.ExecutionContext
-import au.com.onegeek.respite.controllers.UsersController
 import au.com.onegeek.respite.config.TestConfigurationModule
 
 class RespiteAPIServletTests extends ScalatraSuite with org.scalatest.FunSuiteLike {
   protected implicit def executor: ExecutionContext = ExecutionContext.global
   implicit val bindingModule = TestConfigurationModule
 
-  addServlet(new UsersController, "/api/*")
+//  addServlet(new UsersController, "/api/*")
 
   test("The API contains the key user journey resources") {
 

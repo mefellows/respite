@@ -25,11 +25,15 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
     implicit val format = User.formats
 
     get("/") {
-      JsSuccess(User(_id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar"))
+      JsSuccess(User(id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar"))
+    }
+
+    get("/list") {
+      List(User(id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar"))
     }
 
     get("/amodel") {
-      User(_id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar")
+      User(id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar")
     }
 
     post("/") {
@@ -79,7 +83,9 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
     }
 
     "Convert Lists of Models into JSON" in {
-
+      get("/list") {
+        println(body)
+      }
     }
 
     "Stay out of the way for non-JSON requests" in {

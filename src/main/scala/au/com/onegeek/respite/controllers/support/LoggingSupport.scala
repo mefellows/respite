@@ -20,22 +20,16 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package au.com.onegeek.respite.controllers
+package au.com.onegeek.respite.controllers.support
 
-import scala.concurrent._
-import reactivemongo.bson.BSONDocument
-import scala.util.{Success, Failure}
-import org.json4s.DefaultFormats
-import org.scalatra.AsyncResult
-import au.com.onegeek.respite.models.AccountComponents._
-import au.com.onegeek.respite.config.TestConfigurationModule
-import com.escalatesoft.subcut.inject.BindingModule
-import au.com.onegeek.respite.models.JsonFormats._
-import au.com.onegeek.respite.models.DefaultFormats._
+import org.slf4j.LoggerFactory
 
-class UsersController(implicit override val bindingModule: BindingModule) extends RestController[User]("users") {
-
-  // Do something specific, override etc.
-
-
+/**
+ * Mixin this Trait into any class, Controller etc. to get a free Logger!
+ *
+ *
+ * Created by mfellows on 23/06/2014.
+ */
+trait LoggingSupport {
+  val logger = LoggerFactory.getLogger(getClass)
 }

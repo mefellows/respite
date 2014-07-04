@@ -15,7 +15,7 @@ class ModelTests extends UnitSpec with ScalaFutures {
   "An Model Object" should {
 
     "Serialise to a sane JSON format" in {
-      val user = new User(_id = Some(BSONObjectID("53af77a90100000100a16ffb")), username = "mfellows", firstName = "Matt")
+      val user = new User(id = Some(BSONObjectID("53af77a90100000100a16ffb")), username = "mfellows", firstName = "Matt")
       println(Json.toJson(user))
       Json.toJson(user).toString should equal("{\"_id\":{\"$oid\":\"53af77a90100000100a16ffb\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"}")
     }

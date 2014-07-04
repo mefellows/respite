@@ -22,13 +22,10 @@
  */
 import _root_.akka.actor.ActorSystem
 import au.com.onegeek.respite.config.ProductionConfigurationModule
-import au.com.onegeek.respite.controllers.RestController
-import au.com.onegeek.respite.models.AccountComponents.User
 import org.scalatra._
 import javax.servlet.ServletContext
 import org.slf4j.LoggerFactory
 import scala.concurrent.ExecutionContext
-import au.com.onegeek.respite.models.DefaultFormats._
 
 /**
  * Main Scalatra entry point.
@@ -45,8 +42,6 @@ class ScalatraBootstrap extends LifeCycle {
   override def init(context: ServletContext) {
     implicit val bindingModule = ProductionConfigurationModule
 
-//    context.mount(new UsersController, "/users/*")
-    context.mount(new RestController[User]("users"), "/users/*")
   }
 
   // Make sure you shut down

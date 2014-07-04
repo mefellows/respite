@@ -22,26 +22,21 @@
  */
 package au.com.onegeek.respite.actors
 
-import akka.actor.{Actor, ActorSystem}
-import org.scalatra.{NotFound, BadRequest}
-import reactivemongo.api.collections.default.BSONCollection
+import akka.actor.Actor
 import org.slf4j.LoggerFactory
-import au.com.onegeek.respite.models.DAOMappers._
-import au.com.onegeek.respite.models.AccountComponents._
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{Await, ExecutionContext, Future}
 import reactivemongo.bson.{BSONObjectID, BSONDocument}
 import spray.caching.{LruCache, Cache}
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
 import java.util.concurrent.TimeUnit
 import com.escalatesoft.subcut.inject.{Injectable, BindingModule}
 import play.api.libs.json._
-import play.api.libs.functional.syntax._
-import play.modules.reactivemongo.json.collection.JSONCollection
 import play.modules.reactivemongo.json.BSONFormats._
-import scala.util.Failure
 import play.modules.reactivemongo.json.collection.JSONCollection
 import scala.Some
 import reactivemongo.api.DefaultDB
+import uk.gov.hmrc.mongo.Repository
+import au.com.onegeek.respite.models.Model
 
 /**
  * Created by mfellows on 24/04/2014.
@@ -53,7 +48,7 @@ import reactivemongo.api.DefaultDB
  *
  * Inspects the sender's message and returns a serializable object or List.
  */
-class RestActor[ModelType <: AnyRef](collection: JSONCollection)
+class RestActor[ModelType <: Model[BSONObjectID]](repository: Repository[ModelType, BSONObjectID])
                                      (implicit val bindingModule: BindingModule, implicit val reader: Reads[ModelType], implicit val writer: Writes[ModelType]) extends Actor with Injectable {
 
   val logger =  LoggerFactory.getLogger(getClass)
@@ -70,22 +65,24 @@ class RestActor[ModelType <: AnyRef](collection: JSONCollection)
 
   protected implicit def executor: ExecutionContext = ExecutionContext.global
 
-  val connection = injectOptional[DefaultDB] getOrElse {
-    throw new Exception("Database connection not supplied. Death. Ah, horrible horrible.")
-  }
+//  val connection = injectOptional[DefaultDB] getOrElse {
+//    throw new Exception("Database connection not supplied. Death. Ah, horrible horrible.")
+//  }
 
   def doGet(objectId: String) = {
     logger.debug("Getting something");
 
-    sender ! doGetSingle(objectId).map({ model =>
-        model match {
-          case Some(model: ModelType) => {
-            println(Json.toJson(model))
-            Json.toJson(model)
-          }
-          case _ => NotFound("No object with that id")
-        }
-    })
+//    sender ! doGetSingle(objectId).map({ model =>
+//        model match {
+//          case Some(model: ModelType) => {
+//            println(Json.toJson(model))
+//            Json.toJson(model)
+//          }
+//          case _ => NotFound("No object with that id")
+//        }
+//    })
+
+    sender ! doGetSingle(objectId)
   }
 
   /**
@@ -100,12 +97,7 @@ class RestActor[ModelType <: AnyRef](collection: JSONCollection)
    */
   def doAll() = {
     logger.debug("Getting all");
-
-    val list = doList
-    val jsonList = list.map { obj =>
-      Json.toJson(obj)
-    }
-    sender ! jsonList
+    sender ! doList
   }
 
   def doUpdate(objectId: String, modelInstance: ModelType) = {
@@ -160,10 +152,10 @@ class RestActor[ModelType <: AnyRef](collection: JSONCollection)
         println("No user to delete: ")
         None
       }
-      case Some(user) => {
+      case Some(obj) => {
         println("Deleting object")
-        collection.remove(obj).map { e =>
-            Some(user)
+        repository.removeById(obj.id.get).map { e=>
+          Some(obj)
         }
       }
     }
@@ -182,7 +174,7 @@ class RestActor[ModelType <: AnyRef](collection: JSONCollection)
   }
 
   def createEntity(obj: ModelType): Future[reactivemongo.core.commands.LastError] = {
-    collection.insert(obj)
+    repository.insert(obj)
   }
 
   /**
@@ -191,18 +183,14 @@ class RestActor[ModelType <: AnyRef](collection: JSONCollection)
    * @return
    */
   def doList: Future[List[ModelType]] = listCache("list-users") {
-    val query = BSONDocument()
-    val cursor = collection.find(query).cursor[ModelType].collect[List](25)
-    cursor
+    val foo = Await.result(repository.findAll, 100 millis)
+    println(foo)
+    Future {foo}
   }
 
   //
   def doGetSingle(id: String): Future[Option[ModelType]] = cache(id) {
-    logger.info("Fetching records!")
-    val query = BSONDocument("_id" -> BSONObjectID(id))
-
-    collection.
-      find(query).
-      one[ModelType]
+    logger.info(s"Fetching records by id ${id}")
+    repository.findById(BSONObjectID(id))
   }
 }

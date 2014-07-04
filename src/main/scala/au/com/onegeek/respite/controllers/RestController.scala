@@ -22,7 +22,7 @@
  */
 package au.com.onegeek.respite.controllers
 
-import akka.actor.{ActorRef, Actor, Props, ActorSystem}
+import akka.actor.{Props, ActorSystem}
 import akka.pattern.ask
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.{Duration, SECONDS}
@@ -31,19 +31,16 @@ import org.slf4j.LoggerFactory
 
 import org.scalatra._
 import org.json4s.{DefaultFormats, Formats}
-import org.scalatra.json._
 import au.com.onegeek.respite.actors.RestActor
 import com.escalatesoft.subcut.inject.{Injectable, BindingModule}
-import au.com.onegeek.respite.config.TestConfigurationModule
-import org.slf4j.Logger
 import play.api.libs.json._
-import au.com.onegeek.respite.models.AccountComponents.Model
-import play.modules.reactivemongo.json.ImplicitBSONHandlers.JsObjectReader
 import play.api.libs.json.JsSuccess
 import play.modules.reactivemongo.json.collection.JSONCollection
-import scala.Some
 import reactivemongo.api.DefaultDB
-import au.com.onegeek.respite.models.JsonFormats._
+import au.com.onegeek.respite.models.Model
+import au.com.onegeek.respite.controllers.support.LoggingSupport
+import uk.gov.hmrc.mongo.Repository
+import reactivemongo.bson.BSONObjectID
 
 /**
  * Created by mfellows on 24/04/2014.
@@ -84,21 +81,18 @@ import au.com.onegeek.respite.models.JsonFormats._
  *
  * End: Create/update yeoman generator to get started quickly, and allow for commands to add new models, services and so on
  */
-class RestController[ObjectType <: Model](collectionName: String)
-                                                   (implicit val bindingModule: BindingModule, implicit val reader: Reads[ObjectType], implicit val writer: Writes[ObjectType])
-  extends RespiteApiStack with MethodOverride with FutureSupport with Injectable {
-  //  val
-  val logger = LoggerFactory.getLogger(getClass)
+class RestController[ObjectType <: Model[BSONObjectID]](collectionName: String, jsonFormatter: Format[ObjectType], repository: Repository[ObjectType, BSONObjectID])
+//                                                   (implicit val bindingModule: BindingModule, implicit val reader: Reads[ObjectType], implicit val writer: Writes[ObjectType])
+                                                   (implicit val bindingModule: BindingModule)
+  extends RespiteApiStack[ObjectType] with MethodOverride with FutureSupport with Injectable with LoggingSupport { this: LoggingSupport =>
+
   val system = inject[ActorSystem]
-  // getOrElse { throw new Exception("ActorSystem not provided. Death. Ah, horrible horrible.") }
-  val connection = injectOptional[DefaultDB] getOrElse {
-    throw new Exception("Database connection not supplied. Death. Ah, horrible horrible.")
-  }
+  override implicit val format = jsonFormatter
+
   protected override implicit val jsonFormats: Formats = DefaultFormats
 
-  val mongoCollection = connection[JSONCollection](collectionName)
-  val actor = system.actorOf(Props(new RestActor[ObjectType](mongoCollection)))
-
+//  val mongoCollection = connection[JSONCollection](collectionName)
+  val actor = system.actorOf(Props(new RestActor[ObjectType](repository)))
 
   protected implicit def executor: ExecutionContext = system.dispatcher
 
@@ -144,17 +138,18 @@ class RestController[ObjectType <: Model](collectionName: String)
     // Validation Errors are already handled at another layer...
 
 
-    nameResult match {
-      case model: JsSuccess[ObjectType] => {
-        new AsyncResult {
-          logger.debug(s"Received object: ${model.get}")
-          val is = actor ? Seq("create", model.get)
-        }
-      }
-      case e: JsError => {
-        JsError.toFlatJson(e)
-      }
-    }
+//    nameResult match {
+//      case model: JsSuccess[ObjectType] => {
+//        new AsyncResult {
+//          logger.debug(s"Received object: ${model.get}")
+//          val is = actor ? Seq("create", model.get)
+//        }
+//      }
+//      case e: JsError => {
+//        JsError.toFlatJson(e)
+//      }
+//    }
+    nameResult
   }
 
   put("/:id") {

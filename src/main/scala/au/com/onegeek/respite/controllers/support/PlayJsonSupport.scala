@@ -22,8 +22,6 @@
  */
 package au.com.onegeek.respite.controllers.support
 
-import au.com.onegeek.respite.models.AccountComponents.User
-import au.com.onegeek.respite.models.{JsonFormats, DefaultFormats}
 import org.scalatra._
 import scala.annotation.implicitNotFound
 import play.api.libs.json._
@@ -32,7 +30,6 @@ import javax.servlet.http.HttpServletRequest
 import org.scalatra.MatchedRoute
 import play.api.libs.json.JsSuccess
 import scala.Some
-import reactivemongo.bson.BSONObjectID
 
 /**
  * Created by mfellows on 27/06/2014.
@@ -95,6 +92,9 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
         case model: JsSuccess[T] => writer.write(Json.toJson[T](model.get).toString)
         case e: JsError => writer.write(JsError.toFlatForm(e).toString)
       }
+      ()
+    case list: List[T] if responseFormat == "json" =>
+      response.writer.write(renderJson(list))
       ()
     case a: T if responseFormat == "json" =>
       response.writer.write(renderJson(a))

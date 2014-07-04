@@ -22,14 +22,9 @@
  */
 package au.com.onegeek.respite.models
 
-import reactivemongo.bson.BSONObjectID
-
 /**
- * A canonical representation of a Persisted Model.
- *
- * Created by mfellows on 30/06/2014.
+ * Created by mfellows on 4/07/2014.
  */
-trait Model[ObjectID] {
-  val id: Option[ObjectID]
-  val _id = id
+class ApiKey {
+
 }

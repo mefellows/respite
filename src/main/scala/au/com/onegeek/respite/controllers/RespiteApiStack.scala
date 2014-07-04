@@ -30,9 +30,9 @@ import javax.servlet.http.HttpServletRequest
 import collection.mutable
 import org.json4s.{Formats, DefaultFormats}
 import org.scalatra.json.{JValueResult, JacksonJsonSupport}
+import au.com.onegeek.respite.controllers.support.PlayJsonSupport
 
-//trait RespiteApiStack extends ScalatraServlet with ScalateSupport with JacksonJsonSupport with JValueResult with SessionSupport {
-trait RespiteApiStack extends ScalatraServlet {
+trait RespiteApiStack[T] extends ScalatraServlet with PlayJsonSupport[T] {
 
   implicit protected val jsonFormats: Formats = DefaultFormats
 

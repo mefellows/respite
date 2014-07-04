@@ -20,16 +20,20 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package au.com.onegeek.respite.models
+package au.com.onegeek.respite.controllers
 
+import scala.util.Failure
+import au.com.onegeek.respite.models.AccountComponents._
+import com.escalatesoft.subcut.inject.BindingModule
+import au.com.onegeek.respite.models.DefaultFormats._
+import uk.gov.hmrc.mongo.{ReactiveMongoFormats, ReactiveRepository, MongoConnector}
 import reactivemongo.bson.BSONObjectID
+import reactivemongo.api.indexes.{IndexType, Index}
 
-/**
- * A canonical representation of a Persisted Model.
- *
- * Created by mfellows on 30/06/2014.
- */
-trait Model[ObjectID] {
-  val id: Option[ObjectID]
-  val _id = id
+class UserTestRepository(implicit mc: MongoConnector)
+  extends ReactiveRepository[User, BSONObjectID]("users", mc.db, User.formats, ReactiveMongoFormats.objectIdFormats) {
+
+  override def ensureIndexes() = {
+    collection.indexesManager.ensure(Index(Seq("username" -> IndexType.Ascending), name = Some("keyFieldUniqueIdx"), unique = true, sparse = true))
+  }
 }

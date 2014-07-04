@@ -2,11 +2,10 @@ package au.com.onegeek.respite.models
 
 import reactivemongo.bson._
 import play.api.libs.json._
-import play.api.libs.json.Reads._
 import au.com.onegeek.respite.models.AccountComponents.User
 import scala.Some
 import reactivemongo.bson.BSONString
-import uk.gov.hmrc.mongo.{TupleFormats, ReactiveMongoFormats}
+import uk.gov.hmrc.mongo.{ReactiveMongoFormats, TupleFormats}
 import uk.gov.hmrc.mongo.ReactiveMongoFormats._
 import reactivemongo.bson.BSONString
 import scala.Some
@@ -21,14 +20,9 @@ object AccountComponents {
                                )
 
   /** Describes some common behavior of asset types */
-  trait Model {
-  }
-
-  case class User(_id: Option[BSONObjectID] = Some(BSONObjectID.generate), username: String, firstName: String) extends Model
+  case class User(id: Option[BSONObjectID] = Some(BSONObjectID.generate), username: String, firstName: String) extends Model[BSONObjectID]
 
   object User {
-
-    import ReactiveMongoFormats.mongoEntity
 
     implicit val formats = {
       import uk.gov.hmrc.mongo.ReactiveMongoFormats._
