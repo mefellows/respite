@@ -20,8 +20,11 @@ class ModelTests extends UnitSpec with ScalaFutures {
       Json.toJson(user).toString should equal("{\"_id\":{\"$oid\":\"53af77a90100000100a16ffb\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"}")
     }
 
-    "Allow empty Profile objects" in {
+
+    "Validate JSON objects without an id (for creating one)" in {
       val user = new User(username = "mfellows", firstName = "Matt")
+      val json = Json.toJson(user)
+      println(json)
     }
 
     "reject requests with an invalid API Key" in {

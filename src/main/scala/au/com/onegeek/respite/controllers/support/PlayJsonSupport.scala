@@ -56,26 +56,29 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
   //  implicit val formats: JsonFormats
   implicit val format: Format[T]
 
-  private def shouldParseBody(fmt: String)(implicit request: HttpServletRequest) = (fmt == "json")
+  private def shouldParseBody(fmt: String)(implicit request: HttpServletRequest) = fmt == "json"
 
   override protected def invoke(matchedRoute: MatchedRoute) = {
     withRouteMultiParams(Some(matchedRoute)) {
+
+
+      // TODO: ONly support POST?
 
       val mt = request.contentType map {
         _.split(";").head
       } getOrElse "application/x-www-form-urlencoded"
 
+      val fmt = mimeTypes get mt getOrElse "html"
+
       // Extract  the JSON request body if the message is a JSON object
-      if (shouldParseBody(mt)) {
+      if (shouldParseBody(fmt)) {
         //      request(ParsedBodyKey) = parseRequestBody(fmt).asInstanceOf[AnyRef]
         //      Option(request.body) filterNot {_.isEmpty} map {s => request(ParsedModelKey) = Some(Json.parse(request.body).validate[T])}
         Option(request.body) filterNot {
           _.isEmpty
-        } map {
-          s => request(ParsedModelKey) = Some(Json.parse(request.body).validate[T])
+        } map { s => request(ParsedModelKey) = Json.parse(s).validate[T]
         }
       }
-
 
       super.invoke(matchedRoute)
     }
@@ -90,7 +93,27 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
       status = 200
       jv match {
         case model: JsSuccess[T] => writer.write(Json.toJson[T](model.get).toString)
-        case e: JsError => writer.write(JsError.toFlatForm(e).toString)
+        case e: JsError =>
+          writer.write(JsError.toFlatJson(e).toString)
+          status = 400
+      }
+      ()
+    case jv: Option[JsResult[T]] =>
+      val writer = response.writer
+      // JSON is always UTF-8
+      response.characterEncoding = Some(Codec.UTF8.name)
+      status = 200
+      jv.get match {
+        case model: JsSuccess[T] => writer.write(Json.toJson[T](model.get).toString)
+        case e: JsError =>
+          writer.write(JsError.toFlatJson(e).toString)
+          status = 400
+      }
+      ()
+    case a: Option[T] if responseFormat == "json" =>
+      a match {
+        case Some(model) => response.writer.write(renderJson(model))
+        case None => doNotFound
       }
       ()
     case list: List[T] if responseFormat == "json" =>
@@ -98,12 +121,6 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
       ()
     case a: T if responseFormat == "json" =>
       response.writer.write(renderJson(a))
-      ()
-    case a: Option[T] if responseFormat == "json" =>
-      a match {
-        case Some(model) => response.writer.write(renderJson(model))
-        case None =>
-      }
       ()
   }: RenderPipeline) orElse super.renderPipeline
 
@@ -116,6 +133,8 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
     val result: JsResult[T] = Json.parse(request.body).validate[T]
     result
   }
+
+  // TODO: How to get back a T here? Wants a Manifest. Write my own requset getter?
   def getParsedModel[T] = request.get(ParsedModelKey).orElse(None)
 
 }

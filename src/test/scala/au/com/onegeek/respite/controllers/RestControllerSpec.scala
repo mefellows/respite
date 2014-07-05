@@ -1,6 +1,8 @@
 package au.com.onegeek.respite.controllers
 
+import au.com.onegeek.respite.DefaultImplicits
 import au.com.onegeek.respite.config.TestConfigurationModule
+import play.api.libs.json.Json
 import reactivemongo.api.MongoDriver
 import scala.util.{Failure, Success}
 import scala.concurrent.ExecutionContext
@@ -10,7 +12,7 @@ import au.com.onegeek.respite.models.AccountComponents.User
 import au.com.onegeek.respite.models.DefaultFormats._
 import uk.gov.hmrc.mongo.{CurrentTime, ReactiveMongoFormats, ReactiveRepository, MongoConnector}
 import au.com.onegeek.respite.models.ApiKey
-import reactivemongo.bson.BSONObjectID
+import reactivemongo.bson.{BSONString, BSONObjectID}
 import reactivemongo.api.indexes.{IndexType, Index}
 import au.com.onegeek.respite.test.{Awaiting, MongoSpecSupport}
 import com.github.simplyscala.{MongoEmbedDatabase, MongodProps}
@@ -22,6 +24,7 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
   var mongoProps: MongodProps = mongoStart(17123)
   val repository = new UserTestRepository
 
+  import DefaultImplicits._
   addServlet(new RestController[User]("users", UserJsonFormat, repository), "/users/*")
 
   before {
@@ -65,9 +68,25 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
     }
 
     "Provide an API to create a Model" in {
-      post("/users/") {
+      val json = "{\"username\":\"mfellows\",\"firstName\":\"Matt\"}"
+
+      post("/users/", json.toString, Map("Content-Type" -> "application/json")) {
         status should equal(200)
         body should include("Matt")
+        println(body)
+      }
+
+      // Get response and then query
+
+    }
+
+    "Send a 400 bad request on invalid JSON Model" in {
+      val json = "{\"usernot\":\"mfellows\",\"firstName\":\"Matt\"}"
+
+      post("/users/", json.toString, Map("Content-Type" -> "application/json")) {
+        println(body)
+        status should equal(400)
+        body should equal ("{\"obj.username\":[{\"msg\":\"error.path.missing\",\"args\":[]}]}")
       }
     }
 

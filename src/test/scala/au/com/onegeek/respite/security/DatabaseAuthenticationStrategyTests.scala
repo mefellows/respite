@@ -126,14 +126,20 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
   "A Servlet with AuthenticationApi" should {
 
     "provide a RESTful API to remove keys at runtime" in {
-      delete("/auth/key/foo/key", headers = validHeaders) {
+      delete("/auth/token/key", headers = validHeaders) {
         status should equal (200)
-        body should equal ("Removing a key")
+//        body should equal ("Removing a key")
       }
+
+      // Key deleted, I should be rejected!
+      get("/", headers = validHeaders) {
+        status should equal (401)
+      }
+
     }
 
     "reject a request with incorrect key" in {
-      delete("/auth/key/foo/notexist", headers = validHeaders) {
+      delete("/auth/token/notexist", headers = validHeaders) {
         status should equal (404)
       }
     }

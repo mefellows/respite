@@ -28,6 +28,14 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
       JsSuccess(User(id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar"))
     }
 
+    get("/some") {
+      Some(User(id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar"))
+    }
+
+    get("/none") {
+      None
+    }
+
     get("/list") {
       List(User(id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar"))
     }
@@ -65,7 +73,7 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
     "Transparently convert Models into JSON" in {
       get("/amodel") {
         status should equal(200)
-        body should equal("{\"_id\":{\"$oid\":\"53aeb92ab65f2a89219ddcfb\"},\"username\":\"foo\",\"firstName\":\"bar\"}")
+        body should equal("{\"id\":{\"$oid\":\"53aeb92ab65f2a89219ddcfb\"},\"username\":\"foo\",\"firstName\":\"bar\"}")
       }
     }
 
@@ -84,7 +92,21 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
 
     "Convert Lists of Models into JSON" in {
       get("/list") {
+        status should equal(200)
         println(body)
+      }
+    }
+
+    "Convert an Option of a Model into JSON" in {
+      get("/some") {
+        status should equal(200)
+        println(body)
+      }
+    }
+
+    "Return a 404 when a None (Option[Model]) is returned" in {
+      get("/none") {
+        status should equal(404)
       }
     }
 
@@ -97,9 +119,9 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
     }
 
     "Store the validated Model object in the Request map" in {
-      post("/", "{\"_id\":{\"$oid\":\"53af77a90100000100a16ffb\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"}", Map("Content-Type" -> "application/json")) {
+      post("/", "{\"id\":{\"$oid\":\"53af77a90100000100a16ffb\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"}", Map("Content-Type" -> "application/json")) {
         status should equal(200)
-        body should equal("{\"_id\":{\"$oid\":\"53af77a90100000100a16ffb\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"}")
+        body should equal("{\"id\":{\"$oid\":\"53af77a90100000100a16ffb\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"}")
       }
     }
   }

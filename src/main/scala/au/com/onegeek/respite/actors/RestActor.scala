@@ -22,22 +22,21 @@
  */
 package au.com.onegeek.respite.actors
 
-import akka.actor.Actor
-import org.slf4j.LoggerFactory
-import scala.concurrent.{Await, ExecutionContext, Future}
-import reactivemongo.bson.{BSONObjectID, BSONDocument}
-import spray.caching.{LruCache, Cache}
-import scala.concurrent.duration._
 import java.util.concurrent.TimeUnit
-import com.escalatesoft.subcut.inject.{Injectable, BindingModule}
-import play.api.libs.json._
-import play.modules.reactivemongo.json.BSONFormats._
-import play.modules.reactivemongo.json.collection.JSONCollection
-import scala.Some
-import reactivemongo.api.DefaultDB
-import uk.gov.hmrc.mongo.Repository
-import au.com.onegeek.respite.models.Model
 
+import akka.actor.Actor
+import au.com.onegeek.respite.DefaultImplicits
+import au.com.onegeek.respite.models.Model
+import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
+import org.slf4j.LoggerFactory
+import play.api.libs.json._
+import reactivemongo.bson.{BSONObjectID, BSONString}
+import spray.caching.{Cache, LruCache}
+import uk.gov.hmrc.mongo.Repository
+
+import scala.concurrent.duration._
+import scala.concurrent.{Await, ExecutionContext, Future}
+import DefaultImplicits._
 /**
  * Created by mfellows on 24/04/2014.
  *
@@ -49,7 +48,7 @@ import au.com.onegeek.respite.models.Model
  * Inspects the sender's message and returns a serializable object or List.
  */
 class RestActor[ModelType <: Model[BSONObjectID]](repository: Repository[ModelType, BSONObjectID])
-                                     (implicit val bindingModule: BindingModule, implicit val reader: Reads[ModelType], implicit val writer: Writes[ModelType]) extends Actor with Injectable {
+                                     (implicit val bindingModule: BindingModule, implicit val format: Format[ModelType]) extends Actor with Injectable {
 
   val logger =  LoggerFactory.getLogger(getClass)
 
@@ -69,7 +68,7 @@ class RestActor[ModelType <: Model[BSONObjectID]](repository: Repository[ModelTy
 //    throw new Exception("Database connection not supplied. Death. Ah, horrible horrible.")
 //  }
 
-  def doGet(objectId: String) = {
+  def doGet(id: String) = {
     logger.debug("Getting something");
 
 //    sender ! doGetSingle(objectId).map({ model =>
@@ -82,7 +81,7 @@ class RestActor[ModelType <: Model[BSONObjectID]](repository: Repository[ModelTy
 //        }
 //    })
 
-    sender ! doGetSingle(objectId)
+    sender ! doGetSingle(id)
   }
 
   /**
@@ -100,7 +99,7 @@ class RestActor[ModelType <: Model[BSONObjectID]](repository: Repository[ModelTy
     sender ! doList
   }
 
-  def doUpdate(objectId: String, modelInstance: ModelType) = {
+  def doUpdate(objectId: String, modelInstance: ModelType)(implicit f: String => BSONObjectID) = {
     logger.debug("Updating something");
   }
 
@@ -110,6 +109,7 @@ class RestActor[ModelType <: Model[BSONObjectID]](repository: Repository[ModelTy
   }
 
   def receive = {
+
     case "all" => doAll()
     case Seq("get", objectId: String, None) => doGet(objectId)
     case Seq("update", objectId: String, Some(modelInstance: ModelType)) =>
@@ -189,8 +189,18 @@ class RestActor[ModelType <: Model[BSONObjectID]](repository: Repository[ModelTy
   }
 
   //
-  def doGetSingle(id: String): Future[Option[ModelType]] = cache(id) {
+  def doGetSingle(id: String)(implicit fo: String => BSONObjectID): Future[Option[ModelType]] = cache(id) {
+
     logger.info(s"Fetching records by id ${id}")
-    repository.findById(BSONObjectID(id))
+    val foo = Await.result ({
+      repository.findById(id)
+    }, 100 millis)
+
+    println(s"I have me a foo: ${foo}")
+
+    Future {
+      foo
+    }
+
   }
 }

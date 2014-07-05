@@ -30,6 +30,7 @@ import reactivemongo.bson.BSONObjectID
  * Created by mfellows on 30/06/2014.
  */
 trait Model[ObjectID] {
+  // Needs to be an Option to allow for JS validation on submission.
+  // TODO: Can I use a play json transformer to make this field optional on posts/create?
   val id: Option[ObjectID]
-  val _id = id
 }

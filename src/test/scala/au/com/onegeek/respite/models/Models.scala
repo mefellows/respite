@@ -24,7 +24,7 @@ object AccountComponents {
 
   object User {
 
-    implicit val formats = {
+    implicit val formats = mongoEntity {
       import uk.gov.hmrc.mongo.ReactiveMongoFormats._
       Json.format[User]
     }
@@ -90,6 +90,8 @@ object DAOMappers {
   implicit def BSONObjectIdToBSONString(b: BSONObjectID): BSONString = BSONString(b.stringify)
 
   implicit def BSONStringToBSONObjectId(s: BSONString): BSONObjectID = BSONObjectID(s.value)
+  implicit def StringToBSONObjectId(s: String): BSONObjectID = BSONObjectID(s)
+  implicit def BSONObjectIdToString(s: BSONObjectID): String = s.stringify
 
   // How to do this and format the _id as a sane 'id' field.
   implicit val ApiKeysFormat = Macros.handler[ApiKey]

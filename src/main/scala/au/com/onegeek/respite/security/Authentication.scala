@@ -92,7 +92,7 @@ trait Authentication extends ScalatraBase with Injectable {
 
 trait AuthenticationApi extends Authentication with FutureSupport { this: Authentication =>
 
-  delete("/key/foo/:key") {
+  delete("/token/:key") {
     new AsyncResult {
     _log.debug("Removing a key")
 
