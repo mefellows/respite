@@ -62,22 +62,44 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
     }
 
     "Provide an API to fetch a update a Model by it's ID" in {
-      put("/users/1") {
-        fail("not implemented")
+      val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}"
+      put("/users/53b62e370100000100af8ecd", json.toString, Map("Content-Type" -> "application/json")) {
+        status should equal(200)
+
+      }
+
+      val user = await(repository.findById(BSONObjectID("53b62e370100000100af8ecd")))
+      user.get.firstName should equal("Harry")
+    }
+
+
+    "Send a 400 when an empty put body is sent" in {
+      val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}"
+      put("/users/53b62e370100000100af8ecd", headers = Map("Content-Type" -> "application/json")) {
+        status should equal(400)
+      }
+    }
+
+    "Send a 400 when incorrect headers sent with put???" in {
+      val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}"
+      put("/users/53b62e370100000100af8ecd", json.toString) {
+        status should equal(400)
       }
     }
 
     "Provide an API to create a Model" in {
-      val json = "{\"username\":\"mfellows\",\"firstName\":\"Matt\"}"
+      val json = "{\"username\":\"superman\",\"firstName\":\"Matt\"}"
 
       post("/users/", json.toString, Map("Content-Type" -> "application/json")) {
         status should equal(200)
-        body should include("Matt")
-        println(body)
+        body should equal ("")
       }
 
       // Get response and then query
-
+      val users = await(repository.findAll)
+      users foreach(u =>
+        u.username shouldNot equal("superman")
+      )
     }
 
     "Send a 400 bad request on invalid JSON Model" in {
@@ -91,9 +113,16 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
     }
 
     "Provide an API to delete a single Model by it's ID" in {
-      delete("/users/1") {
-        fail("not implemented")
+      delete("/users/53b62e370100000100af8ecd") {
+        status should equal(200)
+        body should equal ("")
       }
+
+      // Get response and then query
+      val users = await(repository.findAll)
+      users foreach(u =>
+        u.username shouldNot equal("mfellows")
+      )
     }
   }
 }

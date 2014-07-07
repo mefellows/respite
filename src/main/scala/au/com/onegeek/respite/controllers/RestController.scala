@@ -153,8 +153,8 @@ class RestController[ObjectType <: Model[BSONObjectID]](collectionName: String, 
     //      }
     //    }
     //    nameResult
-    val model = getParsedModel
-    println(model.get)
+    val model = getParsedModel[ObjectType].get
+    println(model)
     new AsyncResult {
       val is = actor ? Seq("create", model)
     }
@@ -171,11 +171,30 @@ class RestController[ObjectType <: Model[BSONObjectID]](collectionName: String, 
 
   }
 
+  delete("/:id") {
+    val id = params("id")
+    logger.debug(s"Deleting something: ${id}")
+
+    new AsyncResult {
+      val is = actor ? Seq("delete", id)
+    }
+    //    val modelInstance = Json.parse(request.body).validate[ObjectType]
+    //    val id = params("id")
+    //    doSingle(id, "update", Some(modelInstance))
+  }
+
   put("/:id") {
     logger.debug("updating something")
     //    val modelInstance = Json.parse(request.body).validate[ObjectType]
     //    val id = params("id")
-    //    doSingle(id, "update", Some(modelInstance))
+//        doSingle(id, "update", Some(modelInstance))
+
+    val model = getParsedModel[ObjectType].map { e =>
+      println(e)
+      new AsyncResult {
+        val is = actor ? Seq("update", e)
+      }
+    }.getOrElse(halt(status = 400, reason = "No request body sent"))
   }
 
 }

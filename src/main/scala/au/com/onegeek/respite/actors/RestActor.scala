@@ -37,6 +37,8 @@ import uk.gov.hmrc.mongo.Repository
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
 import DefaultImplicits._
+import reactivemongo.core.commands.LastError
+
 /**
  * Created by mfellows on 24/04/2014.
  *
@@ -48,9 +50,9 @@ import DefaultImplicits._
  * Inspects the sender's message and returns a serializable object or List.
  */
 class RestActor[ModelType <: Model[BSONObjectID]](repository: Repository[ModelType, BSONObjectID])
-                                     (implicit val bindingModule: BindingModule, implicit val format: Format[ModelType]) extends Actor with Injectable {
+                                                 (implicit val bindingModule: BindingModule, implicit val format: Format[ModelType]) extends Actor with Injectable {
 
-  val logger =  LoggerFactory.getLogger(getClass)
+  val logger = LoggerFactory.getLogger(getClass)
 
   val cache: Cache[Option[ModelType]] = LruCache(maxCapacity = 500,
     initialCapacity = 16,
@@ -64,22 +66,22 @@ class RestActor[ModelType <: Model[BSONObjectID]](repository: Repository[ModelTy
 
   protected implicit def executor: ExecutionContext = ExecutionContext.global
 
-//  val connection = injectOptional[DefaultDB] getOrElse {
-//    throw new Exception("Database connection not supplied. Death. Ah, horrible horrible.")
-//  }
+  //  val connection = injectOptional[DefaultDB] getOrElse {
+  //    throw new Exception("Database connection not supplied. Death. Ah, horrible horrible.")
+  //  }
 
   def doGet(id: String) = {
     logger.debug("Getting something");
 
-//    sender ! doGetSingle(objectId).map({ model =>
-//        model match {
-//          case Some(model: ModelType) => {
-//            println(Json.toJson(model))
-//            Json.toJson(model)
-//          }
-//          case _ => NotFound("No object with that id")
-//        }
-//    })
+    //    sender ! doGetSingle(objectId).map({ model =>
+    //        model match {
+    //          case Some(model: ModelType) => {
+    //            println(Json.toJson(model))
+    //            Json.toJson(model)
+    //          }
+    //          case _ => NotFound("No object with that id")
+    //        }
+    //    })
 
     sender ! doGetSingle(id)
   }
@@ -99,8 +101,9 @@ class RestActor[ModelType <: Model[BSONObjectID]](repository: Repository[ModelTy
     sender ! doList
   }
 
-  def doUpdate(objectId: String, modelInstance: ModelType)(implicit f: String => BSONObjectID) = {
+  def doUpdate(modelInstance: ModelType)(implicit f: String => BSONObjectID) = {
     logger.debug("Updating something");
+    sender ! updateEntity(modelInstance)
   }
 
   def doCreate(modelInstance: ModelType) = {
@@ -108,18 +111,24 @@ class RestActor[ModelType <: Model[BSONObjectID]](repository: Repository[ModelTy
     sender ! createEntity(modelInstance)
   }
 
+  def doDeleteEntity(id: String) = {
+    logger.debug(s"Deleting something ${id}");
+    sender ! deleteEntity(id)
+  }
+
   def receive = {
 
     case "all" => doAll()
     case Seq("get", objectId: String, None) => doGet(objectId)
-    case Seq("update", objectId: String, Some(modelInstance: ModelType)) =>
-      doUpdate(objectId, modelInstance)
-    case Seq("create", modelInstance: ModelType) => doCreate(modelInstance)
-    case _ =>
+    case Seq("create", modelInstance: ModelType) => println("yo, actor creatin"); doCreate(modelInstance)
+    case Seq("update", modelInstance: ModelType) => println("yo, actor updating something "); doUpdate(modelInstance)
+    case Seq("delete", objectID: String) => println("yo, actor deleting something"); doDeleteEntity(objectID)
+    case _ => println("Ah, NFI what you're askin")
   }
 
 
   // TODO: Compose futures together here to delete the entity, purge from cache and return to user...
+
 
   /**
    * Deletes an entity from the
@@ -130,7 +139,7 @@ class RestActor[ModelType <: Model[BSONObjectID]](repository: Repository[ModelTy
 
     for {
       e <- doGetSingle(id)
-      d <- deleteEntityFromDB(e)
+      d <- deleteEntityFromDB(id)
       c <- deleteItemFromCache(e)
     } yield e.orElse(None)
 
@@ -154,11 +163,17 @@ class RestActor[ModelType <: Model[BSONObjectID]](repository: Repository[ModelTy
       }
       case Some(obj) => {
         println("Deleting object")
-        repository.removeById(obj.id.get).map { e=>
-          Some(obj)
+        repository.removeById(obj.id.get).map {
+          e =>
+            Some(obj)
         }
       }
     }
+  }
+
+  def deleteEntityFromDB(id: String)(implicit fo: String => BSONObjectID): Future[Option[LastError]] = {
+    println(s"Deleting object ${id}" )
+    repository.removeById(id).map { Some(_) }
   }
 
   def deleteItemFromCache(key: Option[Any]): Future[Option[Any]] = {
@@ -177,22 +192,28 @@ class RestActor[ModelType <: Model[BSONObjectID]](repository: Repository[ModelTy
     repository.insert(obj)
   }
 
+  def updateEntity(obj: ModelType): Future[reactivemongo.core.commands.LastError] = {
+    repository.save(obj)
+  }
+
   /**
    * List ALL objects
    *
    * @return
    */
   def doList: Future[List[ModelType]] = listCache("list-users") {
-    val foo = Await.result(repository.findAll, 100 millis)
-    println(foo)
-    Future {foo}
+    val list = Await.result(repository.findAll, 100 millis)
+    println(list)
+    Future {
+      list
+    }
   }
 
   //
   def doGetSingle(id: String)(implicit fo: String => BSONObjectID): Future[Option[ModelType]] = cache(id) {
 
     logger.info(s"Fetching records by id ${id}")
-    val foo = Await.result ({
+    val foo = Await.result({
       repository.findById(id)
     }, 100 millis)
 

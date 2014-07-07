@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest
 import org.scalatra.MatchedRoute
 import play.api.libs.json.JsSuccess
 import scala.Some
+import org.scalatra.util.conversion.TypeConverter
 
 /**
  * Created by mfellows on 27/06/2014.
@@ -74,9 +75,9 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
       if (shouldParseBody(fmt)) {
         //      request(ParsedBodyKey) = parseRequestBody(fmt).asInstanceOf[AnyRef]
         //      Option(request.body) filterNot {_.isEmpty} map {s => request(ParsedModelKey) = Some(Json.parse(request.body).validate[T])}
-        Option(request.body) filterNot {
-          _.isEmpty
-        } map { s => request(ParsedModelKey) = Json.parse(s).validate[T]
+        Option(request.body) filterNot { _.isEmpty } map { s =>
+          val validation = Json.parse(s).validate[T]
+          request(ParsedModelKey) = validation.getOrElse(validation)
         }
       }
 
@@ -134,8 +135,15 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
     result
   }
 
-  // TODO: How to get back a T here? Wants a Manifest. Write my own requset getter?
-  def getParsedModel[T] = request.get(ParsedModelKey).orElse(None)
+  /**
+   * Get the model submitted via a JSON POST.
+   *
+   * @tparam T The Generic type of object posted.
+   * @return
+   */
+  def getParsedModel[T]: Option[T] = request.get(ParsedModelKey) map { o =>
+    o.asInstanceOf[T]
+  }
 
 }
 
