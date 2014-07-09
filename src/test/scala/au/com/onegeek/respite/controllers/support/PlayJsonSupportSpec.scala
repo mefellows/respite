@@ -11,7 +11,9 @@ import au.com.onegeek.respite.models.AccountComponents.User
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.mongo._
 import au.com.onegeek.respite.test.Awaiting
+import au.com.onegeek.respite.models.DefaultFormats._
 
+import scala.reflect._
 
 /**
  * Created by mfellows on 29/06/2014.
@@ -19,10 +21,11 @@ import au.com.onegeek.respite.test.Awaiting
 class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiting with CurrentTime {
   implicit val bindingModule = TestConfigurationModule
 
-  class TestServlet extends ScalatraServlet
+  implicit val tag = classTag[User]
+  class TestServlet(implicit val tag: ClassTag[User]) extends ScalatraServlet
 
-  val playServlet = new TestServlet with PlayJsonSupport[User] {
-    implicit val format = User.formats
+  val playServlet = new TestServlet with PlayJsonSupport[User] { //this: PlayJsonSupport =>
+    override implicit val format: Format[User] = UserJsonFormat
 
     get("/") {
       JsSuccess(User(id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar"))
@@ -30,6 +33,9 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
 
     get("/some") {
       Some(User(id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar"))
+    }
+
+    post("/fail") {
     }
 
     get("/none") {
@@ -41,6 +47,11 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
     }
 
     get("/amodel") {
+      User(id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar")
+    }
+
+    get("/plain") {
+      contentType = formats("html")
       User(id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar")
     }
 
@@ -85,8 +96,11 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
     }
 
     "Transparently convert JsFailure (JsError) objects into JSON" in {
-      get("/") {
-        fail("Not yet implemented")
+      val json = "{\"username\":\"foo\",\"ffirstName\":\"bar\",\"_id\":{\"$oid\":\"53aeb92ab65f2a89219ddcfb\"}}"
+
+      post("/fail", body = json, headers = Map("Content-Type" -> "application/json")) {
+        body should equal("{\"obj.firstName\":[{\"msg\":\"error.path.missing\",\"args\":[]}]}")
+        status should equal(400)
       }
     }
 
@@ -111,11 +125,11 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
     }
 
     "Stay out of the way for non-JSON requests" in {
-
-    }
-
-    "Fail invalid JSON requests" in {
-
+      get("/plain", headers = Map("Accept" -> "text/html")) {
+       println(body)
+        status should equal(200)
+        body should equal("User(Some(BSONObjectID(\"53aeb92ab65f2a89219ddcfb\")),foo,bar)")
+      }
     }
 
     "Store the validated Model object in the Request map" in {

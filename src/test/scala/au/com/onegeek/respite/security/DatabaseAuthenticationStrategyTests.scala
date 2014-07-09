@@ -95,7 +95,7 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
     "Store stuff in repo" in {
       val repository = new ApiKeyTestRepository
 
-      val e1 = ApiKey("application-name","my description", "key")
+      val e1 = ApiKey("application-name1","my description", "key")
       val e2 = ApiKey("application-name2","my description", "key2")
       val e3 = ApiKey("application-name3","my description", "key3")
       val e4 = ApiKey("application-name4","my description", "key4")

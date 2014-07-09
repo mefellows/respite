@@ -1,30 +1,24 @@
 package au.com.onegeek.respite.controllers
 
-import au.com.onegeek.respite.DefaultImplicits
-import au.com.onegeek.respite.config.TestConfigurationModule
-import play.api.libs.json.Json
-import reactivemongo.api.MongoDriver
-import scala.util.{Failure, Success}
-import scala.concurrent.ExecutionContext
 import au.com.onegeek.respite.api.ServletTestsBase
-import au.com.onegeek.respite.controllers.RestController
+import au.com.onegeek.respite.config.TestConfigurationModule
 import au.com.onegeek.respite.models.AccountComponents.User
 import au.com.onegeek.respite.models.DefaultFormats._
-import uk.gov.hmrc.mongo.{CurrentTime, ReactiveMongoFormats, ReactiveRepository, MongoConnector}
-import au.com.onegeek.respite.models.ApiKey
-import reactivemongo.bson.{BSONString, BSONObjectID}
-import reactivemongo.api.indexes.{IndexType, Index}
 import au.com.onegeek.respite.test.{Awaiting, MongoSpecSupport}
 import com.github.simplyscala.{MongoEmbedDatabase, MongodProps}
 import org.scalatest.concurrent.ScalaFutures
+import reactivemongo.bson.BSONObjectID
+import uk.gov.hmrc.mongo.CurrentTime
+
+import scala.reflect._
+import scala.reflect.runtime.universe._
 
 class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEmbedDatabase  with MongoSpecSupport with Awaiting with CurrentTime {
   implicit val bindingModule = TestConfigurationModule
 
   var mongoProps: MongodProps = mongoStart(17123)
   val repository = new UserTestRepository
-
-  import DefaultImplicits._
+  implicit val t = classTag[User]
   addServlet(new RestController[User]("users", UserJsonFormat, repository), "/users/*")
 
   before {
@@ -47,7 +41,7 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
   "A RestController" should {
 
     "Provide an API to fetch a all Models" in {
-      get("/users/") {
+      get("/users/", headers = Map("Accept" -> "application/json")) {
         status should equal(200)
         println(body)
         body should equal("[{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"},{\"id\":{\"$oid\":\"53b62e370100000100af8ece\"},\"username\":\"bmurray\",\"firstName\":\"Bill\"}]")
@@ -61,14 +55,16 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
       }
     }
 
-    // TODO: Create test for input header `accept` and `content-type` headers
-
-
     "Provide an API to update a Model by it's ID" in {
       val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}"
       put("/users/53b62e370100000100af8ecd", json, headers = Map("Content-Type" -> "application/json")) {
         status should equal(200)
 
+      }
+
+      val users = await(repository.findAll)
+      users.foreach { u =>
+        println(u)
       }
 
       val user = await(repository.findById(BSONObjectID("53b62e370100000100af8ecd")))
@@ -83,10 +79,19 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
       }
     }
 
+    "Send a 400 when an invalid put body is sent" in {
+      val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"nousername\":\"mfellows\",\"firstName\":\"Harry\"}"
+      put("/users/53b62e370100000100af8ecd", json.toString, headers = Map("Content-Type" -> "application/json")) {
+        status should equal(400)
+        body should equal ("{\"obj.username\":[{\"msg\":\"error.path.missing\",\"args\":[]}]}")
+      }
+    }
+
     "Send a 400 when incorrect headers sent with put???" in {
       val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}"
       put("/users/53b62e370100000100af8ecd", json) {
         status should equal(400)
+        println(s"heres my body: ${body}")
       }
     }
 

@@ -22,25 +22,22 @@
  */
 package au.com.onegeek.respite.controllers
 
-import akka.actor.{Props, ActorSystem}
+import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
-import scala.concurrent.{Future, ExecutionContext}
-import scala.concurrent.duration.{Duration, SECONDS}
 import akka.util.Timeout
-import org.slf4j.LoggerFactory
-
-import org.scalatra._
-import org.json4s.{DefaultFormats, Formats}
 import au.com.onegeek.respite.actors.RestActor
-import com.escalatesoft.subcut.inject.{Injectable, BindingModule}
-import play.api.libs.json._
-import play.api.libs.json.JsSuccess
-import play.modules.reactivemongo.json.collection.JSONCollection
-import reactivemongo.api.DefaultDB
-import au.com.onegeek.respite.models.Model
 import au.com.onegeek.respite.controllers.support.LoggingSupport
-import uk.gov.hmrc.mongo.Repository
+import au.com.onegeek.respite.models.Model
+import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
+import org.scalatra._
+import play.api.libs.json._
 import reactivemongo.bson.BSONObjectID
+import uk.gov.hmrc.mongo.Repository
+
+import scala.concurrent.ExecutionContext
+import scala.concurrent.duration.{Duration, SECONDS}
+import scala.reflect.ClassTag
+
 
 /**
  * Created by mfellows on 24/04/2014.
@@ -84,7 +81,9 @@ import reactivemongo.bson.BSONObjectID
 
 // TODO: Consider making RestController an abstract/Trait and creating specific, concrete implementations (Reactive, Postgres... versions)
 class RestController[ObjectType <: Model[BSONObjectID]](collectionName: String, jsonFormatter: Format[ObjectType], repository: Repository[ObjectType, BSONObjectID])
-                                                       (implicit val bindingModule: BindingModule)
+//                                                       (implicit val bindingModule: BindingModule, implicit val tag: ClassTag[ObjectType], implicit val ttag: TypeTag[ObjectType])
+                                                       (implicit val bindingModule: BindingModule, implicit val tag: ClassTag[ObjectType])
+//                                                       (implicit val bindingModule: BindingModule)
   extends RespiteApiStack[ObjectType] with MethodOverride with FutureSupport with Injectable with LoggingSupport {
   this: LoggingSupport =>
 
@@ -130,52 +129,10 @@ class RestController[ObjectType <: Model[BSONObjectID]](collectionName: String, 
 
   post("/") {
     logger.debug("creating something")
-
-    //    val nameResult: JsResult[ObjectType] = Json.parse(request.body).validate[ObjectType]
-
-    // Move this layer into a Mixin / Trait
-
-    // Then call something like: `model` (instead of parsedbody.extract[ObjectType] -> We've already parsed the body!
-
-    // Validation Errors are already handled at another layer...
-
-
-    //    nameResult match {
-    //      case model: JsSuccess[ObjectType] => {
-    //        new AsyncResult {
-    //          logger.debug(s"Received object: ${model.get}")
-    //          val is = actor ? Seq("create", model.get)
-    //        }
-    //      }
-    //      case e: JsError => {
-    //        JsError.toFlatJson(e)
-    //      }
-    //    }
-    //    nameResult
-    getParsedModel[ObjectType].map {
-      o =>
-        o match {
-          case obj: JsSuccess[ObjectType] => {
-            println(obj)
-            new AsyncResult {
-              val is = actor ? Seq("create", obj)
-            }
-          }
-          case e: JsError => e
-        }
-    }
-
-
-
-//    model match {
-//      case Some(o) =>
-//        new AsyncResult {
-//          val is = actor ? Seq("create", o)
-//        }
-//      case None =>
-//        halt(status = 400, reason = "Invalid model")
-//    }
-
+      val model = getParsedModel[ObjectType].get
+      new AsyncResult {
+        val is = actor ? Seq("create", model)
+      }
   }
 
   delete("/:id") {
@@ -192,32 +149,17 @@ class RestController[ObjectType <: Model[BSONObjectID]](collectionName: String, 
 
   put("/:id") {
     logger.debug("updating something")
-    //    val modelInstance = Json.parse(request.body).validate[ObjectType]
-    //    val id = params("id")
-//        doSingle(id, "update", Some(modelInstance))
 
-    getParsedModel[ObjectType].map {
-      o =>
-        o match {
-          case obj: JsSuccess[ObjectType] => {
-            println("successful put, object is ...")
-            println(obj)
-            new AsyncResult {
-              val is = actor ? Seq("update", obj)
-            }
-          }
-          case e: JsError =>
-            println(s"put error, dang: ${e}")
-            e
-        }
+    getParsedModel[ObjectType].map { e =>
+      println(e)
+      new AsyncResult {
+        val is = actor ? Seq("update", e)
+      }
+    }.getOrElse {
+
+      // TODO: Still return JS Validation error
+      halt(status = 400, reason = "No Request body provided")
     }
-
-//    val model = getParsedModel[ObjectType].map { e =>
-//      println(e)
-//      new AsyncResult {
-//        val is = actor ? Seq("update", e)
-//      }
-//    }.getOrElse(halt(status = 400, reason = "No request body sent"))
   }
 
 }

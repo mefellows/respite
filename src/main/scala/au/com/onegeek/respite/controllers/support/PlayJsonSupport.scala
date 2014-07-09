@@ -22,15 +22,15 @@
  */
 package au.com.onegeek.respite.controllers.support
 
-import org.scalatra._
-import scala.annotation.implicitNotFound
-import play.api.libs.json._
-import scala.io.Codec
 import javax.servlet.http.HttpServletRequest
-import org.scalatra.MatchedRoute
-import play.api.libs.json.JsSuccess
-import scala.Some
-import org.scalatra.util.conversion.TypeConverter
+
+import org.scalatra.{MatchedRoute, _}
+import play.api.libs.json.{JsSuccess, _}
+
+import scala.Option
+import scala.annotation.implicitNotFound
+import scala.io.Codec
+import scala.reflect.ClassTag
 
 /**
  * Created by mfellows on 27/06/2014.
@@ -44,7 +44,10 @@ object PlayJsonSupport {
 )
 trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormats =>
 
-  import PlayJsonSupport._
+  import au.com.onegeek.respite.controllers.support.PlayJsonSupport._
+
+  // Hopefully, can refactor this into methods which request an implicit ClassTag by default :)
+  implicit def tag: ClassTag[T]
 
   /**
    * Set content-type header to JSON.
@@ -54,7 +57,6 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
   }
 
   // Hoping to be able to go back to this to avoid passing Type Parameters around in all subclasses. OK for now.
-  //  implicit val formats: JsonFormats
   implicit val format: Format[T]
 
   private def shouldParseBody(fmt: String)(implicit request: HttpServletRequest) = fmt == "json"
@@ -74,10 +76,11 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
 
       // Extract  the JSON request body if the message is a JSON object
       if (shouldParseBody(fmt)) {
-        //      Option(request.body) filterNot {_.isEmpty} map {s => request(ParsedModelKey) = Some(Json.parse(request.body).validate[T])}
         Option(request.body) filterNot { _.isEmpty } map { s =>
-          val validation = Json.parse(s).validate[T]
-          request(ParsedModelKey) = validation
+          request(ParsedModelKey) = Json.parse(s).validate[T] match {
+            case e: JsError => halt(status = 400, body = JsError.toFlatJson(e))
+            case e: JsSuccess[T] => e.get
+          }
         }
       }
 
@@ -85,9 +88,9 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
     }
   }
 
-  override protected def renderPipeline = ({
+  protected def renderJsonPipeline[T](implicit t: ClassTag[T], fmt: Format[T]) = ({
     // Note the following from the JValueResult class -> Secret sauce is PartialFunctions?
-    case jv: JsResult[T] =>
+    case jv: JsResult[T] if responseFormat == "json" =>
       val writer = response.writer
       // JSON is always UTF-8
       response.characterEncoding = Some(Codec.UTF8.name)
@@ -106,24 +109,35 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
         case None => doNotFound
       }
       ()
-    case jv: Option[JsResult[T]] =>
+    case Some(e: JsResult[T]) if responseFormat == "json" =>
       val writer = response.writer
       // JSON is always UTF-8
       response.characterEncoding = Some(Codec.UTF8.name)
       status = 200
-      jv.get match {
+      e.get match {
         case model: JsSuccess[T] => writer.write(Json.toJson[T](model.get).toString)
         case e: JsError =>
           writer.write(JsError.toFlatJson(e).toString)
           status = 400
       }
       ()
-    case list: List[T] if responseFormat == "json" =>
-      response.writer.write(renderJson(list))
+    case Some(model: T) if responseFormat == "json" =>
+      response.writer.write(renderJson(model))
       ()
-    case a: T if responseFormat == "json" =>
-      response.writer.write(renderJson(a))
+    case None =>
+      status = 404
+      doNotFound
       ()
+    case e: List[T] if responseFormat == "json" =>
+      response.writer.write(renderJson(e))
+      ()
+    case o: T if responseFormat == "json" =>
+      response.writer.write(renderJson(o))
+      ()
+  }: RenderPipeline) orElse super.renderPipeline
+
+  override protected def renderPipeline = ({
+    renderJsonPipeline
   }: RenderPipeline) orElse super.renderPipeline
 
 
@@ -136,8 +150,7 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
   }
 
   def parsedModel[T](implicit fmt: Format[T]): JsResult[T] = {
-    val result: JsResult[T] = Json.parse(request.body).validate[T]
-    result
+    Json.parse(request.body).validate[T]
   }
 
   /**
@@ -149,4 +162,5 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
   def getParsedModel[T]: Option[JsResult[T]] = request.get(ParsedModelKey) map { o =>
     o.asInstanceOf[JsResult[T]]
   }
+
 }

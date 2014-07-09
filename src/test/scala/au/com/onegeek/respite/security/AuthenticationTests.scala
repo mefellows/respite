@@ -58,21 +58,5 @@ class AuthenticationTests extends ServletTestsBase with ScalaFutures {
         status should equal(200)
       }
     }
-
-//    "find keys from database" in {
-//      val key = authServlet.au ("bill", "murray")
-//      whenReady(key) {
-//        res =>
-//          res should be(defined)
-//      }
-//    }
-//
-//    "reject unknown API keys" in {
-//      val key = authServlet.findKey("idon't", "exist")
-//      whenReady(key) {
-//        res =>
-//          res should be(None)
-//      }
-//    }
   }
 }
