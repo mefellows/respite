@@ -103,7 +103,6 @@ class RestController[ObjectType <: Model[BSONObjectID]](collectionName: String, 
 
   def doSingle(id: String, method: String, modelInstance: Option[ObjectType] = None) = {
     try {
-      //      val objectId = new ObjectId(id.asInstanceOf[String])
       new AsyncResult {
         val is = actor ? Seq(method, id, modelInstance)
       }
@@ -153,11 +152,19 @@ class RestController[ObjectType <: Model[BSONObjectID]](collectionName: String, 
     //      }
     //    }
     //    nameResult
-    val model = getParsedModel[ObjectType].get
-    println(model)
-    new AsyncResult {
-      val is = actor ? Seq("create", model)
+    getParsedModel[ObjectType].map {
+      o =>
+        o match {
+          case obj: JsSuccess[ObjectType] => {
+            println(obj)
+            new AsyncResult {
+              val is = actor ? Seq("create", obj)
+            }
+          }
+          case e: JsError => e
+        }
     }
+
 
 
 //    model match {
@@ -189,12 +196,28 @@ class RestController[ObjectType <: Model[BSONObjectID]](collectionName: String, 
     //    val id = params("id")
 //        doSingle(id, "update", Some(modelInstance))
 
-    val model = getParsedModel[ObjectType].map { e =>
-      println(e)
-      new AsyncResult {
-        val is = actor ? Seq("update", e)
-      }
-    }.getOrElse(halt(status = 400, reason = "No request body sent"))
+    getParsedModel[ObjectType].map {
+      o =>
+        o match {
+          case obj: JsSuccess[ObjectType] => {
+            println("successful put, object is ...")
+            println(obj)
+            new AsyncResult {
+              val is = actor ? Seq("update", obj)
+            }
+          }
+          case e: JsError =>
+            println(s"put error, dang: ${e}")
+            e
+        }
+    }
+
+//    val model = getParsedModel[ObjectType].map { e =>
+//      println(e)
+//      new AsyncResult {
+//        val is = actor ? Seq("update", e)
+//      }
+//    }.getOrElse(halt(status = 400, reason = "No request body sent"))
   }
 
 }

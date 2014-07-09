@@ -55,15 +55,18 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
     }
 
     "Provide an API to fetch a single Model by it's ID" in {
-      get("/users/53b62e370100000100af8ecd") {
+      get("/users/53b62e370100000100af8ecd", headers = Map("Content-Type" -> "application/json")) {
         status should equal(200)
         body should equal("{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"}")
       }
     }
 
-    "Provide an API to fetch a update a Model by it's ID" in {
+    // TODO: Create test for input header `accept` and `content-type` headers
+
+
+    "Provide an API to update a Model by it's ID" in {
       val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}"
-      put("/users/53b62e370100000100af8ecd", json.toString, Map("Content-Type" -> "application/json")) {
+      put("/users/53b62e370100000100af8ecd", json, headers = Map("Content-Type" -> "application/json")) {
         status should equal(200)
 
       }
@@ -82,7 +85,7 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
 
     "Send a 400 when incorrect headers sent with put???" in {
       val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}"
-      put("/users/53b62e370100000100af8ecd", json.toString) {
+      put("/users/53b62e370100000100af8ecd", json) {
         status should equal(400)
       }
     }
@@ -115,7 +118,7 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
     "Provide an API to delete a single Model by it's ID" in {
       delete("/users/53b62e370100000100af8ecd") {
         status should equal(200)
-        body should equal ("")
+        body should equal ("{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"}")
       }
 
       // Get response and then query

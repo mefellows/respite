@@ -60,6 +60,7 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
   private def shouldParseBody(fmt: String)(implicit request: HttpServletRequest) = fmt == "json"
 
   override protected def invoke(matchedRoute: MatchedRoute) = {
+
     withRouteMultiParams(Some(matchedRoute)) {
 
 
@@ -73,11 +74,10 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
 
       // Extract  the JSON request body if the message is a JSON object
       if (shouldParseBody(fmt)) {
-        //      request(ParsedBodyKey) = parseRequestBody(fmt).asInstanceOf[AnyRef]
         //      Option(request.body) filterNot {_.isEmpty} map {s => request(ParsedModelKey) = Some(Json.parse(request.body).validate[T])}
         Option(request.body) filterNot { _.isEmpty } map { s =>
           val validation = Json.parse(s).validate[T]
-          request(ParsedModelKey) = validation.getOrElse(validation)
+          request(ParsedModelKey) = validation
         }
       }
 
@@ -95,8 +95,15 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
       jv match {
         case model: JsSuccess[T] => writer.write(Json.toJson[T](model.get).toString)
         case e: JsError =>
-          writer.write(JsError.toFlatJson(e).toString)
           status = 400
+          writer.write(JsError.toFlatJson(e).toString)
+      }
+      ()
+      // Presumably due to Type Erasure, this never fires - Option[JsResult[T]] does first!
+    case a: Option[T] if responseFormat == "json" =>
+      a match {
+        case Some(model) => response.writer.write(renderJson(model))
+        case None => doNotFound
       }
       ()
     case jv: Option[JsResult[T]] =>
@@ -111,12 +118,6 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
           status = 400
       }
       ()
-    case a: Option[T] if responseFormat == "json" =>
-      a match {
-        case Some(model) => response.writer.write(renderJson(model))
-        case None => doNotFound
-      }
-      ()
     case list: List[T] if responseFormat == "json" =>
       response.writer.write(renderJson(list))
       ()
@@ -125,6 +126,10 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
       ()
   }: RenderPipeline) orElse super.renderPipeline
 
+
+  def renderJson[T](model: JsResult[T])(implicit fmt: Format[T]): String = {
+    Json.toJson[T](model.get).toString
+  }
 
   def renderJson[T](model: T)(implicit fmt: Format[T]): String = {
     Json.toJson[T](model).toString
@@ -141,9 +146,7 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
    * @tparam T The Generic type of object posted.
    * @return
    */
-  def getParsedModel[T]: Option[T] = request.get(ParsedModelKey) map { o =>
-    o.asInstanceOf[T]
+  def getParsedModel[T]: Option[JsResult[T]] = request.get(ParsedModelKey) map { o =>
+    o.asInstanceOf[JsResult[T]]
   }
-
 }
-
