@@ -32,19 +32,6 @@ object AccountComponents {
 
 }
 
-// Authentication
-case class ApiKey(application: String, description: String, key: String)
-
-object ApiKey {
-
-  import ReactiveMongoFormats.mongoEntity
-
-  implicit val formats = {
-    import uk.gov.hmrc.mongo.ReactiveMongoFormats._
-    Json.format[ApiKey]
-  }
-}
-
 object BSONObjectIdFormats extends BSONObjectIdFormats
 
 trait BSONObjectIdFormats {

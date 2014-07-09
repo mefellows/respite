@@ -27,6 +27,7 @@ import uk.gov.hmrc.mongo.Repository
 import au.com.onegeek.respite.models.ApiKey
 import reactivemongo.bson.BSONObjectID
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.libs.json.Json
 
 /**
  * This class implements a Database persisted Authentication Strategy, with
@@ -42,13 +43,14 @@ class DatabaseAuthenticationStrategy(repository: Repository[ApiKey, BSONObjectID
     println(s"Authenticating key: ${apiKey} and app: ${appName}")
       for {
         keys <- repository.find("key" -> apiKey, "application" -> appName)
-      } yield Some(keys.head)
+      } yield keys.headOption
   }
 
   override def revokeKey(apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = {
     println(s"Revoking key: ${apiKey}")
       for {
         keys <- repository.find("key" -> apiKey)
-      } yield Some(keys.head)
+        result <- repository.remove("key" -> apiKey)
+      } yield keys.headOption
   }
 }

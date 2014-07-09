@@ -22,9 +22,20 @@
  */
 package au.com.onegeek.respite.models
 
+import uk.gov.hmrc.mongo.ReactiveMongoFormats
+import play.api.libs.json.Json
+import reactivemongo.bson.BSONObjectID
+
 /**
  * Created by mfellows on 4/07/2014.
  */
-class ApiKey {
+case class ApiKey(id: BSONObjectID = BSONObjectID.generate, application: String, description: String, key: String)
+object ApiKey {
 
+  import ReactiveMongoFormats.mongoEntity
+
+  implicit val formats = {
+    import uk.gov.hmrc.mongo.ReactiveMongoFormats._
+    Json.format[ApiKey]
+  }
 }

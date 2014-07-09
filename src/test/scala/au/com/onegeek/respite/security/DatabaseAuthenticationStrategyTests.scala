@@ -20,7 +20,6 @@ import reactivemongo.api.indexes.IndexType
 import reactivemongo.api.indexes.Index
 import au.com.onegeek.respite.models.ApiKey
 
-
 class ApiKeyTestRepository(implicit mc: MongoConnector)
   extends ReactiveRepository[ApiKey, BSONObjectID]("testapikeys", mc.db, ApiKey.formats, ReactiveMongoFormats.objectIdFormats) {
 
@@ -30,11 +29,8 @@ class ApiKeyTestRepository(implicit mc: MongoConnector)
   }
 }
 
-
 class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFutures with MongoEmbedDatabase with MongoSpecSupport with Awaiting {
   implicit val bindingModule = TestConfigurationModule
-
-  //  implicit val repository =
 
   class TestServlet(implicit val bindingModule: BindingModule) extends ScalatraServlet with Injectable
 
@@ -66,7 +62,7 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
     repository.removeAll
 
     // Add some keys to test against
-    val key = ApiKey("application-name","my description", "key")
+    val key = ApiKey(application = "application-name", description = "my description", key = "key")
     await(repository.insert(key))
 
   } // add your own port & version parameters in mongoStart method if you need it
@@ -93,12 +89,11 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
     }
 
     "Store stuff in repo" in {
-      val repository = new ApiKeyTestRepository
 
-      val e1 = ApiKey("application-name1","my description", "key")
-      val e2 = ApiKey("application-name2","my description", "key2")
-      val e3 = ApiKey("application-name3","my description", "key3")
-      val e4 = ApiKey("application-name4","my description", "key4")
+      val e1 = ApiKey(application = "application-name1", description = "my description", key = "key1")
+      val e2 = ApiKey(application = "application-name2", description = "my description", key = "key2")
+      val e3 = ApiKey(application = "application-name3", description = "my description", key = "key3")
+      val e4 = ApiKey(application = "application-name4", description = "my description", key = "key4")
 
       println(Json.toJson(e1).toString())
 
@@ -109,18 +104,17 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
         countResult <- repository.count
       } yield countResult
 
-      await(created) shouldBe 3
+      await(created) shouldBe 4
 
       val result: List[ApiKey] = await(repository.findAll)
       result.foreach (println)
-      result.size shouldBe 3
+      result.size shouldBe 4
       result should contain(e1)
       result should contain(e2)
       result should contain(e3)
 
       result should not contain (e4)
     }
-
   }
 
   "A Servlet with AuthenticationApi" should {
@@ -128,14 +122,13 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
     "provide a RESTful API to remove keys at runtime" in {
       delete("/auth/token/key", headers = validHeaders) {
         status should equal (200)
-//        body should equal ("Removing a key")
+        body should include ("Some(ApiKey(BSONObjectID")
       }
 
       // Key deleted, I should be rejected!
       get("/", headers = validHeaders) {
         status should equal (401)
       }
-
     }
 
     "reject a request with incorrect key" in {
@@ -144,5 +137,4 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
       }
     }
   }
-
 }
