@@ -16,13 +16,13 @@ import au.com.onegeek.respite.ServletTestsBase
 class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEmbedDatabase  with MongoSpecSupport with Awaiting with CurrentTime {
   implicit val bindingModule = TestConfigurationModule
 
-  var mongoProps: MongodProps = mongoStart(17123)
+  var mongoProps: MongodProps = null
   val repository = new UserTestRepository
   implicit val t = classTag[User]
   addServlet(new RestController[User]("users", UserJsonFormat, repository), "/users/*")
 
   before {
-    mongoProps = mongoStart() // by default port = 12345 & version = Version.2.3.0
+    mongoProps = mongoStart(17123) // by default port = 12345 & version = Version.2.3.0
 
     // Clear out entries - only do this if you don't start/stop between tests
     repository.removeAll
