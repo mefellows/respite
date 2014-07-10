@@ -28,15 +28,20 @@ import au.com.onegeek.respite.models.ApiKey
 /**
  * Created by mfellows on 1/07/2014.
  */
-object ConfigAuthenticationStrategy extends AuthenticationStrategy {
-  override def authenticate(appName: String, apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = {
-    Future {
-      None
-    }
+trait ConfigAuthenticationStrategy extends AuthenticationStrategy {
 
+  type Key = String
+  protected val keys: Map[Key, ApiKey]
+
+  override def authenticate(appName: String, apiKey: Key)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = {
+    Future {
+      keys.get(apiKey) filter { _.application == appName }
+    }
   }
+
   override def revokeKey(apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = {
     Future {
+      // Cannot revoke Keys as it's config based
       None
     }
   }

@@ -106,7 +106,9 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
     case a: Option[T] if responseFormat == "json" =>
       a match {
         case Some(model) => response.writer.write(renderJson(model))
-        case None => doNotFound
+        case None =>
+          status = 404
+          doNotFound
       }
       ()
     case Some(e: JsResult[T]) if responseFormat == "json" =>
@@ -159,8 +161,8 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
    * @tparam T The Generic type of object posted.
    * @return
    */
-  def getParsedModel[T]: Option[JsResult[T]] = request.get(ParsedModelKey) map { o =>
-    o.asInstanceOf[JsResult[T]]
+  def getParsedModel[T]: Option[T] = request.get(ParsedModelKey) map { o =>
+    o.asInstanceOf[T]
   }
 
 }

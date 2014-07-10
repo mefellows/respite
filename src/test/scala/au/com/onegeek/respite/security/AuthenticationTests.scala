@@ -9,17 +9,24 @@ import org.scalatra.ScalatraServlet
 import org.scalatest.FunSuiteLike
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import au.com.onegeek.respite.api.ServletTestsBase
 import org.scalatest.concurrent.ScalaFutures
 import reactivemongo.bson.BSONDocument
+import au.com.onegeek.respite.models.ApiKey
+import au.com.onegeek.respite.ServletTestsBase
 
 class AuthenticationTests extends ServletTestsBase with ScalaFutures {
   implicit val bindingModule = TestConfigurationModule
 
+  object ConfigAuthStrategy extends ConfigAuthenticationStrategy {
+    override implicit val keys = Map("testkey" -> ApiKey(application = "test1", description = "Test application", key = "testkey"))
+
+  }
+
   class TestServlet(implicit val bindingModule: BindingModule) extends ScalatraServlet with Injectable
 
-  val authServlet = new TestServlet with Authentication {
-//    override val db: DefaultDB = inject[DefaultDB]
+  val authServlet = new TestServlet with Authentication  {
+
+  implicit val authenticationStrategy = ConfigAuthStrategy
 
     get("/") {
       "OK"
@@ -51,8 +58,18 @@ class AuthenticationTests extends ServletTestsBase with ScalaFutures {
 
     "accept requests with a valid API Key" in {
       val headers = Map(
-        "X-API-Application" -> "bill",
-        "X-API-Key" -> "murray")
+        "X-API-Application" -> "test1",
+        "X-API-Key" -> "testkey")
+
+      get("/", headers = headers) {
+        status should equal(200)
+      }
+    }
+
+    "Return None if a revoke API is called" in {
+      val headers = Map(
+        "X-API-Application" -> "test1",
+        "X-API-Key" -> "testkey")
 
       get("/", headers = headers) {
         status should equal(200)

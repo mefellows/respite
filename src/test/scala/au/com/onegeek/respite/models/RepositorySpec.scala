@@ -2,7 +2,7 @@ package au.com.onegeek.respite.models
 
 import au.com.onegeek.respite.config.TestConfigurationModule
 import org.scalatest.concurrent.ScalaFutures
-import au.com.onegeek.respite.api.UnitSpec
+import au.com.onegeek.respite.UnitSpec
 
 
 class RepositorySpec extends UnitSpec with ScalaFutures {

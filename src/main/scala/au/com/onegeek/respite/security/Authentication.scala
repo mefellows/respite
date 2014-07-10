@@ -23,7 +23,7 @@ trait Authentication extends ScalatraBase with Injectable {
   protected implicit def executor: ExecutionContext = ExecutionContext.global
 
   // Override this strategy for more explicit control
-  implicit val authenticationStrategy: AuthenticationStrategy = ConfigAuthenticationStrategy
+  implicit val authenticationStrategy: AuthenticationStrategy
 
   val _log = LoggerFactory.getLogger(getClass)
   val API_KEY_HEADER = "X-API-Key";

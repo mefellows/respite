@@ -1,6 +1,5 @@
 package au.com.onegeek.respite.controllers.support
 
-import au.com.onegeek.respite.api.ServletTestsBase
 import org.scalatest.concurrent.ScalaFutures
 import au.com.onegeek.respite.config.TestConfigurationModule
 import org.scalatra.{ApiFormats, ScalatraServlet}
@@ -14,6 +13,7 @@ import au.com.onegeek.respite.test.Awaiting
 import au.com.onegeek.respite.models.DefaultFormats._
 
 import scala.reflect._
+import au.com.onegeek.respite.ServletTestsBase
 
 /**
  * Created by mfellows on 29/06/2014.
@@ -56,8 +56,7 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
     }
 
     post("/") {
-      val obj = parsedModel[User]
-      obj match {
+      parsedModel[User] match {
         case model: JsSuccess[User] =>
           println(model.get.firstName)
           assert(model.get.firstName == "Matt")

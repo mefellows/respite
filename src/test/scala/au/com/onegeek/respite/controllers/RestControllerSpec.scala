@@ -1,6 +1,5 @@
 package au.com.onegeek.respite.controllers
 
-import au.com.onegeek.respite.api.ServletTestsBase
 import au.com.onegeek.respite.config.TestConfigurationModule
 import au.com.onegeek.respite.models.AccountComponents.User
 import au.com.onegeek.respite.models.DefaultFormats._
@@ -12,6 +11,7 @@ import uk.gov.hmrc.mongo.CurrentTime
 
 import scala.reflect._
 import scala.reflect.runtime.universe._
+import au.com.onegeek.respite.ServletTestsBase
 
 class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEmbedDatabase  with MongoSpecSupport with Awaiting with CurrentTime {
   implicit val bindingModule = TestConfigurationModule

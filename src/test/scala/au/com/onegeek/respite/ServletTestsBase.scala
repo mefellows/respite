@@ -1,7 +1,6 @@
-package au.com.onegeek.respite.api
+package au.com.onegeek.respite
 
-import org.scalatest.fixture.FeatureSpec
-import org.scalatra.test.scalatest.{ScalatraSuite, ScalatraFlatSpec, ScalatraSpec}
+import org.scalatra.test.scalatest.ScalatraSuite
 import org.scalatest._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

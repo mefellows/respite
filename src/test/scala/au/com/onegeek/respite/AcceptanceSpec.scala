@@ -1,4 +1,4 @@
-package au.com.onegeek.respite.api
+package au.com.onegeek.respite
 
 import org.scalatest._
 

@@ -3,7 +3,6 @@ package au.com.onegeek.respite.security
 import au.com.onegeek.respite.config.TestConfigurationModule
 import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
 import org.scalatra.ScalatraServlet
-import au.com.onegeek.respite.api.ServletTestsBase
 import au.com.onegeek.respite.test.{Awaiting, MongoSpecSupport}
 import org.scalatest.concurrent.ScalaFutures
 import com.github.simplyscala.MongoEmbedDatabase
@@ -19,6 +18,7 @@ import uk.gov.hmrc.mongo.MongoConnector
 import reactivemongo.api.indexes.IndexType
 import reactivemongo.api.indexes.Index
 import au.com.onegeek.respite.models.ApiKey
+import au.com.onegeek.respite.ServletTestsBase
 
 class ApiKeyTestRepository(implicit mc: MongoConnector)
   extends ReactiveRepository[ApiKey, BSONObjectID]("testapikeys", mc.db, ApiKey.formats, ReactiveMongoFormats.objectIdFormats) {
