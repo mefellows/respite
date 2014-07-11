@@ -25,19 +25,16 @@ package au.com.onegeek.respite.actors
 import java.util.concurrent.TimeUnit
 
 import akka.actor.Actor
-import au.com.onegeek.respite.DefaultImplicits
 import au.com.onegeek.respite.models.Model
 import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
 import org.slf4j.LoggerFactory
 import play.api.libs.json._
-import reactivemongo.bson.{BSONObjectID, BSONString}
+import reactivemongo.core.commands.LastError
 import spray.caching.{Cache, LruCache}
 import uk.gov.hmrc.mongo.Repository
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
-import DefaultImplicits._
-import reactivemongo.core.commands.LastError
 
 /**
  * Created by mfellows on 24/04/2014.
@@ -49,8 +46,8 @@ import reactivemongo.core.commands.LastError
  *
  * Inspects the sender's message and returns a serializable object or List.
  */
-class RestActor[ModelType <: Model[BSONObjectID]](repository: Repository[ModelType, BSONObjectID])
-                                                 (implicit val bindingModule: BindingModule, implicit val format: Format[ModelType]) extends Actor with Injectable {
+class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](repository: Repository[ModelType, ObjectIDType])
+                                                 (implicit val bindingModule: BindingModule, implicit val format: Format[ModelType], implicit val stringToId: String => ObjectIDType) extends Actor with Injectable {
 
   val logger = LoggerFactory.getLogger(getClass)
 
@@ -101,7 +98,7 @@ class RestActor[ModelType <: Model[BSONObjectID]](repository: Repository[ModelTy
     sender ! doList
   }
 
-  def doUpdate(modelInstance: ModelType)(implicit f: String => BSONObjectID) = {
+  def doUpdate(modelInstance: ModelType) = {
     logger.debug("Updating something");
     sender ! updateEntity(modelInstance)
   }
@@ -171,7 +168,7 @@ class RestActor[ModelType <: Model[BSONObjectID]](repository: Repository[ModelTy
     }
   }
 
-  def deleteEntityFromDB(id: String)(implicit fo: String => BSONObjectID): Future[Option[LastError]] = {
+  def deleteEntityFromDB(id: String): Future[Option[LastError]] = {
     println(s"Deleting object ${id}" )
     repository.removeById(id).map { Some(_) }
   }
@@ -201,18 +198,23 @@ class RestActor[ModelType <: Model[BSONObjectID]](repository: Repository[ModelTy
    *
    * @return
    */
-  def doList: Future[List[ModelType]] = listCache("list-users") {
-    val list = Await.result(repository.findAll, 100 millis)
-    println(list)
-    Future {
-      list
-    }
+//  def doList: Future[List[ModelType]] = listCache("list-users") {
+  def doList: Future[List[ModelType]] = {
+    repository.findAll
+//    val list = Await.result(repository.findAll, 500 millis)
+//    println(list)
+//    Future {
+//      list
+//    }
   }
 
   //
-  def doGetSingle(id: String)(implicit fo: String => BSONObjectID): Future[Option[ModelType]] = cache(id) {
+//  def doGetSingle(id: String): Future[Option[ModelType]] = cache(id) {
+  def doGetSingle(id: String): Future[Option[ModelType]] = {
 
     logger.info(s"Fetching records by id ${id}")
+//      repository.findById(id)
+
     val foo = Await.result({
       repository.findById(id)
     }, 100 millis)

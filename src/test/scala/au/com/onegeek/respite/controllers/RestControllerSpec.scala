@@ -15,23 +15,37 @@ import au.com.onegeek.respite.ServletTestsBase
 
 class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEmbedDatabase  with MongoSpecSupport with Awaiting with CurrentTime {
   implicit val bindingModule = TestConfigurationModule
-
   var mongoProps: MongodProps = null
+
+  implicit def StringToBSONObjectId(s: String): BSONObjectID = BSONObjectID(s)
+  implicit def BSONObjectIdToString(s: BSONObjectID): String = s.stringify
+//
   val repository = new UserTestRepository
-  implicit val t = classTag[User]
-  addServlet(new RestController[User]("users", UserJsonFormat, repository), "/users/*")
+  val catRepository = new CatTestRepository
+//  implicit val t = classTag[User]
+//  addServlet(new RestController[User, BSONObjectID]("users", UserJsonFormat, repository), "/users/*")
+  addServlet(new UserController(repository = repository), "/users/*")
+  addServlet(new CatController(repository = catRepository), "/cats/*")
+
+//  addServlet(new ReactiveMongoRestController[User]("users", UserJsonFormat, repository), "/users/*")
 
   before {
     mongoProps = mongoStart(17123) // by default port = 12345 & version = Version.2.3.0
 
     // Clear out entries - only do this if you don't start/stop between tests
-    repository.removeAll
+    await(repository.removeAll)
 
     // Add some keys to test against
     val key = User(id = Some(BSONObjectID("53b62e370100000100af8ecd")), username = "mfellows", firstName = "Matt")
     val key2 = User(id = Some(BSONObjectID("53b62e370100000100af8ece")), username = "bmurray", firstName = "Bill")
     await(repository.insert(key))
     await(repository.insert(key2))
+
+    println("Users in repo: ")
+    val users = await(repository.findAll)
+    users foreach(u =>
+      println(u)
+      )
   }
 
   after {
@@ -60,11 +74,6 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
       put("/users/53b62e370100000100af8ecd", json, headers = Map("Content-Type" -> "application/json")) {
         status should equal(200)
 
-      }
-
-      val users = await(repository.findAll)
-      users.foreach { u =>
-        println(u)
       }
 
       val user = await(repository.findById(BSONObjectID("53b62e370100000100af8ecd")))

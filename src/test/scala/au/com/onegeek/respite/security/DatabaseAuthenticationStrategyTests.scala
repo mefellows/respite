@@ -34,7 +34,7 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
 
   class TestServlet(implicit val bindingModule: BindingModule) extends ScalatraServlet with Injectable
 
-  var mongoProps: MongodProps = mongoStart(17123)
+  var mongoProps: MongodProps = mongoStart(17124)
   val repository = new ApiKeyTestRepository
   val API_KEY_HEADER = "X-API-Key";
   val API_APP_HEADER = "X-API-Application";

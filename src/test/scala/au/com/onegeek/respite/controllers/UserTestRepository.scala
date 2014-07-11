@@ -22,6 +22,12 @@
  */
 package au.com.onegeek.respite.controllers
 
+import au.com.onegeek.respite.test.MongoSpecSupport
+import com.github.simplyscala.MongodProps
+import reactivemongo.api.FailoverStrategy
+import reactivemongo.api.collections.default.BSONCollection
+
+import scala.reflect._
 import scala.util.Failure
 import au.com.onegeek.respite.models.AccountComponents._
 import com.escalatesoft.subcut.inject.BindingModule
@@ -37,3 +43,19 @@ class UserTestRepository(implicit mc: MongoConnector)
     collection.indexesManager.ensure(Index(Seq("username" -> IndexType.Ascending), name = Some("keyFieldUniqueIdx"), unique = true, sparse = true))
   }
 }
+class CatTestRepository(implicit mc: MongoConnector)
+  extends ReactiveRepository[Cat, BSONObjectID]("cats", mc.db, Cat.formats, ReactiveMongoFormats.objectIdFormats) {
+
+  override def ensureIndexes() = {
+    collection.indexesManager.ensure(Index(Seq("name" -> IndexType.Ascending), name = Some("keyFieldUniqueIdx"), unique = true, sparse = true))
+  }
+}
+
+class UserController(repository: ReactiveRepository[User, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[User, BSONObjectID]("users", User.formats, repository) {
+  implicit val t = classTag[User]
+}
+
+class CatController(repository: ReactiveRepository[Cat, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[Cat], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[Cat, BSONObjectID]("cats", Cat.formats, repository) {
+  implicit val t = classTag[Cat]
+}
+

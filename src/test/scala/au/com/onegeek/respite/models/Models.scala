@@ -24,9 +24,17 @@ object AccountComponents {
 
   object User {
 
-    implicit val formats = mongoEntity {
+    implicit val formats =  {
       import uk.gov.hmrc.mongo.ReactiveMongoFormats._
       Json.format[User]
+    }
+  }
+  case class Cat(id: Option[BSONObjectID] = Some(BSONObjectID.generate), name: String, breed: String) extends Model[BSONObjectID]
+  object Cat {
+
+    implicit val formats =  {
+      import uk.gov.hmrc.mongo.ReactiveMongoFormats._
+      Json.format[Cat]
     }
   }
 

@@ -31,6 +31,7 @@ import au.com.onegeek.respite.models.Model
 import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
 import org.scalatra._
 import play.api.libs.json._
+import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.mongo.Repository
 
 import scala.concurrent.ExecutionContext
@@ -79,88 +80,32 @@ import scala.reflect.ClassTag
  */
 
 // TODO: Consider making RestController an abstract/Trait and creating specific, concrete implementations (Reactive, Postgres... versions)
-class RestController[ObjectType <: Model[ObjectID], ObjectID]
-    (collectionName: String, jsonFormatter: Format[ObjectType], repository: Repository[ObjectType, ObjectID])
-    (implicit val bindingModule: BindingModule, implicit val tag: ClassTag[ObjectType], implicit val objectIdConverter: String => ObjectID)
-//    (implicit val bindingModule: BindingModule, implicit val tag: ClassTag[ObjectType])
-    extends RespiteApiStack[ObjectType]
-    with MethodOverride
-    with FutureSupport
-    with Injectable
-    with LoggingSupport { this: LoggingSupport =>
+//class ReactiveMongoRestController[ObjectType <: Model[BSONObjectID]] extends RestController(collectionName: String, jsonFormatter: Format[ObjectType], repository: Repository[ObjectType, BSONObjectID])
+//(implicit val bindingModule: BindingModule, implicit val tag: ClassTag[ObjectType])
+//  with RespiteApiStack[ObjectType]
+//  with MethodOverride
+//  with FutureSupport
+//  with Injectable
+//  with LoggingSupport {
+//  this: LoggingSupport =>
+//
+//    val system = inject[ActorSystem]
+//
+//    implicit val format = jsonFormatter
+//
+//    implicit def StringToBSONObjectId(s: String): BSONObjectID = BSONObjectID(s)
+//    implicit def BSONObjectIdToString(s: BSONObjectID): String = s.stringify
+//
+//    val actor = system.actorOf(Props(new ReactiveMongoDatabaseRestActor[ObjectType, BSONObjectID](repository)))
+//}
 
-  val system = inject[ActorSystem]
-  override implicit val format = jsonFormatter
-
-
-  val actor = system.actorOf(Props(new DatabaseRestActor[ObjectType, ObjectID](repository)))
-
-  protected implicit def executor: ExecutionContext = system.dispatcher
-//  protected implicit def objectIdConverter: BSONObjectID => String
-
-
-  implicit val tOut = Timeout(Duration.create(10, SECONDS))
-
-  def doSingle(id: String, method: String, modelInstance: Option[ObjectType] = None) = {
-    try {
-      new AsyncResult {
-        val is = actor ? Seq(method, id, modelInstance)
-      }
-    }
-    catch {
-      case e: Exception => {
-        logger.error("Something died: " + e.getMessage)
-        BadRequest("You probably have a malformed id: " + e.getMessage)
-      }
-    }
-  }
-
-  get("/") {
-    logger.debug("Getting all")
-    new AsyncResult {
-      val is = actor ? "all"
-    }
-  }
-
-  get("/:id") {
-    logger.debug("Getting something")
-    val id = params("id")
-    doSingle(id, "get")
-  }
-
-  post("/") {
-    logger.debug("creating something")
-      val model = getParsedModel[ObjectType].get
-      new AsyncResult {
-        val is = actor ? Seq("create", model)
-      }
-  }
-
-  delete("/:id") {
-    val id = params("id")
-    logger.debug(s"Deleting something: ${id}")
-
-    new AsyncResult {
-      val is = actor ? Seq("delete", id)
-    }
-    //    val modelInstance = Json.parse(request.body).validate[ObjectType]
-    //    val id = params("id")
-    //    doSingle(id, "update", Some(modelInstance))
-  }
-
-  put("/:id") {
-    logger.debug("updating something")
-
-    getParsedModel[ObjectType].map { e =>
-      println(e)
-      new AsyncResult {
-        val is = actor ? Seq("update", e)
-      }
-    }.getOrElse {
-
-      // TODO: Still return JS Validation error
-      halt(status = 400, reason = "No Request body provided")
-    }
-  }
-
-}
+//class ReactiveMongoRestController[ObjectType <: Model[ObjectID], ObjectID](collectionName: String, jsonFormatter: Format[ObjectType], repository: Repository[ObjectType, ObjectID]) extends RestController[ObjectType, ObjectID](collectionName: String, jsonFormatter: Format[ObjectType], repository: Repository[ObjectType, ObjectID]) {
+//class ReactiveMongoRestController[ObjectType <: Model[BSONObjectID]](collectionName: String, jsonFormatter: Format[ObjectType], repository: Repository[ObjectType, BSONObjectID])(override val bindingModule: BindingModule, override val tag: ClassTag[ObjectType]) extends RestController(collectionName, jsonFormatter, repository)(bindingModule, tag) {
+//  override protected val actor = system.actorOf(Props(new ReactiveMongoDatabaseRestActor[ObjectType, BSONObjectID](repository)))
+//
+//  implicit def StringToBSONObjectId(s: String): BSONObjectID = BSONObjectID(s)
+//  implicit def BSONObjectIdToString(s: BSONObjectID): String = s.stringify
+//
+//  //  protected implicit def objectIdConverter: BSONObjectID => String
+//  override protected implicit def objectIdConverter: (String) => BSONObjectID = StringToBSONObjectId
+//}
