@@ -30,6 +30,7 @@ import reactivemongo.bson.BSONObjectID
  * Created by mfellows on 4/07/2014.
  */
 case class ApiKey(id: BSONObjectID = BSONObjectID.generate, application: String, description: String, key: String)
+
 object ApiKey {
 
   import ReactiveMongoFormats.mongoEntity

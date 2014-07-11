@@ -1,19 +1,16 @@
 package au.com.onegeek.respite.controllers.support
 
-import org.scalatest.concurrent.ScalaFutures
+import au.com.onegeek.respite.ServletTestsBase
 import au.com.onegeek.respite.config.TestConfigurationModule
-import org.scalatra.{ApiFormats, ScalatraServlet}
-import au.com.onegeek.respite.models.DefaultFormats
-import play.api.libs.json._
-import play.api.libs.json.JsSuccess
 import au.com.onegeek.respite.models.AccountComponents.User
+import au.com.onegeek.respite.test.Awaiting
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatra.ScalatraServlet
+import play.api.libs.json.{JsSuccess, _}
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.mongo._
-import au.com.onegeek.respite.test.Awaiting
-import au.com.onegeek.respite.models.DefaultFormats._
 
 import scala.reflect._
-import au.com.onegeek.respite.ServletTestsBase
 
 /**
  * Created by mfellows on 29/06/2014.
@@ -25,7 +22,7 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
   class TestServlet(implicit val tag: ClassTag[User]) extends ScalatraServlet
 
   val playServlet = new TestServlet with PlayJsonSupport[User] { //this: PlayJsonSupport =>
-    override implicit val format: Format[User] = UserJsonFormat
+    override implicit val format: Format[User] = User.format
 
     get("/") {
       JsSuccess(User(id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar"))

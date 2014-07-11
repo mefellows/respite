@@ -3,9 +3,10 @@ package au.com.onegeek.respite.models
 import reactivemongo.bson._
 import play.api.libs.json._
 import au.com.onegeek.respite.models.AccountComponents.User
+import uk.gov.hmrc.mongo.JsonExtensions._
 import scala.Some
 import reactivemongo.bson.BSONString
-import uk.gov.hmrc.mongo.{ReactiveMongoFormats, TupleFormats}
+import uk.gov.hmrc.mongo.{JsonExtensions, ReactiveMongoFormats, TupleFormats}
 import uk.gov.hmrc.mongo.ReactiveMongoFormats._
 import reactivemongo.bson.BSONString
 import scala.Some
@@ -23,72 +24,66 @@ object AccountComponents {
   case class User(id: Option[BSONObjectID] = Some(BSONObjectID.generate), username: String, firstName: String) extends Model[BSONObjectID]
 
   object User {
+    import uk.gov.hmrc.mongo.ReactiveMongoFormats._
 
-    implicit val formats =  {
-      import uk.gov.hmrc.mongo.ReactiveMongoFormats._
-      Json.format[User]
-    }
+    implicit val format = {Json.format[User]}
   }
   case class Cat(id: Option[BSONObjectID] = Some(BSONObjectID.generate), name: String, breed: String) extends Model[BSONObjectID]
   object Cat {
-
-    implicit val formats =  {
-      import uk.gov.hmrc.mongo.ReactiveMongoFormats._
-      Json.format[Cat]
-    }
+    import uk.gov.hmrc.mongo.ReactiveMongoFormats._
+    implicit val format = {Json.format[Cat]}
   }
-
 }
 
-object BSONObjectIdFormats extends BSONObjectIdFormats
-
-trait BSONObjectIdFormats {
-
-
-}
-
-
-object JsonFormats {
-
-  def read[T](json: JsValue)(implicit reader: Reads[T]): JsResult[T] = reader.reads(json)
-
-  def write[T](obj: T)(implicit writer: Writes[T]): JsValue = writer.writes(obj)
-}
-
-trait JsonFormats {
-  self: JsonFormats =>
-
-  //  implicit val objectIdFormat = Format[BSONObjectID](
-  //    (__ \ "$oid").read[String].map( obj => new BSONObjectID(obj) ),
-  //    Writes[BSONObjectID]{ s => Json.obj( "$oid" -> s.stringify ) }
-  //  )
-
-  import uk.gov.hmrc.mongo.ReactiveMongoFormats._
-
-  // Generates Writes and Reads for Models thanks to json Macros
-  implicit val ApiKeysJsonFormat = Json.format[ApiKey]
-  implicit val UserJsonFormat = Json.format[User]
-}
-
-trait DefaultFormats extends java.lang.Object with JsonFormats {
-
-}
-
-object DefaultFormats extends java.lang.Object with DefaultFormats {
-
-}
-
-object DAOMappers {
-
-  import AccountComponents._
-
-  implicit def BSONObjectIdToBSONString(b: BSONObjectID): BSONString = BSONString(b.stringify)
-
-  implicit def BSONStringToBSONObjectId(s: BSONString): BSONObjectID = BSONObjectID(s.value)
-  implicit def StringToBSONObjectId(s: String): BSONObjectID = BSONObjectID(s)
-  implicit def BSONObjectIdToString(s: BSONObjectID): String = s.stringify
-
-  // How to do this and format the _id as a sane 'id' field.
-  implicit val ApiKeysFormat = Macros.handler[ApiKey]
-  implicit val UserFormat = Macros.handler[User]
-}
+//object BSONObjectIdFormats extends BSONObjectIdFormats
+//
+//trait BSONObjectIdFormats {
+//
+//
+//}
+//
+//
+//object JsonFormats {
+//
+//  def read[T](json: JsValue)(implicit reader: Reads[T]): JsResult[T] = reader.reads(json)
+//
+//  def write[T](obj: T)(implicit writer: Writes[T]): JsValue = writer.writes(obj)
+//}
+//
+//trait JsonFormats {
+//  self: JsonFormats =>
+//
+//  //  implicit val objectIdFormat = Format[BSONObjectID](
+//  //    (__ \ "$oid").read[String].map( obj => new BSONObjectID(obj) ),
+//  //    Writes[BSONObjectID]{ s => Json.obj( "$oid" -> s.stringify ) }
+//  //  )
+//
+//  import uk.gov.hmrc.mongo.ReactiveMongoFormats._
+//
+//  // Generates Writes and Reads for Models thanks to json Macros
+//  implicit val ApiKeysJsonFormat = Json.format[ApiKey]
+//  implicit val UserJsonFormat = Json.format[User]
+//}
+//
+//trait DefaultFormats extends java.lang.Object with JsonFormats {
+//
+//}
+//
+//object DefaultFormats extends java.lang.Object with DefaultFormats {
+//
+//}
+//
+//object DAOMappers {
+//
+//  import AccountComponents._
+//
+//  implicit def BSONObjectIdToBSONString(b: BSONObjectID): BSONString = BSONString(b.stringify)
+//
+//  implicit def BSONStringToBSONObjectId(s: BSONString): BSONObjectID = BSONObjectID(s.value)
+//  implicit def StringToBSONObjectId(s: String): BSONObjectID = BSONObjectID(s)
+//  implicit def BSONObjectIdToString(s: BSONObjectID): String = s.stringify
+//
+//  // How to do this and format the _id as a sane 'id' field.
+//  implicit val ApiKeysFormat = Macros.handler[ApiKey]
+//  implicit val UserFormat = Macros.handler[User]
+//}

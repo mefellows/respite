@@ -1,17 +1,14 @@
 package au.com.onegeek.respite.controllers
 
+import au.com.onegeek.respite.ServletTestsBase
 import au.com.onegeek.respite.config.TestConfigurationModule
-import au.com.onegeek.respite.models.AccountComponents.User
-import au.com.onegeek.respite.models.DefaultFormats._
+import au.com.onegeek.respite.controllers.RestController
+import au.com.onegeek.respite.models.AccountComponents.{Cat, User}
 import au.com.onegeek.respite.test.{Awaiting, MongoSpecSupport}
 import com.github.simplyscala.{MongoEmbedDatabase, MongodProps}
 import org.scalatest.concurrent.ScalaFutures
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.mongo.CurrentTime
-
-import scala.reflect._
-import scala.reflect.runtime.universe._
-import au.com.onegeek.respite.ServletTestsBase
 
 class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEmbedDatabase  with MongoSpecSupport with Awaiting with CurrentTime {
   implicit val bindingModule = TestConfigurationModule
@@ -22,12 +19,11 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
 //
   val repository = new UserTestRepository
   val catRepository = new CatTestRepository
-//  implicit val t = classTag[User]
-//  addServlet(new RestController[User, BSONObjectID]("users", UserJsonFormat, repository), "/users/*")
-  addServlet(new UserController(repository = repository), "/users/*")
-  addServlet(new CatController(repository = catRepository), "/cats/*")
 
-//  addServlet(new ReactiveMongoRestController[User]("users", UserJsonFormat, repository), "/users/*")
+//  addServlet(new RestController[User, BSONObjectID]("users", UserJsonFormat, repository), "/users/*")
+//  addServlet(new UserController(repository = repository), "/users/*")
+  addServlet(new CatController(repository = catRepository), "/cats/*")
+  addServlet(new RestController[User, BSONObjectID]("users", User.format, repository), "/users/*")
 
   before {
     mongoProps = mongoStart(17123) // by default port = 12345 & version = Version.2.3.0

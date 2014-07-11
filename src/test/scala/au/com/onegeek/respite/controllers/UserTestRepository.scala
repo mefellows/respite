@@ -22,40 +22,32 @@
  */
 package au.com.onegeek.respite.controllers
 
-import au.com.onegeek.respite.test.MongoSpecSupport
-import com.github.simplyscala.MongodProps
-import reactivemongo.api.FailoverStrategy
-import reactivemongo.api.collections.default.BSONCollection
-
-import scala.reflect._
-import scala.util.Failure
 import au.com.onegeek.respite.models.AccountComponents._
 import com.escalatesoft.subcut.inject.BindingModule
-import au.com.onegeek.respite.models.DefaultFormats._
-import uk.gov.hmrc.mongo.{ReactiveMongoFormats, ReactiveRepository, MongoConnector}
+import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.BSONObjectID
-import reactivemongo.api.indexes.{IndexType, Index}
+import uk.gov.hmrc.mongo.{MongoConnector, ReactiveMongoFormats, ReactiveRepository}
 
+import scala.reflect._
+
+import uk.gov.hmrc.mongo.ReactiveMongoFormats._
 class UserTestRepository(implicit mc: MongoConnector)
-  extends ReactiveRepository[User, BSONObjectID]("users", mc.db, User.formats, ReactiveMongoFormats.objectIdFormats) {
+  extends ReactiveRepository[User, BSONObjectID]("users", mc.db, mongoEntity {User.format}, ReactiveMongoFormats.objectIdFormats) {
 
   override def ensureIndexes() = {
     collection.indexesManager.ensure(Index(Seq("username" -> IndexType.Ascending), name = Some("keyFieldUniqueIdx"), unique = true, sparse = true))
   }
 }
 class CatTestRepository(implicit mc: MongoConnector)
-  extends ReactiveRepository[Cat, BSONObjectID]("cats", mc.db, Cat.formats, ReactiveMongoFormats.objectIdFormats) {
+  extends ReactiveRepository[Cat, BSONObjectID]("cats", mc.db, mongoEntity {Cat.format}, ReactiveMongoFormats.objectIdFormats) {
 
   override def ensureIndexes() = {
     collection.indexesManager.ensure(Index(Seq("name" -> IndexType.Ascending), name = Some("keyFieldUniqueIdx"), unique = true, sparse = true))
   }
 }
 
-class UserController(repository: ReactiveRepository[User, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[User, BSONObjectID]("users", User.formats, repository) {
-  implicit val t = classTag[User]
-}
-
-class CatController(repository: ReactiveRepository[Cat, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[Cat], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[Cat, BSONObjectID]("cats", Cat.formats, repository) {
-  implicit val t = classTag[Cat]
+// Example of concrete sub-class of RestController
+class CatController(repository: ReactiveRepository[Cat, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[Cat], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[Cat, BSONObjectID]("cats", Cat.format, repository) {
+  // Do stuff, extend me!
 }
 

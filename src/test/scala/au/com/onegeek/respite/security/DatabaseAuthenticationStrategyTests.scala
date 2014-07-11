@@ -19,9 +19,10 @@ import reactivemongo.api.indexes.IndexType
 import reactivemongo.api.indexes.Index
 import au.com.onegeek.respite.models.ApiKey
 import au.com.onegeek.respite.ServletTestsBase
+import uk.gov.hmrc.mongo.ReactiveMongoFormats._
 
 class ApiKeyTestRepository(implicit mc: MongoConnector)
-  extends ReactiveRepository[ApiKey, BSONObjectID]("testapikeys", mc.db, ApiKey.formats, ReactiveMongoFormats.objectIdFormats) {
+  extends ReactiveRepository[ApiKey, BSONObjectID]("testapikeys", mc.db, mongoEntity { ApiKey.formats}, ReactiveMongoFormats.objectIdFormats) {
 
   override def ensureIndexes() = {
     collection.indexesManager.ensure(Index(Seq("application" -> IndexType.Ascending), name = Some("applicationFieldUniqueIdx"), unique = true, sparse = true))
@@ -34,7 +35,7 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
 
   class TestServlet(implicit val bindingModule: BindingModule) extends ScalatraServlet with Injectable
 
-  var mongoProps: MongodProps = mongoStart(17124)
+  var mongoProps: MongodProps = null
   val repository = new ApiKeyTestRepository
   val API_KEY_HEADER = "X-API-Key";
   val API_APP_HEADER = "X-API-Application";
@@ -56,10 +57,10 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
   val authServletWithApi = new AuthServlet with AuthenticationApi
 
   before {
-    mongoProps = mongoStart() // by default port = 12345 & version = Version.2.3.0
+    mongoProps = mongoStart(17124) // by default port = 12345 & version = Version.2.3.0
 
     // Clear out entries
-    repository.removeAll
+    await(repository.removeAll)
 
     // Add some keys to test against
     val key = ApiKey(application = "application-name", description = "my description", key = "key")
