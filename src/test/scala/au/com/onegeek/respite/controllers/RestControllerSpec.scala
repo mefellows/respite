@@ -34,14 +34,22 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
     // Add some keys to test against
     val key = User(id = Some(BSONObjectID("53b62e370100000100af8ecd")), username = "mfellows", firstName = "Matt")
     val key2 = User(id = Some(BSONObjectID("53b62e370100000100af8ece")), username = "bmurray", firstName = "Bill")
+    val cat = Cat(name = "Kitty", breed = "Shitzu")
     await(repository.insert(key))
     await(repository.insert(key2))
+    await(catRepository.insert(cat))
 
     println("Users in repo: ")
     val users = await(repository.findAll)
     users foreach(u =>
       println(u)
-      )
+    )
+
+    println("Cats in repo: ")
+    val cats = await(catRepository.findAll)
+    cats foreach(u =>
+      println(u)
+    )
   }
 
   after {
@@ -69,13 +77,12 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
       val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}"
       put("/users/53b62e370100000100af8ecd", json, headers = Map("Content-Type" -> "application/json")) {
         status should equal(200)
-
+        body should equal("{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}")
       }
 
       val user = await(repository.findById(BSONObjectID("53b62e370100000100af8ecd")))
       user.get.firstName should equal("Harry")
     }
-
 
     "Send a 400 when an empty put body is sent" in {
       val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}"
@@ -100,19 +107,23 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
       }
     }
 
-    "Provide an API to create a Model" in {
-      val json = "{\"username\":\"superman\",\"firstName\":\"Matt\"}"
 
+    // OK, so we have a problem - it doesn't seem to save if ID not provided. hmmm....
+    "Provide an API to create a Model" in {
+//      val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8eca\"},\"username\":\"aoeu\",\"firstName\":\"aoeu\"}"
+      val json = "{\"username\":\"superman\",\"firstName\":\"Clarke\"}"
       post("/users/", json.toString, Map("Content-Type" -> "application/json")) {
         status should equal(200)
-        body should equal ("")
+//        body should equal("{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}")
       }
 
       // Get response and then query
       val users = await(repository.findAll)
-      users foreach(u =>
-        u.username shouldNot equal("superman")
-      )
+      val notSupermanList = users takeWhile { e =>
+        println(e)
+        e.firstName.equals("superman")
+      }
+      notSupermanList.size should equal(1)
     }
 
     "Send a 400 bad request on invalid JSON Model" in {

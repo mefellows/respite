@@ -29,7 +29,6 @@ import au.com.onegeek.respite.models.Model
 import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
 import org.slf4j.LoggerFactory
 import play.api.libs.json._
-import reactivemongo.core.commands.LastError
 import spray.caching.{Cache, LruCache}
 import uk.gov.hmrc.mongo.Repository
 
@@ -128,7 +127,7 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
 
 
   /**
-   * Deletes an entity from the
+   * Deletes an entity from the755147
    * @param id
    * @return
    */
@@ -168,9 +167,14 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
     }
   }
 
-  def deleteEntityFromDB(id: String): Future[Option[LastError]] = {
+  def deleteEntityFromDB(id: String): Future[Option[ModelType]] = {
     println(s"Deleting object ${id}" )
-    repository.removeById(id).map { Some(_) }
+
+    for {
+      entity <- doGetSingle(id)
+      response <- repository.removeById(id).map { Some(_) }
+    } yield entity orElse None
+
   }
 
   def deleteItemFromCache(key: Option[Any]): Future[Option[Any]] = {
@@ -185,12 +189,19 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
     }
   }
 
-  def createEntity(obj: ModelType): Future[reactivemongo.core.commands.LastError] = {
-    repository.insert(obj)
+  def createEntity(obj: ModelType): Future[ModelType] = {
+    println(s"Saving this guy ${obj}")
+    for {
+      saved <- repository.insert(obj)
+      if saved.ok
+    } yield obj
   }
 
-  def updateEntity(obj: ModelType): Future[reactivemongo.core.commands.LastError] = {
-    repository.save(obj)
+  def updateEntity(obj: ModelType): Future[ModelType] = {
+    for {
+      saved <- repository.save(obj)
+      if saved.ok
+    } yield obj
   }
 
   /**

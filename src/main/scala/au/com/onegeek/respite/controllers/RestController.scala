@@ -131,6 +131,9 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
   post("/") {
     logger.debug("creating something")
       val model = getParsedModel[ObjectType].get
+
+    println(s"I have me a model object: ${model}")
+
       new AsyncResult {
         val is = actor ? Seq("create", model)
       }
