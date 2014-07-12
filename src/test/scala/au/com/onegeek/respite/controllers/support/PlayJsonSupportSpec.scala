@@ -2,7 +2,7 @@ package au.com.onegeek.respite.controllers.support
 
 import au.com.onegeek.respite.ServletTestsBase
 import au.com.onegeek.respite.config.TestConfigurationModule
-import au.com.onegeek.respite.models.AccountComponents.User
+import au.com.onegeek.respite.models.User
 import au.com.onegeek.respite.test.Awaiting
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatra.ScalatraServlet
@@ -25,11 +25,11 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
     override implicit val format: Format[User] = User.format
 
     get("/") {
-      JsSuccess(User(id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar"))
+      JsSuccess(User(id = BSONObjectID("53aeb92ab65f2a89219ddcfb"), username="foo", firstName = "bar"))
     }
 
     get("/some") {
-      Some(User(id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar"))
+      Some(User(id = BSONObjectID("53aeb92ab65f2a89219ddcfb"), username="foo", firstName = "bar"))
     }
 
     post("/fail") {
@@ -40,16 +40,16 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
     }
 
     get("/list") {
-      List(User(id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar"))
+      List(User(id = BSONObjectID("53aeb92ab65f2a89219ddcfb"), username="foo", firstName = "bar"))
     }
 
     get("/amodel") {
-      User(id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar")
+      User(id = BSONObjectID("53aeb92ab65f2a89219ddcfb"), username="foo", firstName = "bar")
     }
 
     get("/plain") {
       contentType = formats("html")
-      User(id = Some(BSONObjectID("53aeb92ab65f2a89219ddcfb")), username="foo", firstName = "bar")
+      User(id = BSONObjectID("53aeb92ab65f2a89219ddcfb"), username="foo", firstName = "bar")
     }
 
     post("/") {
@@ -124,7 +124,7 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
       get("/plain", headers = Map("Accept" -> "text/html")) {
        println(body)
         status should equal(200)
-        body should equal("User(Some(BSONObjectID(\"53aeb92ab65f2a89219ddcfb\")),foo,bar)")
+        body should equal("User(BSONObjectID(\"53aeb92ab65f2a89219ddcfb\"),foo,bar)")
       }
     }
 

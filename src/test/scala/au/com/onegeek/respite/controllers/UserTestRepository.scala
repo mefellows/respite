@@ -22,24 +22,24 @@
  */
 package au.com.onegeek.respite.controllers
 
-import au.com.onegeek.respite.models.AccountComponents._
+import au.com.onegeek.respite.models._
 import com.escalatesoft.subcut.inject.BindingModule
+import play.api.libs.json.Json
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.mongo.{MongoConnector, ReactiveMongoFormats, ReactiveRepository}
-
+import au.com.onegeek.respite.models.ModelJsonExtensions._
+import uk.gov.hmrc.mongo.ReactiveMongoFormats.objectIdFormats
 import scala.reflect._
-
-import uk.gov.hmrc.mongo.ReactiveMongoFormats._
 class UserTestRepository(implicit mc: MongoConnector)
-  extends ReactiveRepository[User, BSONObjectID]("users", mc.db, mongoEntity {User.format}, ReactiveMongoFormats.objectIdFormats) {
+  extends ReactiveRepository[User, BSONObjectID]("users", mc.db, modelFormatForMongo {Json.format[User]}, ReactiveMongoFormats.objectIdFormats) {
 
   override def ensureIndexes() = {
     collection.indexesManager.ensure(Index(Seq("username" -> IndexType.Ascending), name = Some("keyFieldUniqueIdx"), unique = true, sparse = true))
   }
 }
 class CatTestRepository(implicit mc: MongoConnector)
-  extends ReactiveRepository[Cat, BSONObjectID]("cats", mc.db, mongoEntity {Cat.format}, ReactiveMongoFormats.objectIdFormats) {
+  extends ReactiveRepository[Cat, BSONObjectID]("cats", mc.db, modelFormatForMongo {Json.format[Cat]}, ReactiveMongoFormats.objectIdFormats) {
 
   override def ensureIndexes() = {
     collection.indexesManager.ensure(Index(Seq("name" -> IndexType.Ascending), name = Some("keyFieldUniqueIdx"), unique = true, sparse = true))

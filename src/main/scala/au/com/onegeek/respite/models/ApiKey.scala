@@ -25,18 +25,20 @@ package au.com.onegeek.respite.models
 import uk.gov.hmrc.mongo.ReactiveMongoFormats
 import play.api.libs.json.Json
 import reactivemongo.bson.BSONObjectID
+import au.com.onegeek.respite.models.ModelJsonExtensions._
 
 /**
  * Created by mfellows on 4/07/2014.
  */
-case class ApiKey(id: BSONObjectID = BSONObjectID.generate, application: String, description: String, key: String)
+
+case class ApiKey(id: BSONObjectID = BSONObjectID.generate, application: String, description: String, key: String) extends Model[BSONObjectID]
 
 object ApiKey {
 
-  import ReactiveMongoFormats.mongoEntity
+  import au.com.onegeek.respite.models.ModelJsonExtensions._
+  import uk.gov.hmrc.mongo.ReactiveMongoFormats.objectIdFormats
 
-  implicit val formats = {
-    import uk.gov.hmrc.mongo.ReactiveMongoFormats._
+  implicit val format = modelFormat {
     Json.format[ApiKey]
   }
 }

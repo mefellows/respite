@@ -3,10 +3,11 @@ package au.com.onegeek.respite.controllers
 import au.com.onegeek.respite.ServletTestsBase
 import au.com.onegeek.respite.config.TestConfigurationModule
 import au.com.onegeek.respite.controllers.RestController
-import au.com.onegeek.respite.models.AccountComponents.{Cat, User}
+import au.com.onegeek.respite.models._
 import au.com.onegeek.respite.test.{Awaiting, MongoSpecSupport}
 import com.github.simplyscala.{MongoEmbedDatabase, MongodProps}
 import org.scalatest.concurrent.ScalaFutures
+import play.api.libs.json.Json
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.mongo.CurrentTime
 
@@ -16,12 +17,10 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
 
   implicit def StringToBSONObjectId(s: String): BSONObjectID = BSONObjectID(s)
   implicit def BSONObjectIdToString(s: BSONObjectID): String = s.stringify
-//
+
   val repository = new UserTestRepository
   val catRepository = new CatTestRepository
 
-//  addServlet(new RestController[User, BSONObjectID]("users", UserJsonFormat, repository), "/users/*")
-//  addServlet(new UserController(repository = repository), "/users/*")
   addServlet(new CatController(repository = catRepository), "/cats/*")
   addServlet(new RestController[User, BSONObjectID]("users", User.format, repository), "/users/*")
 
@@ -32,8 +31,8 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
     await(repository.removeAll)
 
     // Add some keys to test against
-    val key = User(id = Some(BSONObjectID("53b62e370100000100af8ecd")), username = "mfellows", firstName = "Matt")
-    val key2 = User(id = Some(BSONObjectID("53b62e370100000100af8ece")), username = "bmurray", firstName = "Bill")
+    val key = User(id = BSONObjectID("53b62e370100000100af8ecd"), username = "mfellows", firstName = "Matt")
+    val key2 = User(id = BSONObjectID("53b62e370100000100af8ece"), username = "bmurray", firstName = "Bill")
     val cat = Cat(name = "Kitty", breed = "Shitzu")
     await(repository.insert(key))
     await(repository.insert(key2))
@@ -92,10 +91,12 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
     }
 
     "Send a 400 when an invalid put body is sent" in {
-      val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"nousername\":\"mfellows\",\"firstName\":\"Harry\"}"
+//      val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"nousername\":\"mfellows\",\"irstName\":\"Harry\"}"
+      val json = "{\"nousername\":\"mfellows\",\"nofirstName\":\"Harry\"}"
       put("/users/53b62e370100000100af8ecd", json.toString, headers = Map("Content-Type" -> "application/json")) {
+        println(body)
         status should equal(400)
-        body should equal ("{\"obj.username\":[{\"msg\":\"error.path.missing\",\"args\":[]}]}")
+        body should equal ("{\"obj.username\":[{\"msg\":\"error.path.missing\",\"args\":[]}],\"obj.firstName\":[{\"msg\":\"error.path.missing\",\"args\":[]}]}")
       }
     }
 
@@ -113,17 +114,14 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
 //      val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8eca\"},\"username\":\"aoeu\",\"firstName\":\"aoeu\"}"
       val json = "{\"username\":\"superman\",\"firstName\":\"Clarke\"}"
       post("/users/", json.toString, Map("Content-Type" -> "application/json")) {
+        println(s"heres my body: ${body}")
         status should equal(200)
-//        body should equal("{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}")
+        body should include ("\"username\":\"superman\",\"firstName\":\"Clarke\"}")
       }
 
+
       // Get response and then query
-      val users = await(repository.findAll)
-      val notSupermanList = users takeWhile { e =>
-        println(e)
-        e.firstName.equals("superman")
-      }
-      notSupermanList.size should equal(1)
+      await(repository.findAll).find(_.username.equals("superman")).size should equal (1)
     }
 
     "Send a 400 bad request on invalid JSON Model" in {

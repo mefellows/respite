@@ -65,7 +65,6 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
 
     withRouteMultiParams(Some(matchedRoute)) {
 
-
       // TODO: ONly support POST?
 
       val mt = request.contentType map {

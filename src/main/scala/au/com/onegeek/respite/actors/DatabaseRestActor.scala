@@ -159,7 +159,7 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
       }
       case Some(obj) => {
         println("Deleting object")
-        repository.removeById(obj.id.get).map {
+        repository.removeById(obj.id).map {
           e =>
             Some(obj)
         }

@@ -9,20 +9,17 @@ import com.github.simplyscala.MongoEmbedDatabase
 import uk.gov.hmrc.mongo._
 import play.api.libs.json.{Json, JsValue}
 import reactivemongo.bson.BSONObjectID
-import org.joda.time.DateTime
 import com.github.simplyscala.MongodProps
-import scala.Some
-import scala.Tuple2
-import reactivemongo.api.DefaultDB
 import uk.gov.hmrc.mongo.MongoConnector
 import reactivemongo.api.indexes.IndexType
 import reactivemongo.api.indexes.Index
 import au.com.onegeek.respite.models.ApiKey
 import au.com.onegeek.respite.ServletTestsBase
 import uk.gov.hmrc.mongo.ReactiveMongoFormats._
+import au.com.onegeek.respite.models.ModelJsonExtensions._
 
 class ApiKeyTestRepository(implicit mc: MongoConnector)
-  extends ReactiveRepository[ApiKey, BSONObjectID]("testapikeys", mc.db, mongoEntity { ApiKey.formats}, ReactiveMongoFormats.objectIdFormats) {
+  extends ReactiveRepository[ApiKey, BSONObjectID]("testapikeys", mc.db, modelFormatForMongo {Json.format[ApiKey]}, ReactiveMongoFormats.objectIdFormats) {
 
   override def ensureIndexes() = {
     collection.indexesManager.ensure(Index(Seq("application" -> IndexType.Ascending), name = Some("applicationFieldUniqueIdx"), unique = true, sparse = true))
@@ -57,16 +54,16 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
   val authServletWithApi = new AuthServlet with AuthenticationApi
 
   before {
-    mongoProps = mongoStart(17124) // by default port = 12345 & version = Version.2.3.0
+    mongoProps = mongoStart(17123)
 
     // Clear out entries
     await(repository.removeAll)
 
     // Add some keys to test against
-    val key = ApiKey(application = "application-name", description = "my description", key = "key")
+    val key = ApiKey(id = BSONObjectID.generate, application = "application-name", description = "my description", key = "key")
     await(repository.insert(key))
 
-  } // add your own port & version parameters in mongoStart method if you need it
+  }
 
   after {
     mongoStop(mongoProps)
