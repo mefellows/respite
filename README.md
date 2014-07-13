@@ -8,7 +8,7 @@ REST should be easy - Respite is a reactive & modular micro-framework for REST a
 * API usage metrics (With an API and GUI)
 * Extensible REST/CRUD Pipeline caching support (via CachingSupport with EHCache and in-memory Spray caching)
 * Distributed Database Access and Integration Layer via Reactive Mongo and Akka, with CRUD out-of-the-box
-* In-built JSON validation via Spray-json
+* In-built JSON <-> Case Class marshalling & validation via play-json
 
 ## Getting Started
 

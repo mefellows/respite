@@ -15,8 +15,7 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
   implicit val bindingModule = TestConfigurationModule
   var mongoProps: MongodProps = null
 
-  implicit def StringToBSONObjectId(s: String): BSONObjectID = BSONObjectID(s)
-  implicit def BSONObjectIdToString(s: BSONObjectID): String = s.stringify
+  import au.com.onegeek.respite.models.ModelJsonExtensions._
 
   val repository = new UserTestRepository
   val catRepository = new CatTestRepository

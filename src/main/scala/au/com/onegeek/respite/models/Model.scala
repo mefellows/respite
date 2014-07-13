@@ -41,6 +41,10 @@ trait Model[ObjectID] {
  */
 object ModelJsonExtensions {
   import uk.gov.hmrc.mongo.ReactiveMongoFormats.objectIdFormats
+
+  implicit def StringToBSONObjectId(s: String): BSONObjectID = BSONObjectID(s)
+  implicit def BSONObjectIdToString(s: BSONObjectID): String = s.stringify
+
   def withDefault[A](key: String, default: A)(implicit writes: Writes[A]) = __.json.update((__ \ key).json.copyFrom((__ \ key).json.pick orElse Reads.pure(Json.toJson(default))))
 
   /**
