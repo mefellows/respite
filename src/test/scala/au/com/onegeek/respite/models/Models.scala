@@ -14,27 +14,25 @@ import uk.gov.hmrc.mongo.ReactiveMongoFormats.objectIdFormats
 //                               )
 
 
-  /** Describes some common behavior of asset types */
-  case class User(id: BSONObjectID = BSONObjectID.generate, username: String, firstName: String) extends Model[BSONObjectID]
+/** Describes some common behavior of asset types */
+case class User(id: BSONObjectID = BSONObjectID.generate, username: String, firstName: String) extends Model[BSONObjectID]
 
-  object User {
+object User {
 
-    import au.com.onegeek.respite.models.ModelJsonExtensions._
+  import au.com.onegeek.respite.models.ModelJsonExtensions._
 
-    implicit val format = modelFormat {
-      Json.format[User]
-    }
+  implicit val format = modelFormat {
+    Json.format[User]
   }
+}
 
-  case class Cat(id: BSONObjectID = BSONObjectID.generate, name: String, breed: String) extends Model[BSONObjectID]
+case class Cat(id: BSONObjectID = BSONObjectID.generate, name: String, breed: String) extends Model[BSONObjectID]
 
-  object Cat {
+object Cat {
 
-    import au.com.onegeek.respite.models.ModelJsonExtensions._
+  import au.com.onegeek.respite.models.ModelJsonExtensions._
 
-    implicit val format = modelFormat {
-      Json.format[Cat]
-    }
+  implicit val format = modelFormat {
+    Json.format[Cat]
   }
-
-//}
+}
