@@ -17,22 +17,55 @@ Fetch from Maven Central (to be confirmed), currently only Snapshots are availab
 In your build.{sbt, scala}:
 ```scala
 libraryDependencies ++= Seq(
-  "au.com.onegeek" %% "respite" % "0.0.1-SNAPSHOT",
+  "au.com.onegeek" %% "respite-rest-framework" % "0.0.1-SNAPSHOT",
   "com.typesafe.play" %% "play-json" % "2.2.3"
 )
 ```
 ### Create a Model
 ```scala
-case class User(_id: Option[BSONObjectID] = Some(BSONObjectID.generate), username: String, firstName: String) extends Model
-implicit val UserFormat = Macros.handler[User]
+case class User(id: BSONObjectID = BSONObjectID.generate, username: String, firstName: String) extends Model[BSONObjectID]
+
+object User {
+  import au.com.onegeek.respite.models.ModelJsonExtensions._
+  implicit val format = modelFormat { Json.format[User] }
+}
 ```
 
-### Add RestController instance to your Scalatra Bootstrap
+### Create a Repository
+
+Here is a Repository definition that saves data to a Mongo Database (using the [Reactive Mongo](http://reactivemongo.org/) library), creating an Index on the ```username``` field.
+
+```scala
+class UserRepository(implicit mc: MongoConnector)
+  extends ReactiveRepository[User, BSONObjectID]("users", mc.db, modelFormatForMongo {Json.format[User]}, ReactiveMongoFormats.objectIdFormats) {
+
+  override def ensureIndexes() = {
+    collection.indexesManager.ensure(Index(Seq("username" -> IndexType.Ascending), name = Some("keyFieldUniqueIdx"), unique = true, sparse = true))
+  }
+}
+```
+
+### Add RestController instance to your Scalatra Bootstrap file
 
 Create an instance of RestController for a ```User``` in table "users" on path "/users/*":
 
 ```scala
-context.mount(new RestController[User]("users"), "/users/*")
+/**
+ * Main Scalatra entry point.
+ */
+class ScalatraBootstrap extends LifeCycle {
+  protected implicit def executor: ExecutionContext = ExecutionContext.global
+
+  override def init(context: ServletContext) {
+  
+    // Import implicit definitions into Scope
+    implicit val bindingModule = ProductionConfigurationModule  // DI Configuration object
+    import au.com.onegeek.respite.models.ModelJsonExtensions._  // JSON extensions
+    
+    // Add Controllers
+    addServlet(new RestController[User, BSONObjectID]("users", User.format, new UserRepository), "/users/*")
+  }
+}
 ```
 
 ### Your done
@@ -41,14 +74,14 @@ context.mount(new RestController[User]("users"), "/users/*")
 
     [
         {
-            "_id": {
+            "id": {
                 "$oid": "53aed383b65f2a89219ddcfd"
             },
             "username": "bmurray",
             "firstName": "Bill"
         },
         {
-            "_id": {
+            "id": {
                 "$oid": "53af811bb65f2a89219ddd08"
             },
             "username": "Matty",
@@ -58,13 +91,13 @@ context.mount(new RestController[User]("users"), "/users/*")
 
 ### Add Support for ...
 
-Use the following Mixins to enhance your
+Use the following Mixins to enhance your Controllers
 
 * CachingSupport - to provide access to a Caching DSL within your routes
 * HateosSupport - to link data models together (not required for Mongo setup)
 * PaginationSupport - to enable REST pagination on CRUD objects
 * RepositorySupport - for enhanced Repository access
-
+* MetricSupport - for detailed instrumentation of API calls with its own API + Administration user interface
 
 ## Status
 
