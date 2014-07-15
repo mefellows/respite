@@ -2,6 +2,9 @@
 
 REST should be easy - Respite is a reactive & modular micro-framework for REST applications written in Scala.
 
+[![Build Status](https://travis-ci.org/mefellows/respite.svg)](https://travis-ci.org/mefellows/respite)
+[![Coverage Status](https://coveralls.io/repos/mefellows/respite/badge.png?branch=multi-module)](https://coveralls.io/r/mefellows/respite?branch=multi-module)
+
 ## Features
 
 * Easy OAuth2.0 integration
@@ -12,14 +15,14 @@ REST should be easy - Respite is a reactive & modular micro-framework for REST a
 
 ## Getting Started
 
-Fetch from Maven Central (to be confirmed), currently only Snapshots are available:
+Fetch from Maven Central, currently only Snapshots are available:
 
 In your build.{sbt, scala}:
+
 ```scala
-libraryDependencies ++= Seq(
-  "au.com.onegeek" %% "respite-rest-framework" % "0.0.1-SNAPSHOT",
-  "com.typesafe.play" %% "play-json" % "2.2.3"
-)
+resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+
+libraryDependencies += "au.com.onegeek" %% "respite" % "0.0.1-SNAPSHOT"
 ```
 ### Create a Model
 ```scala
@@ -50,9 +53,6 @@ class UserRepository(implicit mc: MongoConnector)
 Create an instance of RestController for a ```User``` in table "users" on path "/users/*":
 
 ```scala
-/**
- * Main Scalatra entry point.
- */
 class ScalatraBootstrap extends LifeCycle {
   protected implicit def executor: ExecutionContext = ExecutionContext.global
 
@@ -68,9 +68,9 @@ class ScalatraBootstrap extends LifeCycle {
 }
 ```
 
-### Your done
+### Your done! cURL until your heart is content
 
-    curl -v "http://localhost:8080/users/"
+    curl "http://localhost:8080/users/"
 
     [
         {
@@ -112,7 +112,16 @@ Thanks to the following projects for making this so awesome:
 * Play JSON library
 * Metrics
 
+## Livin' on the edge?
+
+To get nightly/development versions, add the following snapshot repository and version:
+
+```scala
+resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+
+libraryDependencies += "au.com.onegeek" %% "respite" % "0.0.1-SNAPSHOT"
+```
 
 ## Contributing
 
-Simply fork the repo, create a feature branch and then submit a pull request.
+Simply fork the repo, create a feature branch and then submit a pull request (oh, please be a squash your commits too!).
