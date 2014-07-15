@@ -9,8 +9,8 @@ libraryDependencies ++= Seq(
   Dependencies.Compile.scalate,
   Dependencies.Compile.specs2,
   Dependencies.Compile.logback,
-  Dependencies.Compile.jettyServlet,
-  Dependencies.Compile.jettyWebapp,
+  Dependencies.Compile.Web.jettyServlet,
+  Dependencies.Compile.Web.jettyWebapp,
   Dependencies.Compile.Test.scalatest,
   Dependencies.Compile.Test.scalatraTest
 )

@@ -41,6 +41,8 @@ trait Model[ObjectID] {
  */
 object ModelJsonExtensions {
   import uk.gov.hmrc.mongo.ReactiveMongoFormats.objectIdFormats
+  import uk.gov.hmrc.mongo.ReactiveMongoFormats.dateTimeFormats
+  import uk.gov.hmrc.mongo.ReactiveMongoFormats.localDateTimeFormats
 
   implicit def StringToBSONObjectId(s: String): BSONObjectID = BSONObjectID(s)
   implicit def BSONObjectIdToString(s: BSONObjectID): String = s.stringify

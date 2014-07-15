@@ -20,6 +20,7 @@ object RespiteBuild extends Build {
     "respite-core",
     file("respite-core"),
 //    settings = Seq(com.typesafe.sbt.SbtStartScript.startScriptForClassesSettings: _*) ++ Defaults.defaultSettings ++ ScalatraPlugin.scalatraWithJRebel ++ scalateSettings ++ Seq(
+//    settings = Defaults.defaultSettings ++ ScalatraPlugin.scalatraSettings ++ Seq(
     settings = Defaults.defaultSettings ++ Seq(
       organization := Organization,
       name := Name,
@@ -51,6 +52,4 @@ object RespiteBuild extends Build {
     ),
   dependencies = Seq(core)
   )
-
-//  lazy val root = Project(id = "respite", base = file(".")) aggregate(core, examples)
 }

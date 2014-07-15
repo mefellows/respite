@@ -35,8 +35,15 @@ object Dependencies {
     val playMongo        = "org.reactivemongo"         %% "play2-reactivemongo"      % "0.10.2"
     val simpleMongo      = "uk.gov.hmrc"               %% "simple-reactivemongo"     % "1.1.0"
     val ehCacheCore      = "net.sf.ehcache"            %  "ehcache-core"             % "2.6.8"
-    val jettyWebapp      = "org.eclipse.jetty"         %  "jetty-webapp"             % "8.1.10.v20130312"          % "container"
-    val jettyServlet     = "org.eclipse.jetty.orbit"   %  "javax.servlet"            % "3.0.0.v201112011016"       % "container;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar"))
+    val jettyWebapp      = "org.eclipse.jetty"         %  "jetty-webapp"             % "8.1.10.v20130312"          % "compile"
+    val jettyServlet     = "org.eclipse.jetty.orbit"   %  "javax.servlet"            % "3.0.0.v201112011016"       % "compile;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar"))
+
+    // Web
+    object Web {
+      val jettyWebapp      = "org.eclipse.jetty"         %  "jetty-webapp"             % "8.1.10.v20130312"          % "container;compile"
+      val jettyServlet     = "org.eclipse.jetty.orbit"   %  "javax.servlet"            % "3.0.0.v201112011016"       % "container;compile;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar"))
+    }
+
 
     // Test
 
