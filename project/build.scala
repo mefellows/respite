@@ -6,13 +6,13 @@ import sbt._
 import org.scalatra.sbt.PluginKeys._
 import com.mojolly.scalate.ScalatePlugin._
 import ScalateKeys._
+import scoverage.ScoverageSbtPlugin.instrumentSettings
 
 object RespiteBuild extends Build {
   val Organization = "au.com.onegeek"
   val Name = "Respite REST Framework"
   val Version = "0.1.0-SNAPSHOT"
 
-//  import com.typesafe.sbt.SbtStartScript
 
 //  seq(SbtStartScript.startScriptForClassesSettings: _*)
 
@@ -20,7 +20,6 @@ object RespiteBuild extends Build {
     "respite-core",
     file("respite-core"),
 //    settings = Seq(com.typesafe.sbt.SbtStartScript.startScriptForClassesSettings: _*) ++ Defaults.defaultSettings ++ ScalatraPlugin.scalatraWithJRebel ++ scalateSettings ++ Seq(
-//    settings = Defaults.defaultSettings ++ ScalatraPlugin.scalatraSettings ++ Seq(
     settings = Defaults.defaultSettings ++ Seq(
       organization := Organization,
       name := Name,

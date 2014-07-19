@@ -1,7 +1,5 @@
 import respite.Dependencies
 
-//import respite.Dependencies
-
 name := "respite-core"
 
 //libraryDependencies ++= Dependencies.Compile.
@@ -39,3 +37,13 @@ libraryDependencies ++= Seq(
   Dependencies.Compile.Test.scalatestMongo,
   Dependencies.Compile.Test.scalatraTest
 )
+
+instrumentSettings
+
+ScoverageKeys.minimumCoverage := 80
+
+ScoverageKeys.failOnMinimumCoverage := false
+
+ScoverageKeys.highlighting := true
+
+coverallsSettings

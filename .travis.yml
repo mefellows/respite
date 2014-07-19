@@ -2,9 +2,9 @@ language: scala
 scala:
   - 2.10.3
 jdk:
+  - oraclejdk8
   - oraclejdk7
   - openjdk7
-  - oraclejdk6
   - openjdk6
 services: mongodb
 script:
