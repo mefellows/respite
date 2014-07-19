@@ -3,7 +3,7 @@
 REST should be easy - Respite is a reactive & modular micro-framework for REST applications written in Scala.
 
 [![Build Status](https://travis-ci.org/mefellows/respite.svg)](https://travis-ci.org/mefellows/respite)
-[![Coverage Status](https://img.shields.io/coveralls/mefellows/respite.svg)](https://coveralls.io/r/mefellows/respite?branch=multi-module)
+[![Coverage Status](https://coveralls.io/repos/mefellows/respite/badge.png?branch=multi-module)](https://coveralls.io/r/mefellows/respite?branch=multi-module)
 
 ## Features
 
