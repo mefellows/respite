@@ -12,11 +12,13 @@ trait MongoSpecSupport {
 
   protected val databaseName = "test" + this.getClass.getSimpleName.toLowerCase
 
-  protected val mongoUri: String = s"mongodb://127.0.0.1:17123/$databaseName"
+  protected val databasePort = sys.env.get("MONGO_PORT").map( port => port.toInt).getOrElse(27017)
 
-  implicit val mongoConnectorForTest = new MongoConnector(mongoUri)
+  protected lazy val mongoUri: String = s"mongodb://127.0.0.1:$databasePort/$databaseName"
 
-  implicit val mongo = mongoConnectorForTest.db
+  implicit lazy val mongoConnectorForTest = new MongoConnector(mongoUri)
+
+  implicit lazy val mongo = mongoConnectorForTest.db
 
   def bsonCollection(name: String)(failoverStrategy: FailoverStrategy = mongoConnectorForTest.helper.db.failoverStrategy): BSONCollection = {
     mongoConnectorForTest.helper.db(name, failoverStrategy)

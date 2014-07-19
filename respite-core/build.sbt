@@ -14,6 +14,8 @@ resolvers += "spray repo" at "http://repo.spray.io"
 
 resolvers += Classpaths.typesafeReleases
 
+parallelExecution in Test := false
+
 libraryDependencies ++= Seq(
   Dependencies.Compile.scalatra,
   Dependencies.Compile.scalate,

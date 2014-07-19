@@ -14,11 +14,6 @@ object Dependencies {
 
     import Versions._
 
-//    resolvers += "Typesafe" at "http://repo.typesafe.com/typesafe/releases/",
-//    resolvers += "Akka Repo" at "http://repo.akka.io/repository",
-//    resolvers += "spray repo" at "http://repo.spray.io",
-//    resolvers += Classpaths.typesafeReleases,
-//    libraryDependencies ++= Seq(
     val scalatra         = "org.scalatra"              %% "scalatra"                 % ScalatraVersion
     val scalatraJson     = "org.scalatra"              %% "scalatra-json"            % "2.2.2"
     val scalatraAuth     = "org.scalatra"              %% "scalatra-auth"            % ScalatraVersion
@@ -43,7 +38,6 @@ object Dependencies {
       val jettyWebapp      = "org.eclipse.jetty"         %  "jetty-webapp"             % "8.1.10.v20130312"          % "container;compile"
       val jettyServlet     = "org.eclipse.jetty.orbit"   %  "javax.servlet"            % "3.0.0.v201112011016"       % "container;compile;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar"))
     }
-
 
     // Test
 

@@ -11,7 +11,7 @@ import play.api.libs.json.Json
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.mongo.CurrentTime
 
-class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEmbedDatabase  with MongoSpecSupport with Awaiting with CurrentTime {
+class RestControllerSpec extends ServletTestsBase with ScalaFutures /*with MongoEmbedDatabase*/ with MongoSpecSupport with Awaiting with CurrentTime {
   implicit val bindingModule = TestConfigurationModule
   var mongoProps: MongodProps = null
 
@@ -24,10 +24,11 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
   addServlet(new RestController[User, BSONObjectID]("users", User.format, repository), "/users/*")
 
   before {
-    mongoProps = mongoStart(17123) // by default port = 12345 & version = Version.2.3.0
+//    mongoProps = mongoStart(databasePort)
 
     // Clear out entries - only do this if you don't start/stop between tests
-    await(repository.removeAll)
+    await(repository.drop)
+    await(catRepository.drop)
 
     // Add some keys to test against
     val key = User(id = BSONObjectID("53b62e370100000100af8ecd"), username = "mfellows", firstName = "Matt")
@@ -51,7 +52,7 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoEm
   }
 
   after {
-    mongoStop(mongoProps)
+//    mongoStop(mongoProps)
   }
 
   "A RestController" should {
