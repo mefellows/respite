@@ -1,5 +1,9 @@
 language: scala
 scala:
-    - 2.10.3
+- 2.10.3
 jdk: oraclejdk7
 services: mongodb
+script: sbt coveralls
+env:
+  global:
+    secure: d+Jo3HwjYCnpHLWFr0bsauv0/5OhKl0iSFlGlRo0Ybnv6ii9jo5qYUSV9gVXRFlypOfEmu3gCNzv6GxTLZsTivV38qpVJypDV0N1cGUl7nRmTanU0Ba9LjtusD6dCRqbfOhggdk4mNf7KFNJ6DA1NQHCRuwmOBCLtebu6WaMC5Y=
