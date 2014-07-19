@@ -166,4 +166,28 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
     }
   }
 
+
+  post("/search/") {
+
+  }
+
+  /**
+   * Search the current repository by given k/v pairs.
+   *
+   * Search keys should be in the form: search.key=value&search.key2=value2
+   *
+   */
+  get("/search/") {
+    val criteria = requestParamsToSearchCriteria(params)
+    logger.debug(criteria.toString)
+
+    new AsyncResult {
+      val is = actor ? Seq("search", criteria)
+    }
+  }
+
+  def requestParamsToSearchCriteria(params: Params): List[(String, JsValue)] = {
+//    val searchCriteria: List[Tuple2[String, String]] = params.keys.filter(_.startsWith("search.")) foldLeft(List[Tuple2[String, String]]()) ( (list,k) => (k, params.get(s"search.$k")))
+    params.keys.filter(_.startsWith("search.")).map (_.replaceFirst("search.","")).foldLeft(List[(String, JsValue)]())((list,k) => list.::(k, JsString(params.as[String](s"search.$k"))) )
+  }
 }

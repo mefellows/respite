@@ -7,6 +7,8 @@
     </encoder>
   </appender>
 
+  <logger name="au.com.onegeek.respite" level="DEBUG" />
+
   <root level="info">
     <appender-ref ref="STDOUT" />
   </root>

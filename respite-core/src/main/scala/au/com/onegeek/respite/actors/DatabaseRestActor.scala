@@ -28,6 +28,7 @@ import akka.actor.Actor
 import au.com.onegeek.respite.models.Model
 import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
 import org.slf4j.LoggerFactory
+import play.api.libs.json.Json.JsValueWrapper
 import play.api.libs.json._
 import spray.caching.{Cache, LruCache}
 import uk.gov.hmrc.mongo.Repository
@@ -119,6 +120,7 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
     case Seq("create", modelInstance: ModelType) => println("yo, actor creatin"); doCreate(modelInstance)
     case Seq("update", modelInstance: ModelType) => println("yo, actor updating something "); doUpdate(modelInstance)
     case Seq("delete", objectID: String) => println("yo, actor deleting something"); doDeleteEntity(objectID)
+    case Seq("search", search: List[(String, JsValue)]) => println("yo, actor search something"); doSearch(search: _*)
     case _ => println("Ah, NFI what you're askin")
   }
 
@@ -236,5 +238,9 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
       foo
     }
 
+  }
+
+  def doSearch(search: (String, JsValueWrapper)*) {
+    repository.find(search: _*)
   }
 }
