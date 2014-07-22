@@ -1,4 +1,6 @@
+import bintray.Keys._
 import respite.Dependencies
+import com.typesafe.sbt.SbtGit._
 
 name := "respite-core"
 
@@ -47,3 +49,5 @@ ScoverageKeys.failOnMinimumCoverage := false
 ScoverageKeys.highlighting := true
 
 coverallsSettings
+
+licenses += ("MIT", url("http://opensource.org/licenses/MIT"))

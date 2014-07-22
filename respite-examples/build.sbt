@@ -1,4 +1,5 @@
 import respite.Dependencies
+import com.typesafe.sbt.SbtGit._
 
 name := "respite-examples"
 
@@ -15,3 +16,7 @@ libraryDependencies ++= Seq(
   Dependencies.Compile.Test.scalatraTest
 )
 
+versionWithGit
+
+// Optionally:
+git.baseVersion := "0.1"
