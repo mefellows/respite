@@ -2,6 +2,9 @@
 
 REST should be easy - Respite is a reactive & modular micro-framework for REST applications written in Scala.
 
+[![Build Status](https://travis-ci.org/mefellows/respite.svg)](https://travis-ci.org/mefellows/respite)
+[![Coverage Status](https://coveralls.io/repos/mefellows/respite/badge.png?branch=multi-module)](https://coveralls.io/r/mefellows/respite?branch=multi-module)
+
 ## Features
 
 * Easy OAuth2.0 integration
@@ -29,7 +32,6 @@ libraryDependencies += "au.com.onegeek" %% "respite" % "0.1.0-SNAPSHOT"
 
 libraryDependencies += "com.typesafe.play" %% "play-json" % "2.2.3"
 ```
-
 ### Create a Model
 ```scala
 case class User(id: BSONObjectID = BSONObjectID.generate, username: String, firstName: String) extends Model[BSONObjectID]
