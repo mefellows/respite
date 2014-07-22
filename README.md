@@ -15,12 +15,21 @@ REST should be easy - Respite is a reactive & modular micro-framework for REST a
 Fetch from Maven Central (to be confirmed), currently only Snapshots are available:
 
 In your build.{sbt, scala}:
+
 ```scala
-libraryDependencies ++= Seq(
-  "au.com.onegeek" %% "respite-rest-framework" % "0.0.1-SNAPSHOT",
-  "com.typesafe.play" %% "play-json" % "2.2.3"
-)
+resolvers += "Typesafe" at "http://repo.typesafe.com/typesafe/releases/"
+
+resolvers += "Akka Repo" at "http://repo.akka.io/repository"
+
+resolvers += "spray repo" at "http://repo.spray.io"
+
+resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+
+libraryDependencies += "au.com.onegeek" %% "respite" % "0.1.0-SNAPSHOT"
+
+libraryDependencies += "com.typesafe.play" %% "play-json" % "2.2.3"
 ```
+
 ### Create a Model
 ```scala
 case class User(id: BSONObjectID = BSONObjectID.generate, username: String, firstName: String) extends Model[BSONObjectID]
