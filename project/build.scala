@@ -20,7 +20,8 @@ object RespiteBuild extends Build {
     "respite-core",
     file("respite-core"),
 //    settings = Seq(com.typesafe.sbt.SbtStartScript.startScriptForClassesSettings: _*) ++ Defaults.defaultSettings ++ ScalatraPlugin.scalatraWithJRebel ++ scalateSettings ++ Seq(
-    settings = Defaults.defaultSettings ++ bintray.Plugin.bintraySettings ++ Seq(
+//    settings = Defaults.defaultSettings ++ bintray.Plugin.bintraySettings ++ Seq(
+    settings = Defaults.defaultSettings ++ Seq(
       organization := Organization,
       name := Name,
       version := Version,

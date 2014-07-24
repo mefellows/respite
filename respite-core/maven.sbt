@@ -2,9 +2,9 @@ import com.typesafe.sbt.SbtGit._
 
 publishMavenStyle := true
 
-versionWithGit
+//versionWithGit
 
-git.baseVersion := "0.1"
+//git.baseVersion := "0.1"
 
 publishTo <<= version { (v: String) =>
   val nexus = "https://oss.sonatype.org/"

@@ -1,4 +1,3 @@
-import bintray.Keys._
 import respite.Dependencies
 import com.typesafe.sbt.SbtGit._
 
