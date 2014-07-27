@@ -8,10 +8,18 @@ import com.mojolly.scalate.ScalatePlugin._
 import ScalateKeys._
 import scoverage.ScoverageSbtPlugin.instrumentSettings
 
+
 object RespiteBuild extends Build {
   val Organization = "au.com.onegeek"
   val Name = "Respite REST Framework"
   val Version = "0.0.1-SNAPSHOT"
+  val projectResolvers = Seq(
+    Opts.resolver.sonatypeReleases,
+    Opts.resolver.sonatypeSnapshots,
+    "typesafe-releases" at "http://repo.typesafe.com/typesafe/releases/",
+    "typesafe-snapshots" at "http://repo.typesafe.com/typesafe/snapshots/",
+    "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
+  )
 //
 
 //  seq(SbtStartScript.startScriptForClassesSettings: _*)
@@ -25,7 +33,8 @@ object RespiteBuild extends Build {
       organization := Organization,
       name := Name,
       version := Version,
-      scalaVersion := Dependencies.Versions.ScalaVersion
+      scalaVersion := Dependencies.Versions.ScalaVersion,
+      resolvers := projectResolvers
     )
   )
 
@@ -37,6 +46,7 @@ object RespiteBuild extends Build {
       name := Name,
       version := Version,
       scalaVersion := Dependencies.Versions.ScalaVersion,
+      resolvers := projectResolvers,
       scalateTemplateConfig in Compile <<= (sourceDirectory in Compile){ base =>
         Seq(
           TemplateConfig(

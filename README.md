@@ -7,11 +7,13 @@ REST should be easy - Respite is a reactive & modular micro-framework for REST a
 
 ## Features
 
-* Easy OAuth2.0 integration
-* API usage metrics (With an API and GUI)
-* Extensible REST/CRUD Pipeline caching support (via CachingSupport with EHCache and in-memory Spray caching)
+* Extensible CRUD REST interface, with endpoint/pipeline caching support (*Caching only in dev + experimental)
 * Distributed Database Access and Integration Layer via Reactive Mongo and Akka, with CRUD out-of-the-box
-* In-built JSON <-> Case Class marshalling & validation via play-json
+* In-built JSON <-> Case Class marshalling & validation via play-json 
+**TODO**:
+* API usage metrics (With an API and GUI)
+* Easy OAuth2.0 Integration + API Key
+* EIP support via Camel
 
 ## Getting Started
 

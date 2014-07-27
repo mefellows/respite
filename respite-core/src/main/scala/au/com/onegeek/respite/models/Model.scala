@@ -26,7 +26,6 @@ import play.api.libs.json._
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.mongo.JsonExtensions
 import uk.gov.hmrc.mongo.ReactiveMongoFormats._
-
 /**
  * A canonical representation of a Persisted Model.
  *

@@ -23,7 +23,6 @@
 package au.com.onegeek.respite.security
 
 import org.scalatra.{FutureSupport, AsyncResult, ScalatraBase}
-import com.escalatesoft.subcut.inject.Injectable
 import org.slf4j.LoggerFactory
 import reactivemongo.api.DefaultDB
 import spray.caching.{LruCache, Cache}
@@ -40,7 +39,7 @@ import scala.concurrent.duration._
  * is checked for authentication based on the
  * X-API-Key header.
  */
-trait Authentication extends ScalatraBase with Injectable {
+trait Authentication extends ScalatraBase {
 
   protected implicit def executor: ExecutionContext = ExecutionContext.global
 

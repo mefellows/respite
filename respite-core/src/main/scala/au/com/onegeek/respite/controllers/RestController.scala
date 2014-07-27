@@ -81,15 +81,16 @@ import scala.reflect.ClassTag
 // TODO: Consider making RestController an abstract/Trait and creating specific, concrete implementations (Reactive, Postgres... versions)
 class RestController[ObjectType <: Model[ObjectID], ObjectID]
     (collectionName: String, jsonFormatter: Format[ObjectType], repository: Repository[ObjectType, ObjectID])
-    (implicit val bindingModule: BindingModule, implicit val tag: ClassTag[ObjectType], implicit val objectIdConverter: String => ObjectID)
+//    (implicit val bindingModule: BindingModule, implicit val tag: ClassTag[ObjectType], implicit val objectIdConverter: String => ObjectID)
+    (implicit val tag: ClassTag[ObjectType], implicit val objectIdConverter: String => ObjectID)
 //    (implicit val bindingModule: BindingModule, implicit val tag: ClassTag[ObjectType])
     extends RespiteApiStack[ObjectType]
     with MethodOverride
     with FutureSupport
-    with Injectable
+//    with Injectable
     with LoggingSupport { this: LoggingSupport =>
 
-  val system = inject[ActorSystem]
+  val system = ActorSystem()
   override implicit val format = jsonFormatter
 
 

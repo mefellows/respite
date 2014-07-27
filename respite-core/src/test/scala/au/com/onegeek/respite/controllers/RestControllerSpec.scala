@@ -12,7 +12,7 @@ import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.mongo.CurrentTime
 
 class RestControllerSpec extends ServletTestsBase with ScalaFutures /*with MongoEmbedDatabase*/ with MongoSpecSupport with Awaiting with CurrentTime {
-  implicit val bindingModule = TestConfigurationModule
+//  implicit val bindingModule = TestConfigurationModule
   var mongoProps: MongodProps = null
 
   import au.com.onegeek.respite.models.ModelJsonExtensions._
