@@ -19,20 +19,20 @@ Fetch from Maven Central, currently only Snapshots are available:
 
 In your build.{sbt, scala}:
 
-```scala
-resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-
-libraryDependencies += "au.com.onegeek" %% "respite" % "0.0.1-SNAPSHOT"
-```
+    ```scala
+    resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+    
+    libraryDependencies += "au.com.onegeek" %% "respite" % "0.0.1-SNAPSHOT"
+    ```
 ### Create a Model
-```scala
-case class User(id: BSONObjectID = BSONObjectID.generate, username: String, firstName: String) extends Model[BSONObjectID]
-
-object User {
-  import au.com.onegeek.respite.models.ModelJsonExtensions._
-  implicit val format = modelFormat { Json.format[User] }
-}
-```
+    ```scala
+    case class User(id: BSONObjectID = BSONObjectID.generate, username: String, firstName: String) extends Model[BSONObjectID]
+    
+    object User {
+      import au.com.onegeek.respite.models.ModelJsonExtensions._
+      implicit val format = modelFormat { Json.format[User] }
+    }
+    ```
 
 ### Create a Repository
 
@@ -52,21 +52,21 @@ class UserRepository(implicit mc: MongoConnector)
 
 Create an instance of RestController for a ```User``` in table "users" on path "/users/*":
 
-```scala
-class ScalatraBootstrap extends LifeCycle {
-  protected implicit def executor: ExecutionContext = ExecutionContext.global
-
-  override def init(context: ServletContext) {
-  
-    // Import implicit definitions into Scope
-    implicit val bindingModule = ProductionConfigurationModule  // DI Configuration object
-    import au.com.onegeek.respite.models.ModelJsonExtensions._  // JSON extensions
+    ```scala
+    class ScalatraBootstrap extends LifeCycle {
+      protected implicit def executor: ExecutionContext = ExecutionContext.global
     
-    // Add Controllers
-    addServlet(new RestController[User, BSONObjectID]("users", User.format, new UserRepository), "/users/*")
-  }
-}
-```
+      override def init(context: ServletContext) {
+      
+        // Import implicit definitions into Scope
+        implicit val bindingModule = ProductionConfigurationModule  // DI Configuration object
+        import au.com.onegeek.respite.models.ModelJsonExtensions._  // JSON extensions
+        
+        // Add Controllers
+        addServlet(new RestController[User, BSONObjectID]("users", User.format, new UserRepository), "/users/*")
+      }
+    }
+    ```
 
 ### Your done! cURL until your heart is content
 
@@ -116,12 +116,12 @@ Thanks to the following projects for making this so awesome:
 
 To get nightly/development versions, add the following snapshot repository and version:
 
-```scala
-resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-
-libraryDependencies += "au.com.onegeek" %% "respite" % "0.0.1-SNAPSHOT"
-```
+    ```scala
+    resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+    
+    libraryDependencies += "au.com.onegeek" %% "respite" % "0.0.1-SNAPSHOT"
+    ```
 
 ## Contributing
 
-Simply fork the repo, create a feature branch and then submit a pull request (oh, please be a squash your commits too!).
+Simply fork the repo, create a feature branch and then submit a pull request (oh, please squash your commits too!).
