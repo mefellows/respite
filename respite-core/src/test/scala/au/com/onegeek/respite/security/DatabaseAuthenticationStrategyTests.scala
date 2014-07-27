@@ -27,7 +27,7 @@ class ApiKeyTestRepository(implicit mc: MongoConnector)
   }
 }
 
-class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFutures with MongoEmbedDatabase with MongoSpecSupport with Awaiting {
+class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFutures with MongoSpecSupport with Awaiting {
   implicit val bindingModule = TestConfigurationModule
 
   class TestServlet(implicit val bindingModule: BindingModule) extends ScalatraServlet with Injectable
@@ -54,7 +54,7 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
   val authServletWithApi = new AuthServlet with AuthenticationApi
 
   before {
-    mongoProps = mongoStart(17123)
+    //mongoProps = mongoStart(17123)
 
     // Clear out entries
     await(repository.removeAll)
@@ -66,7 +66,7 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
   }
 
   after {
-    mongoStop(mongoProps)
+    //mongoStop(mongoProps)
   }
 
   addServlet(authServlet, "/*")
