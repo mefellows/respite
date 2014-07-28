@@ -23,7 +23,7 @@ addSbtPlugin("org.scoverage" %% "sbt-scoverage" % "0.99.5.1")
 
 addSbtPlugin("com.sksamuel.scoverage" %% "sbt-coveralls" % "0.0.5")
 
-addSbtPlugin("au.com.onegeek" % "sbt-dotenv" % "1.0")
+//addSbtPlugin("au.com.onegeek" % "sbt-dotenv" % "1.1")
 
 resolvers += "jgit-repo" at "http://download.eclipse.org/jgit/maven"
 

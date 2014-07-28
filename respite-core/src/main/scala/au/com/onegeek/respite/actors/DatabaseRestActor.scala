@@ -47,7 +47,8 @@ import scala.concurrent.{Await, ExecutionContext, Future}
  * Inspects the sender's message and returns a serializable object or List.
  */
 class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](repository: Repository[ModelType, ObjectIDType])
-                                                 (implicit val bindingModule: BindingModule, implicit val format: Format[ModelType], implicit val stringToId: String => ObjectIDType) extends Actor with Injectable {
+//                                                 (implicit val bindingModule: BindingModule, implicit val format: Format[ModelType], implicit val stringToId: String => ObjectIDType) extends Actor with Injectable {
+                                                 (implicit val format: Format[ModelType], implicit val stringToId: String => ObjectIDType) extends Actor {
 
   val logger = LoggerFactory.getLogger(getClass)
 
