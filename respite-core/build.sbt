@@ -28,11 +28,11 @@ libraryDependencies ++= Seq(
   Dependencies.Compile.sprayUtil,
   Dependencies.Compile.playJson,
   Dependencies.Compile.playMongo,
+  Dependencies.Compile.metrics,
   Dependencies.Compile.ehCacheCore,
   Dependencies.Compile.simpleMongo,
   Dependencies.Compile.jettyServlet,
   Dependencies.Compile.jettyWebapp,
-  Dependencies.Compile.Test.scalatest,
   Dependencies.Compile.Test.scalatestMongo,
   Dependencies.Compile.Test.scalatraTest
 )

@@ -26,7 +26,7 @@ import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
 import au.com.onegeek.respite.actors.DatabaseRestActor
-import au.com.onegeek.respite.controllers.support.LoggingSupport
+import au.com.onegeek.respite.controllers.support.{MetricsSupport, LoggingSupport}
 import au.com.onegeek.respite.models.Model
 import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
 import org.scalatra._
@@ -86,8 +86,21 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
     extends RespiteApiStack[ObjectType]
     with MethodOverride
     with FutureSupport
+    with MetricsSupport
     with Injectable
     with LoggingSupport { this: LoggingSupport =>
+
+  // Metrics
+  private[this] val loading = metrics.timer(s"api-$collectionName-loading")
+  private[this] val counters = metrics.counter(s"api-$collectionName-counters")
+
+  // Would like to compose this metrics into a single function call...
+  //private[this] val all = loading compose counters
+
+  // Health Checks
+  healthCheck("get", unhealthyMessage = s"GET $collectionName service not available") {
+    true
+  }
 
   val system = inject[ActorSystem]
   override implicit val format = jsonFormatter
@@ -116,9 +129,12 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
   }
 
   get("/") {
-    logger.debug("Getting all")
-    new AsyncResult {
-      val is = actor ? "all"
+    loading.time {
+      counters += 1
+      logger.debug("Getting all")
+      new AsyncResult {
+        val is = actor ? "all"
+      }
     }
   }
 
