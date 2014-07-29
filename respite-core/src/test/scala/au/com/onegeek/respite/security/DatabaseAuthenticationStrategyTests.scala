@@ -5,11 +5,11 @@ import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
 import org.scalatra.ScalatraServlet
 import au.com.onegeek.respite.test.{Awaiting, MongoSpecSupport}
 import org.scalatest.concurrent.ScalaFutures
-import com.github.simplyscala.MongoEmbedDatabase
+//import com.github.simplyscala.MongoEmbedDatabase
+//import com.github.simplyscala.MongodProps
 import uk.gov.hmrc.mongo._
 import play.api.libs.json.{Json, JsValue}
 import reactivemongo.bson.BSONObjectID
-import com.github.simplyscala.MongodProps
 import uk.gov.hmrc.mongo.MongoConnector
 import reactivemongo.api.indexes.IndexType
 import reactivemongo.api.indexes.Index
@@ -32,7 +32,7 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
 
   class TestServlet(implicit val bindingModule: BindingModule) extends ScalatraServlet with Injectable
 
-  var mongoProps: MongodProps = null
+//  var mongoProps: MongodProps = null
   val repository = new ApiKeyTestRepository
   val API_KEY_HEADER = "X-API-Key";
   val API_APP_HEADER = "X-API-Application";

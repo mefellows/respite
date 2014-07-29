@@ -47,7 +47,7 @@ class CatTestRepository(implicit mc: MongoConnector)
 }
 
 // Example of concrete sub-class of RestController
-class CatController(repository: ReactiveRepository[Cat, BSONObjectID])(override implicit val tag: ClassTag[Cat], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[Cat, BSONObjectID]("cats", Cat.format, repository) {
+class CatController(repository: ReactiveRepository[Cat, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[Cat], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[Cat, BSONObjectID]("cats", Cat.format, repository) {
   // Do stuff, extend me!
 }
 

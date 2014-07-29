@@ -22,15 +22,9 @@
  */
 package au.com.onegeek.respite.controllers
 
-import org.scalatra._
-import scalate.ScalateSupport
-import org.fusesource.scalate.TemplateEngine
-import org.fusesource.scalate.layout.DefaultLayoutStrategy
-import javax.servlet.http.HttpServletRequest
-import collection.mutable
-import org.json4s.{Formats, DefaultFormats}
-import org.scalatra.json.{JValueResult, JacksonJsonSupport}
 import au.com.onegeek.respite.controllers.support.PlayJsonSupport
+import org.json4s.{DefaultFormats, Formats}
+import org.scalatra._
 
 trait RespiteApiStack[T] extends ScalatraServlet with PlayJsonSupport[T] {
 

@@ -81,37 +81,39 @@ import scala.reflect.ClassTag
 // TODO: Consider making RestController an abstract/Trait and creating specific, concrete implementations (Reactive, Postgres... versions)
 class RestController[ObjectType <: Model[ObjectID], ObjectID]
     (collectionName: String, jsonFormatter: Format[ObjectType], repository: Repository[ObjectType, ObjectID])
-//    (implicit val bindingModule: BindingModule, implicit val tag: ClassTag[ObjectType], implicit val objectIdConverter: String => ObjectID)
-    (implicit val tag: ClassTag[ObjectType], implicit val objectIdConverter: String => ObjectID)
+    (implicit val bindingModule: BindingModule, implicit val tag: ClassTag[ObjectType], implicit val objectIdConverter: String => ObjectID)
+//    (implicit val tag: ClassTag[ObjectType], implicit val objectIdConverter: String => ObjectID)
 //    (implicit val bindingModule: BindingModule, implicit val tag: ClassTag[ObjectType])
     extends RespiteApiStack[ObjectType]
     with MethodOverride
     with FutureSupport
-    with MetricsSupport
+    //with MetricsSupport
+    with Injectable
     with LoggingSupport { this: LoggingSupport =>
 
   // Metrics
-  private[this] val loading = metrics.timer(s"api-$collectionName-loading")
-  private[this] val counters = metrics.counter(s"api-$collectionName-counters")
+//  private[this] val loading = metrics.timer(s"api-$collectionName-loading")
+//  private[this] val counters = metrics.counter(s"api-$collectionName-counters")
 
   // Would like to compose this metrics into a single function call...
   //private[this] val all = loading compose counters
 
   // Health Checks
-  healthCheck("get", unhealthyMessage = s"GET $collectionName service not available") {
-    true
-  }
+//  healthCheck("get", unhealthyMessage = s"GET $collectionName service not available") {
+//    true
+//  }
 
-//  val system = inject[ActorSystem]
-  val system = ActorSystem()
+  val system = inject[ActorSystem]
+//  val system = ActorSystem()
   override implicit val format = jsonFormatter
 
 
   val actor = system.actorOf(Props(new DatabaseRestActor[ObjectType, ObjectID](repository)))
 
-  import ExecutionContext.Implicits.global
-  protected implicit def executor: ExecutionContext = system.dispatcher
-//  protected implicit def objectIdConverter: BSONObjectID => String
+//  protected implicit def executor: ExecutionContext = system.dispatcher
+  protected implicit def executor: ExecutionContext = ExecutionContext.global
+
+  //  protected implicit def objectIdConverter: BSONObjectID => String
 
 
   implicit val tOut = Timeout(Duration.create(10, SECONDS))
@@ -131,13 +133,13 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
   }
 
   get("/") {
-    loading.time {
-      counters += 1
+//    loading.time {
+//      counters += 1
       logger.debug("Getting all")
       new AsyncResult {
         val is = actor ? "all"
       }
-    }
+//    }
   }
 
   get("/:id") {
