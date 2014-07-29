@@ -87,21 +87,21 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
     extends RespiteApiStack[ObjectType]
     with MethodOverride
     with FutureSupport
-    //with MetricsSupport
+    with MetricsSupport
     with Injectable
     with LoggingSupport { this: LoggingSupport =>
 
   // Metrics
-//  private[this] val loading = metrics.timer(s"api-$collectionName-loading")
-//  private[this] val counters = metrics.counter(s"api-$collectionName-counters")
+  private[this] val loading = metrics.timer(s"api-$collectionName-loading")
+  private[this] val counters = metrics.counter(s"api-$collectionName-counters")
 
-  // Would like to compose this metrics into a single function call...
-  //private[this] val all = loading compose counters
+//  Would like to compose this metrics into a single function call...
+//  private[this] val all = loading compose counters
 
-  // Health Checks
-//  healthCheck("get", unhealthyMessage = s"GET $collectionName service not available") {
-//    true
-//  }
+//  Health Checks
+  healthCheck("get", unhealthyMessage = s"GET $collectionName service not available") {
+    true
+  }
 
   val system = inject[ActorSystem]
 //  val system = ActorSystem()
@@ -110,7 +110,6 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
 
   val actor = system.actorOf(Props(new DatabaseRestActor[ObjectType, ObjectID](repository)))
 
-//  protected implicit def executor: ExecutionContext = system.dispatcher
   protected implicit def executor: ExecutionContext = ExecutionContext.global
 
   //  protected implicit def objectIdConverter: BSONObjectID => String
@@ -133,13 +132,13 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
   }
 
   get("/") {
-//    loading.time {
-//      counters += 1
+    loading.time {
+      counters += 1
       logger.debug("Getting all")
       new AsyncResult {
         val is = actor ? "all"
       }
-//    }
+    }
   }
 
   get("/:id") {

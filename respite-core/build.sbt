@@ -15,12 +15,13 @@ resolvers += Classpaths.typesafeReleases
 
 libraryDependencies ++= Seq(
   Dependencies.Compile.scalatra,
-//  Dependencies.Compile.scalate,
+  Dependencies.Compile.scalate,
+  Dependencies.Compile.specs2,
   Dependencies.Compile.logback,
   Dependencies.Compile.reactiveMongo,
-//  Dependencies.Compile.scalatraAuth,
+  Dependencies.Compile.scalatraAuth,
   Dependencies.Compile.scalatraJson,
-//  Dependencies.Compile.jackson4s,
+  Dependencies.Compile.jackson4s,
   Dependencies.Compile.commonsCodec,
   Dependencies.Compile.subcut,
   Dependencies.Compile.sprayCaching,
@@ -28,12 +29,12 @@ libraryDependencies ++= Seq(
   Dependencies.Compile.playJson,
   Dependencies.Compile.playMongo,
   Dependencies.Compile.metrics,
-//  Dependencies.Compile.ehCacheCore,
+  Dependencies.Compile.ehCacheCore,
   Dependencies.Compile.simpleMongo,
   Dependencies.Compile.jettyServlet,
   Dependencies.Compile.jettyWebapp,
-//  Dependencies.Compile.Test.scalatestMongo,
-  Dependencies.Compile.Test.scalaTest,
+  Dependencies.Compile.Test.scalatest,
+  Dependencies.Compile.Test.scalatestMongo,
   Dependencies.Compile.Test.scalatraTest
 )
 
