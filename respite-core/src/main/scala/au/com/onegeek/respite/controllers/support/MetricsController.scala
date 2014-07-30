@@ -29,60 +29,69 @@ import com.codahale.metrics.health.HealthCheck
 import com.codahale.metrics.servlets._
 import org.scalatra.{ScalatraServlet, Handler}
 import scala.collection.JavaConverters._
+import org.eclipse.jetty.server.handler.HandlerCollection
 
 /**
- * Created by mfellows on 30/07/2014.
+ * REST API and UI for system instrumentation.
+ *
+ * Provides Health checks, ping, thread dumps and the full gamit of CodeHale's Metrics.
+ *
+ * @param path The base path to prefix the range of API endpoints from.
  */
-class MetricsController(context: ServletContext) extends ScalatraServlet with MetricsSupport {
-//class MetricsController extends RespiteApiStack {
+class MetricsController(path: String) extends ScalatraServlet with LoggingSupport with MetricsSupport {
 
-
+  /**
+   * Dynamically add all of the CH Servlets into the runtime
+   *
+   * @param config
+   */
   override def init(config: ServletConfig) {
+    logger.debug("Initialising MetricsController for mo-metrics!")
+    val context = config.getServletContext
 
+    context.setAttribute(MetricsServlet.METRICS_REGISTRY, metricRegistry)
+    context.setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, registry)
 
-    // Dynamic add servlet for servlet 3.x or later
-    if (context.getMajorVersion() >= 3) {
-      println("YO, adding health checks!")
-//      val admin: ServletRegistration.Dynamic = context.addServlet("metricsadmin", new AdminServlet)
-      val metrics: ServletRegistration.Dynamic = context.addServlet("metrics", new MetricsServlet(metricRegistry))
-      val health: ServletRegistration.Dynamic = context.addServlet("health", new HealthCheckServlet(registry))
-      val ping: ServletRegistration.Dynamic = context.addServlet("ping", new PingServlet)
-      val threads: ServletRegistration.Dynamic = context.addServlet("threads", new ThreadDumpServlet)
-      metrics.addMapping("/metrics/");
-      health.addMapping("/metrics/health");
-      ping.addMapping("/metrics/ping");
-      threads.addMapping("/metrics/threads");
-//      admin.addMapping("/metrics/admin");
-    }
+    val metricsServlet = new MetricsServlet(metricRegistry)
+    val healthServlet = new HealthCheckServlet(registry)
+    val pingServlet = new PingServlet
+    val threadDumpServlet = new ThreadDumpServlet
+
+    val adminServlet: AdminServlet = new AdminServlet
+    val admin: ServletRegistration.Dynamic = context.addServlet("metricsadmin", adminServlet)
+    val metrics: ServletRegistration.Dynamic = context.addServlet("metrics", metricsServlet)
+    val health: ServletRegistration.Dynamic = context.addServlet("health", healthServlet)
+    val ping: ServletRegistration.Dynamic = context.addServlet("ping", pingServlet)
+    val threads: ServletRegistration.Dynamic = context.addServlet("threads", threadDumpServlet)
+
+    // Set mapping
+    metrics.addMapping(s"$path/");
+    health.addMapping(s"$path/health");
+    ping.addMapping(s"$path/ping");
+    threads.addMapping(s"$path/threads");
+    admin.addMapping(s"$path/admin");
+
+    // Init
+    adminServlet.init(config)
+    metricsServlet.init(config)
+    healthServlet.init(config)
+    pingServlet.init(config)
+    threadDumpServlet.init(config)
 
     super.init(config)
-    initialize(config) // see Initializable.initialize for why
+    initialize(config)
   }
 
 
-  get("/foo") {
-    println("foo'd me")
+  // We do this so Scalatra tells us what we're missing out on if the wrong URL is hit...
 
-    val results: java.util.Map[String, HealthCheck.Result] = registry.runHealthChecks()
+  get("/") {}
 
-    results.asScala.foreach( { s =>
-      println(s)
-    })
+  get("/health") {}
 
-//    for (Entry<String, HealthCheck.Result> entry : results.entrySet()) {
-//      if (entry.getValue().isHealthy()) {
-//        System.out.println(entry.getKey() + " is healthy");
-//      } else {
-//        System.err.println(entry.getKey() + " is UNHEALTHY: " + entry.getValue().getMessage());
-//        final Throwable e = entry.getValue().getError();
-//        if (e != null) {
-//          e.printStackTrace();
-//        }
-//      }
-//    }
+  get("/ping") {}
 
-
-  }
+  get("/threads") {}
 
 }
 

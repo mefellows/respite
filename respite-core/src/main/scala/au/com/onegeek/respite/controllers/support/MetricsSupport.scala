@@ -35,13 +35,14 @@ import nl.grons.metrics.scala.{MetricName, InstrumentedBuilder, CheckedBuilder}
 *
 * Created by mfellows on 23/06/2014.
 */
-trait MetricsSupport  extends InstrumentedBuilder with CheckedBuilder {
+object RespiteApplicationMetrics {
+  val healthChecksRegistry = new com.codahale.metrics.health.HealthCheckRegistry();
+  val metricRegistry = new com.codahale.metrics.MetricRegistry()
+}
+
+trait MetricsSupport extends InstrumentedBuilder with CheckedBuilder {
   override lazy val metricBaseName = MetricName(getClass)
   val metricRegistry = RespiteApplicationMetrics.metricRegistry
   val registry = RespiteApplicationMetrics.healthChecksRegistry
 }
 
-object RespiteApplicationMetrics {
-  val healthChecksRegistry = new com.codahale.metrics.health.HealthCheckRegistry();
-  val metricRegistry = new com.codahale.metrics.MetricRegistry()
-}

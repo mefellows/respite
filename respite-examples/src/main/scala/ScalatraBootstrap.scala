@@ -3,9 +3,10 @@ import au.com.onegeek.respite.controllers.RestController
 import au.com.onegeek.respite.controllers.support.MetricsController
 import au.com.onegeek.respite.examples._
 import au.com.onegeek.respite.examples.models._
-import com.codahale.metrics.servlets.AdminServlet
+import com.codahale.metrics.MetricRegistry
+import com.codahale.metrics.servlets.{HealthCheckServlet, MetricsServlet, AdminServlet}
 import org.scalatra._
-import javax.servlet.ServletContext
+import javax.servlet.{ServletRegistration, ServletContext}
 
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.mongo.MongoConnector
@@ -15,7 +16,7 @@ class ScalatraBootstrap extends LifeCycle {
     import au.com.onegeek.respite.models.ModelJsonExtensions._
 
     val databaseName = "respite"
-
+    val metricsPath = "/metrics"
     val mongoUri: String = s"mongodb://127.0.0.1:17017/$databaseName"
 
     implicit val mongoConnectorForTest = new MongoConnector(mongoUri)
@@ -27,8 +28,6 @@ class ScalatraBootstrap extends LifeCycle {
     context.mount(new RespiteExamples, "/*")
     context.mount(new UserController(new UserRepository), "/users")
     context.mount(new RestController[Product, BSONObjectID]("products", Product.format, new ProductRepository), "/products")
-    context.mount(new MetricsController(context), "/metrics")
-
-    //      context.addServlet("metrics", new AdminServlet)
+    context.mount(new MetricsController(metricsPath), metricsPath)
   }
 }
