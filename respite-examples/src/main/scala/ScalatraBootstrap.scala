@@ -1,7 +1,9 @@
 import au.com.onegeek.respite.config.ProductionConfigurationModule
 import au.com.onegeek.respite.controllers.RestController
+import au.com.onegeek.respite.controllers.support.MetricsController
 import au.com.onegeek.respite.examples._
 import au.com.onegeek.respite.examples.models._
+import com.codahale.metrics.servlets.AdminServlet
 import org.scalatra._
 import javax.servlet.ServletContext
 
@@ -24,6 +26,9 @@ class ScalatraBootstrap extends LifeCycle {
 
     context.mount(new RespiteExamples, "/*")
     context.mount(new UserController(new UserRepository), "/users")
-    context.mount(new RestController[Product, BSONObjectID]("products", Product.format, new ProductRepository), "/products/*")
+    context.mount(new RestController[Product, BSONObjectID]("products", Product.format, new ProductRepository), "/products")
+    context.mount(new MetricsController(context), "/metrics")
+
+    //      context.addServlet("metrics", new AdminServlet)
   }
 }

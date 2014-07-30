@@ -29,6 +29,7 @@ object Dependencies {
     val playJson         = "com.typesafe.play"         %% "play-json"                % "2.2.3"
     val playMongo        = "org.reactivemongo"         %% "play2-reactivemongo"      % "0.10.2"
     val metrics          = "nl.grons"                  %% "metrics-scala"            % "3.2.0_a2.2"
+    val metricsAdmin     = "com.codahale.metrics"      %  "metrics-servlets"         % "3.0.1"
     val simpleMongo      = "uk.gov.hmrc"               %% "simple-reactivemongo"     % "1.1.0"
     val ehCacheCore      = "net.sf.ehcache"            %  "ehcache-core"             % "2.6.8"
     val jettyWebapp      = "org.eclipse.jetty"         %  "jetty-webapp"             % "8.1.10.v20130312"          % "compile"

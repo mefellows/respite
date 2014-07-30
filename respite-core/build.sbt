@@ -29,6 +29,7 @@ libraryDependencies ++= Seq(
   Dependencies.Compile.playJson,
   Dependencies.Compile.playMongo,
   Dependencies.Compile.metrics,
+  Dependencies.Compile.metricsAdmin,
   Dependencies.Compile.ehCacheCore,
   Dependencies.Compile.simpleMongo,
   Dependencies.Compile.jettyServlet,

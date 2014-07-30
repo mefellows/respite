@@ -29,6 +29,8 @@ import au.com.onegeek.respite.actors.DatabaseRestActor
 import au.com.onegeek.respite.controllers.support.{MetricsSupport, LoggingSupport}
 import au.com.onegeek.respite.models.Model
 import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
+import com.sun.org.apache.bcel.internal.generic.ObjectType
+import nl.grons.metrics.scala.MetricName
 import org.scalatra._
 import play.api.libs.json._
 import uk.gov.hmrc.mongo.Repository
@@ -89,16 +91,24 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
     with FutureSupport
     with MetricsSupport
     with Injectable
-    with LoggingSupport { this: LoggingSupport =>
+    with LoggingSupport {
+  this: LoggingSupport =>
 
-  // Metrics
+  // Metrics - override metrics base name if controller has not been subclassed (i.e. direct instantiation)
+  override lazy val metricBaseName = {
+    getClass.getName match {
+      case "au.com.onegeek.respite.controllers.RestController" => MetricName(s"RestController.${collectionName.capitalize}")
+      case name: String => MetricName(name)
+    }
+  }
+
   private[this] val loading = metrics.timer(s"api-$collectionName-loading")
   private[this] val counters = metrics.counter(s"api-$collectionName-counters")
 
 //  Would like to compose this metrics into a single function call...
 //  private[this] val all = loading compose counters
 
-//  Health Checks
+  //  Health Checks
   healthCheck("get", unhealthyMessage = s"GET $collectionName service not available") {
     true
   }
@@ -107,13 +117,9 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
 //  val system = ActorSystem()
   override implicit val format = jsonFormatter
 
-
   val actor = system.actorOf(Props(new DatabaseRestActor[ObjectType, ObjectID](repository)))
 
   protected implicit def executor: ExecutionContext = ExecutionContext.global
-
-  //  protected implicit def objectIdConverter: BSONObjectID => String
-
 
   implicit val tOut = Timeout(Duration.create(10, SECONDS))
 
@@ -165,9 +171,6 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
     new AsyncResult {
       val is = actor ? Seq("delete", id)
     }
-    //    val modelInstance = Json.parse(request.body).validate[ObjectType]
-    //    val id = params("id")
-    //    doSingle(id, "update", Some(modelInstance))
   }
 
   put("/:id") {
