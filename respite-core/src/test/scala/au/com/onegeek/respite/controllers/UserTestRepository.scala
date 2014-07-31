@@ -31,6 +31,9 @@ import uk.gov.hmrc.mongo.{MongoConnector, ReactiveMongoFormats, ReactiveReposito
 import au.com.onegeek.respite.models.ModelJsonExtensions._
 import uk.gov.hmrc.mongo.ReactiveMongoFormats.objectIdFormats
 import scala.reflect._
+import au.com.onegeek.respite.controllers.support.{MetricsRestSupport, MetricsSupport}
+import nl.grons.metrics.scala.MetricName
+
 class UserTestRepository(implicit mc: MongoConnector)
   extends ReactiveRepository[User, BSONObjectID]("users", mc.db, modelFormatForMongo {Json.format[User]}, ReactiveMongoFormats.objectIdFormats) {
 
@@ -49,5 +52,21 @@ class CatTestRepository(implicit mc: MongoConnector)
 // Example of concrete sub-class of RestController
 class CatController(repository: ReactiveRepository[Cat, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[Cat], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[Cat, BSONObjectID]("cats", Cat.format, repository) {
   // Do stuff, extend me!
+}
+
+class MetricSpecController(repository: ReactiveRepository[User, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[User, BSONObjectID]("users", User.format, repository) with MetricsRestSupport[User, BSONObjectID] {
+  get("/fooeyfoobar") {
+    "foo"
+  }
+
+  get("/fooaoeuaoeu/bar/baz") {
+    println("caaoeuaoeuts")
+  }
+}
+
+class MetricSpecControllerWithCustomName(repository: ReactiveRepository[User, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[User, BSONObjectID]("users", User.format, repository) with MetricsRestSupport[User, BSONObjectID] {
+  override lazy val metricBaseName = {
+    MetricName("MyAwesomeName")
+  }
 }
 

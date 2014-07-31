@@ -38,7 +38,7 @@ import org.eclipse.jetty.server.handler.HandlerCollection
  *
  * @param path The base path to prefix the range of API endpoints from.
  */
-class MetricsController(path: String) extends ScalatraServlet with LoggingSupport with MetricsSupport {
+class MetricsController(path: String) extends ScalatraServlet with LoggingSupport with Metrics {
 
   /**
    * Dynamically add all of the CH Servlets into the runtime
@@ -64,14 +64,15 @@ class MetricsController(path: String) extends ScalatraServlet with LoggingSuppor
     val ping: ServletRegistration.Dynamic = context.addServlet("ping", pingServlet)
     val threads: ServletRegistration.Dynamic = context.addServlet("threads", threadDumpServlet)
 
-    // Set mapping
+
+
+//    context.addFilter("instrumentedFilter", ) // This is standard servlet instrumentation... if i can find it.
     metrics.addMapping(s"$path/");
     health.addMapping(s"$path/health");
     ping.addMapping(s"$path/ping");
     threads.addMapping(s"$path/threads");
     admin.addMapping(s"$path/admin");
 
-    // Init
     adminServlet.init(config)
     metricsServlet.init(config)
     healthServlet.init(config)
@@ -109,5 +110,3 @@ class MetricsController(path: String) extends ScalatraServlet with LoggingSuppor
 // Ultimately, CTO is where i'm headed, I can see this role helping me along that path.
 // Assessing a couple of other opps - can I have a few moredays? (contracts / consulting etc.)
 //
-
-

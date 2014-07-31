@@ -8,6 +8,7 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.Json
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.mongo.CurrentTime
+import au.com.onegeek.respite.controllers.support.MetricsSupport
 
 class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoSpecSupport with Awaiting with CurrentTime {
   implicit val bindingModule = TestConfigurationModule

@@ -26,11 +26,9 @@ import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
 import au.com.onegeek.respite.actors.DatabaseRestActor
-import au.com.onegeek.respite.controllers.support.{MetricsSupport, LoggingSupport}
+import au.com.onegeek.respite.controllers.support.LoggingSupport
 import au.com.onegeek.respite.models.Model
 import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
-import com.sun.org.apache.bcel.internal.generic.ObjectType
-import nl.grons.metrics.scala.MetricName
 import org.scalatra._
 import play.api.libs.json._
 import uk.gov.hmrc.mongo.Repository
@@ -38,12 +36,6 @@ import uk.gov.hmrc.mongo.Repository
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.{Duration, SECONDS}
 import scala.reflect.ClassTag
-
-
-/**
- * Created by mfellows on 24/04/2014.
- */
-
 
 /*
   Base controller class. Each controller is bound to a case class representing
@@ -60,61 +52,17 @@ import scala.reflect.ClassTag
   whatever objects are required to complete the action - typically a case class
   instance of ObjectType constructed using JSON from the request body,
 */
-
-
-/*
- * Proposed approach:
- *
- * Step 1: Create a generic CRUD Rest Controller (which is basically what the below does)
- * Step 2.1: Create a type class system that models the main objects required - e.g. a data store representation etc. that can be swapped out
- * Step 2.2: Design any annotations/types required to allow for persistance in the model e.g. @Model or with 'Model' type class
- * Step 3: Create a generic way of dealing with configuration files -> Environment files. Create a `Scalaman` project as a Foreman equivalent?
- * Step 4: Remove the requirement of 'Angular' in the framework and replace with Akka etc.
- * Step 5: Create the default folder 'structure' and 'the Scalam way' of doing things - be opinionated but still allow for customisation
- *
- *
- * Use Stackable Traits / Features (similar to Skinny) to allow for customisation of behaviour.
- * USe type system where possible (do annotations use Type system or not? Assume not)
- * Remove try/catch. *shudders*
- *
- * End: Create/update yeoman generator to get started quickly, and allow for commands to add new models, services and so on
- */
-
-// TODO: Consider making RestController an abstract/Trait and creating specific, concrete implementations (Reactive, Postgres... versions)
 class RestController[ObjectType <: Model[ObjectID], ObjectID]
-    (collectionName: String, jsonFormatter: Format[ObjectType], repository: Repository[ObjectType, ObjectID])
+    (val collectionName: String, jsonFormatter: Format[ObjectType], repository: Repository[ObjectType, ObjectID])
     (implicit val bindingModule: BindingModule, implicit val tag: ClassTag[ObjectType], implicit val objectIdConverter: String => ObjectID)
-//    (implicit val tag: ClassTag[ObjectType], implicit val objectIdConverter: String => ObjectID)
-//    (implicit val bindingModule: BindingModule, implicit val tag: ClassTag[ObjectType])
     extends RespiteApiStack[ObjectType]
     with MethodOverride
     with FutureSupport
-    with MetricsSupport
     with Injectable
     with LoggingSupport {
   this: LoggingSupport =>
 
-  // Metrics - override metrics base name if controller has not been subclassed (i.e. direct instantiation)
-  override lazy val metricBaseName = {
-    getClass.getName match {
-      case "au.com.onegeek.respite.controllers.RestController" => MetricName(s"RestController.${collectionName.capitalize}")
-      case name: String => MetricName(name)
-    }
-  }
-
-  private[this] val loading = metrics.timer(s"api-$collectionName-loading")
-  private[this] val counters = metrics.counter(s"api-$collectionName-counters")
-
-//  Would like to compose this metrics into a single function call...
-//  private[this] val all = loading compose counters
-
-  //  Health Checks
-  healthCheck("get", unhealthyMessage = s"GET $collectionName service not available") {
-    true
-  }
-
   val system = inject[ActorSystem]
-//  val system = ActorSystem()
   override implicit val format = jsonFormatter
 
   val actor = system.actorOf(Props(new DatabaseRestActor[ObjectType, ObjectID](repository)))
@@ -137,23 +85,20 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
     }
   }
 
-  get("/") {
-    loading.time {
-      counters += 1
+  val getList = get("/") {
       logger.debug("Getting all")
       new AsyncResult {
         val is = actor ? "all"
       }
-    }
   }
 
-  get("/:id") {
+  val getSingle = get("/:id") {
     logger.debug("Getting something")
     val id = params("id")
     doSingle(id, "get")
   }
 
-  post("/") {
+  val createEntity = post("/") {
     logger.debug("creating something")
       val model = getParsedModel[ObjectType].get
 
@@ -164,7 +109,7 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
       }
   }
 
-  delete("/:id") {
+  val deleteEntity = delete("/:id") {
     val id = params("id")
     logger.debug(s"Deleting something: ${id}")
 
@@ -173,7 +118,7 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
     }
   }
 
-  put("/:id") {
+  val updateEntity = put("/:id") {
     logger.debug("updating something")
 
     getParsedModel[ObjectType].map { e =>
@@ -188,8 +133,11 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
     }
   }
 
+  post("/:id") {
+    updateEntity(params("id"))
+  }
 
-  post("/search/") {
+  val search = post("/search/") {
 
   }
 

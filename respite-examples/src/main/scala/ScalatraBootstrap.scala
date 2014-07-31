@@ -1,6 +1,6 @@
 import au.com.onegeek.respite.config.ProductionConfigurationModule
 import au.com.onegeek.respite.controllers.RestController
-import au.com.onegeek.respite.controllers.support.MetricsController
+import au.com.onegeek.respite.controllers.support.{MetricsSupport, MetricsController}
 import au.com.onegeek.respite.examples._
 import au.com.onegeek.respite.examples.models._
 import com.codahale.metrics.MetricRegistry
@@ -26,8 +26,8 @@ class ScalatraBootstrap extends LifeCycle {
     implicit val bindingModule = ProductionConfigurationModule
 
     context.mount(new RespiteExamples, "/*")
-    context.mount(new UserController(new UserRepository), "/users")
-    context.mount(new RestController[Product, BSONObjectID]("products", Product.format, new ProductRepository), "/products")
+    context.mount(new UserController(new UserRepository) with MetricsSupport, "/users")
+    context.mount(new RestController[Product, BSONObjectID]("products", Product.format, new ProductRepository) with MetricsSupport, "/products")
     context.mount(new MetricsController(metricsPath), metricsPath)
   }
 }
