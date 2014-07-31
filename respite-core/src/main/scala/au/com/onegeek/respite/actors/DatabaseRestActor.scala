@@ -227,17 +227,17 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
   def doGetSingle(id: String): Future[Option[ModelType]] = {
 
     logger.info(s"Fetching records by id ${id}")
+    repository.findById(id)
+
+//    val foo = Await.result({
 //      repository.findById(id)
-
-    val foo = Await.result({
-      repository.findById(id)
-    }, 100 millis)
-
-    println(s"I have me a foo: ${foo}")
-
-    Future {
-      foo
-    }
+//    }, 100 millis)
+//
+//    println(s"I have me a foo: ${foo}")
+//
+//    Future {
+//      foo
+//    }
 
   }
 

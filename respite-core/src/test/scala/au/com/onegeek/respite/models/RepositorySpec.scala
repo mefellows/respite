@@ -12,6 +12,10 @@ class RepositorySpec extends UnitSpec with ScalaFutures with MongoSpecSupport wi
 
   val repository = new UserTestRepository
 
+  before {
+    repository.removeAll
+  }
+
   "A Repository " should {
 
     "Serialise BSON Object IDs to a flattened structure" in {

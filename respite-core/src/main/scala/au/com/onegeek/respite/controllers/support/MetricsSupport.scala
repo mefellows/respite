@@ -22,19 +22,20 @@
 */
 package au.com.onegeek.respite.controllers.support
 
+import akka.actor.{ActorSystem, Props}
+import akka.pattern.ask
+import akka.util.Timeout
 import nl.grons.metrics.scala._
-import org.scalatra._
 import au.com.onegeek.respite.controllers.RestController
+import org.scalatra._
 import reactivemongo.bson.BSONObjectID
 import com.escalatesoft.subcut.inject.BindingModule
 import scala.reflect.ClassTag
 import javax.servlet.http.HttpServletRequest
 import au.com.onegeek.respite.models.Model
-import scala.concurrent.{ExecutionContext, Await}
+import scala.concurrent.{Future, ExecutionContext, Await}
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration._
-import akka.pattern.ask
-import akka.util.Timeout
 
 object RespiteApplicationMetrics {
   val healthChecksRegistry = new com.codahale.metrics.health.HealthCheckRegistry();
@@ -100,6 +101,8 @@ trait MetricsSupport extends ScalatraBase with Metrics with LoggingSupport {
 trait MetricsRestSupport[ObjectType <: Model[ObjectID], ObjectID] extends MetricsSupport { this: RestController[ObjectType, ObjectID] =>
 
   val REST_CLASSNAME = "au.com.onegeek.respite.controllers.RestController"
+  val HEALTH_CHECK_TIMEOUT = 500 millis
+
   // Metrics - override metrics base name if controller has not been subclassed (i.e. direct instantiation)
   override lazy val metricBaseName = {
     val ANON = ".*\\$\\$anon\\$.*"
@@ -110,16 +113,19 @@ trait MetricsRestSupport[ObjectType <: Model[ObjectID], ObjectID] extends Metric
     }
   }
 
+  /**
+   * Create default health check on REST controller - confirm CRUD pipelines are active
+   * (what exactly does 'active' mean?)
+   */
   healthCheck("get.list", s"List all entities in $metricBaseName failed") {
     // Call Route by name
-//    val is = Await.result( {this.actor ? "all"}, 100 millis)
-
     implicit def executor: ExecutionContext = ExecutionContext.global
 
+    // TODO: Make this more idiomatic and include error handling
+    val foo  = Await.result( {this.actor ? "all"}, HEALTH_CHECK_TIMEOUT).asInstanceOf[Future[List[ObjectType]]]
+    val bar = Await.result(foo, HEALTH_CHECK_TIMEOUT)
+    logger.debug(s"Health check returned: ${bar.toString}")
 
-    val is = this.actor ? "all"
-    println(is)
-
-    true
+    bar != null
   }
 }
