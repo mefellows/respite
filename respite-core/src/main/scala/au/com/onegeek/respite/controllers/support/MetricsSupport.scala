@@ -33,9 +33,10 @@ import com.escalatesoft.subcut.inject.BindingModule
 import scala.reflect.ClassTag
 import javax.servlet.http.HttpServletRequest
 import au.com.onegeek.respite.models.Model
-import scala.concurrent.{Future, ExecutionContext, Await}
+import scala.concurrent._
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration._
+import java.util.concurrent.TimeoutException
 
 object RespiteApplicationMetrics {
   val healthChecksRegistry = new com.codahale.metrics.health.HealthCheckRegistry();
@@ -122,10 +123,18 @@ trait MetricsRestSupport[ObjectType <: Model[ObjectID], ObjectID] extends Metric
     implicit def executor: ExecutionContext = ExecutionContext.global
 
     // TODO: Make this more idiomatic and include error handling
-    val foo  = Await.result( {this.actor ? "all"}, HEALTH_CHECK_TIMEOUT).asInstanceOf[Future[List[ObjectType]]]
-    val bar = Await.result(foo, HEALTH_CHECK_TIMEOUT)
-    logger.debug(s"Health check returned: ${bar.toString}")
+    try {
+      val foo = Await.result({
+        this.actor ? "all"
+      }, HEALTH_CHECK_TIMEOUT).asInstanceOf[Future[List[ObjectType]]]
 
-    bar != null
+      val bar = Await.result(foo, HEALTH_CHECK_TIMEOUT)
+      logger.debug(s"Health check returned: ${bar.toString}")
+      bar != null
+
+    } catch {
+      case e: TimeoutException => false
+      case _: Exception => false
+    }
   }
 }
