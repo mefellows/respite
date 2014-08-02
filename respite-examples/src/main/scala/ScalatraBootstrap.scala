@@ -1,7 +1,7 @@
-import au.com.onegeek.respite.config.ProductionConfigurationModule
 import au.com.onegeek.respite.controllers.RestController
 import au.com.onegeek.respite.controllers.support.{MetricsRestSupport, MetricsSupport, MetricsController}
 import au.com.onegeek.respite.examples._
+import au.com.onegeek.respite.config.ProductionConfigurationModule
 import au.com.onegeek.respite.examples.models._
 import com.codahale.metrics.MetricRegistry
 import com.codahale.metrics.servlets.{HealthCheckServlet, MetricsServlet, AdminServlet}

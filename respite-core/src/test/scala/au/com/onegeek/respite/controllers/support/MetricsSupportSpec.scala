@@ -1,7 +1,6 @@
 package au.com.onegeek.respite.controllers.support
 
 import au.com.onegeek.respite.ServletTestsBase
-import au.com.onegeek.respite.config.TestConfigurationModule
 import au.com.onegeek.respite.models.{Cat, User}
 import au.com.onegeek.respite.test.{MongoSpecSupport, Awaiting}
 import org.scalatest.concurrent.ScalaFutures
@@ -12,6 +11,7 @@ import uk.gov.hmrc.mongo._
 
 import scala.reflect._
 import au.com.onegeek.respite.controllers._
+import au.com.onegeek.respite.config.TestConfigurationModule
 
 /**
  * Created by mfellows on 29/06/2014.

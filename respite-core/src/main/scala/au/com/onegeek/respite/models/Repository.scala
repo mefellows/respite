@@ -40,7 +40,7 @@ import scala.concurrent.{Future, ExecutionContext}
  * @param updated The number of documents affected by last command, 0 if none
  * @param updatedExisting When true, the last update operation resulted in change of existing documents
  */
-case class Result (ok: Boolean, err: Option[String], code: Option[Int], errMsg: Option[String], originalDocument: Option[BSONDocument], updated: Int, updatedExisting: Boolean)
+//case class Result (ok: Boolean, err: Option[String], code: Option[Int], errMsg: Option[String], originalDocument: Option[BSONDocument], updated: Int, updatedExisting: Boolean)
 
 /**
  * Canonical representation of a database Repository. Not tied with any specific implementation.
@@ -49,32 +49,32 @@ case class Result (ok: Boolean, err: Option[String], code: Option[Int], errMsg: 
  *
  * Created by mfellows on 30/06/2014.
  */
-trait RespiteRepository[A <: Any, ID <: Any] extends CurrentTime {
-
-    def findAll(implicit ec: ExecutionContext): Future[List[A]] = ???
-
-    def findById(id: ID)(implicit ec: ExecutionContext): Future[Option[A]] = ???
-
-    def find(query: (scala.Predef.String, play.api.libs.json.Json.JsValueWrapper)*)(implicit ec: ExecutionContext): Future[List[A]] = ???
-
-    def find(query: JsValue)(implicit ec: ExecutionContext): Future[List[A]] = ???
-
-    def count(implicit ec: ExecutionContext): Future[Int] = ???
-
-    def removeAll(implicit ec: ExecutionContext): Future[LastError] = ???
-
-    def removeById(id: ID)(implicit ec: ExecutionContext): Future[LastError] = ???
-
-    def remove(query: (scala.Predef.String, play.api.libs.json.Json.JsValueWrapper)*)(implicit ec: ExecutionContext): Future[LastError] = ???
-
-    def drop(implicit ec: ExecutionContext): Future[Boolean] = ???
-
-    def save(entity: A)(implicit ec: ExecutionContext): Future[LastError] = ???
-
-    def insert(entity: A)(implicit ec: ExecutionContext): Future[LastError] = ???
-
-    def saveOrUpdate(findQuery: => Future[Option[A]], ifNotFound: => Future[A], modifiers: (A) => A)(implicit ec: ExecutionContext): Future[DatabaseUpdate[A]] = ???
-}
+//trait RespiteRepository[A <: Any, ID <: Any] extends CurrentTime {
+//
+//    def findAll(implicit ec: ExecutionContext): Future[List[A]] = ???
+//
+//    def findById(id: ID)(implicit ec: ExecutionContext): Future[Option[A]] = ???
+//
+//    def find(query: (scala.Predef.String, play.api.libs.json.Json.JsValueWrapper)*)(implicit ec: ExecutionContext): Future[List[A]] = ???
+//
+//    def find(query: JsValue)(implicit ec: ExecutionContext): Future[List[A]] = ???
+//
+//    def count(implicit ec: ExecutionContext): Future[Int] = ???
+//
+//    def removeAll(implicit ec: ExecutionContext): Future[LastError] = ???
+//
+//    def removeById(id: ID)(implicit ec: ExecutionContext): Future[LastError] = ???
+//
+//    def remove(query: (scala.Predef.String, play.api.libs.json.Json.JsValueWrapper)*)(implicit ec: ExecutionContext): Future[LastError] = ???
+//
+//    def drop(implicit ec: ExecutionContext): Future[Boolean] = ???
+//
+//    def save(entity: A)(implicit ec: ExecutionContext): Future[LastError] = ???
+//
+//    def insert(entity: A)(implicit ec: ExecutionContext): Future[LastError] = ???
+//
+//    def saveOrUpdate(findQuery: => Future[Option[A]], ifNotFound: => Future[A], modifiers: (A) => A)(implicit ec: ExecutionContext): Future[DatabaseUpdate[A]] = ???
+//}
 
 trait PageableRepository {
 
