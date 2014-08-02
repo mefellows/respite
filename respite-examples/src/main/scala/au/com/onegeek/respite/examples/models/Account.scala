@@ -35,6 +35,7 @@ import uk.gov.hmrc.mongo.{ReactiveMongoFormats, ReactiveRepository, MongoConnect
 import uk.gov.hmrc.mongo.ReactiveMongoFormats.objectIdFormats
 import au.com.onegeek.respite.models.ModelJsonExtensions._
 import scala.reflect.ClassTag
+import au.com.onegeek.respite.controllers.support.MetricsRestSupport
 
 /**
  * Created by mfellows on 16/07/2014.
@@ -92,9 +93,9 @@ class AccountRepository(implicit mc: MongoConnector)
 
 // Example of concrete sub-class of RestController
 
-class UserController(repository: ReactiveRepository[User, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[User, BSONObjectID]("users", User.format, repository) {}
+class UserController(repository: ReactiveRepository[User, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[User, BSONObjectID]("users", User.format, repository) with MetricsRestSupport[User, BSONObjectID] {}
 
-class ProductController(repository: ReactiveRepository[Product, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[Product], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[Product, BSONObjectID]("products", Product.format, repository) {}
+class ProductController(repository: ReactiveRepository[Product, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[Product], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[Product, BSONObjectID]("products", Product.format, repository) with MetricsRestSupport[Product, BSONObjectID] {}
 
 class OrderItemController(repository: ReactiveRepository[OrderItem, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[OrderItem], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[OrderItem, BSONObjectID]("orderItems", OrderItem.format, repository) {}
 

@@ -44,7 +44,7 @@ object RespiteApplicationMetrics {
 }
 
 /**
-* Metrics and HealthCheck Support.
+  * Metrics and HealthCheck Support.
 *
 * Mixin this Trait into any Class, Controller etc. to gain access to A metrics
 * and health-check DSL, provided by https://github.com/erikvanoosten/metrics-scala/.
@@ -64,33 +64,29 @@ trait Metrics extends InstrumentedBuilder with CheckedBuilder {
  *
  */
 trait MetricsSupport extends ScalatraBase with Metrics with LoggingSupport {
-
-  // Lazy registry of Metric machines to avoid initialisation
-  // TODO: This could probably be made eager?
-  // Actually, it should be created during Scalatra initialisation during all of the 'addRoute' invocations
-  private[this] val loaders = Map[String, Timer]()
-  private[this] val counters = Map[String, Counter]()
+  def getTimer(path: String, method: HttpMethod): Timer = {
+    path match {
+      case "/" if method == Get => metrics.timer("list")
+      case "/:id" if method == Get => metrics.timer("single")
+      case "/" if method == Post => metrics.timer("create")
+      case "/:id" if method == Post => metrics.timer("update")
+      case "/:id" if method == Put => metrics.timer("update")
+      case "/:id" if method == Delete => metrics.timer("delete")
+      // Ideally capitalise/camelCase this. Also avoid collisions from above.
+      case _ if !path.toString.replaceAll("[^a-zA-Z0-9_-]", "").isEmpty => metrics.timer(method.toString.toLowerCase, path.replaceAll("[^a-zA-Z0-9_-]", ""))
+      case _ => metrics.timer(method.toString.toLowerCase)
+    }
+  }
 
   override protected def addRoute(method: HttpMethod, transformers: Seq[RouteTransformer], action: => Any): Route = {
     val path = transformers.foldLeft("")((path, transformer) => path.concat(transformer.toString()))
-    val name = path match {
-      case "/" if method == Get => "list"
-      case "/:id" if method == Get => "single"
-      case "/" if method == Post => "create"
-      case "/:id" if method == Post => "update"
-      case "/:id" if method == Put => "update"
-      case "/:id" if method == Delete => "delete"
-      case _ => path.replaceAll("[^a-zA-Z0-9_-]", "") // Ideally capitalise/camelCase this. Also avoid collisions from above.
-    }
 
     logger.debug(s"Instrumenting path $path on ${metricBaseName.name}")
 
     super.addRoute(method, transformers, {
-      // Wrap the action in a timer
-      metrics.timer(method.toString.toLowerCase, name).time {
-        logger.trace(s"Instrumenting $action")
+      getTimer(path, method).time {
+        logger.debug(s"Instrumenting Action")
         action
-        logger.trace(s"Instrumentation of $action complete")
       }
     })
   }
@@ -101,8 +97,8 @@ trait MetricsSupport extends ScalatraBase with Metrics with LoggingSupport {
  */
 trait MetricsRestSupport[ObjectType <: Model[ObjectID], ObjectID] extends MetricsSupport { this: RestController[ObjectType, ObjectID] =>
 
-  val REST_CLASSNAME = "au.com.onegeek.respite.controllers.RestController"
-  val HEALTH_CHECK_TIMEOUT = 500 millis
+  val REST_CLASSNAME        = "au.com.onegeek.respite.controllers.RestController"
+  val HEALTH_CHECK_TIMEOUT  = 100 millis
 
   // Metrics - override metrics base name if controller has not been subclassed (i.e. direct instantiation)
   override lazy val metricBaseName = {
@@ -118,23 +114,25 @@ trait MetricsRestSupport[ObjectType <: Model[ObjectID], ObjectID] extends Metric
    * Create default health check on REST controller - confirm CRUD pipelines are active
    * (what exactly does 'active' mean?)
    */
-  healthCheck("get.list", s"List all entities in $metricBaseName failed") {
-    // Call Route by name
+  healthCheck("list", s"List all entities in $metricBaseName failed") {
     implicit def executor: ExecutionContext = ExecutionContext.global
 
-    // TODO: Make this more idiomatic and include error handling
-    try {
-      val foo = Await.result({
-        this.actor ? "all"
-      }, HEALTH_CHECK_TIMEOUT).asInstanceOf[Future[List[ObjectType]]]
+    def check(): Boolean = {
+      try {
+        val futureList = Await.result({
+          this.actor ? "all"
+        }, HEALTH_CHECK_TIMEOUT).asInstanceOf[Future[List[ObjectType]]]
 
-      val bar = Await.result(foo, HEALTH_CHECK_TIMEOUT)
-      logger.debug(s"Health check returned: ${bar.toString}")
-      bar != null
-
-    } catch {
-      case e: TimeoutException => false
-      case _: Exception => false
+        Await.result(futureList, HEALTH_CHECK_TIMEOUT) match {
+          case l: List[ObjectType] => true
+          case _ => false
+        }
+      } catch {
+        case _: Throwable => false
+      }
     }
+
+    // See https://github.com/erikvanoosten/metrics-scala/blob/master/docs/HealthCheckManual.md#warning-for-version-31x-and-earlier
+    check()
   }
 }

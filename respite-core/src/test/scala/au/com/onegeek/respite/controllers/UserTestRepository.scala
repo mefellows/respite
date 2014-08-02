@@ -59,8 +59,8 @@ class MetricSpecController(repository: ReactiveRepository[User, BSONObjectID])(o
     "foo"
   }
 
-  get("/fooaoeuaoeu/bar/baz") {
-    println("caaoeuaoeuts")
+  get("/foo/bar/baz") {
+    "foo"
   }
 }
 
@@ -69,4 +69,3 @@ class MetricSpecControllerWithCustomName(repository: ReactiveRepository[User, BS
     MetricName("MyAwesomeName")
   }
 }
-

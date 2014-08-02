@@ -33,7 +33,7 @@ import org.scalatra._
 import play.api.libs.json._
 import uk.gov.hmrc.mongo.Repository
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{Future, ExecutionContext}
 import scala.concurrent.duration.{Duration, SECONDS}
 import scala.reflect.ClassTag
 
@@ -69,11 +69,12 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
 
   protected implicit def executor: ExecutionContext = ExecutionContext.global
 
-  implicit val tOut = Timeout(Duration.create(10, SECONDS))
+  implicit val tOut = Timeout(Duration.create(1, SECONDS))
 
   def doSingle(id: String, method: String, modelInstance: Option[ObjectType] = None) = {
     try {
       new AsyncResult {
+        override def timeout = tOut.duration
         val is = actor ? Seq(method, id, modelInstance)
       }
     }
@@ -85,9 +86,12 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
     }
   }
 
-  val getList = get("/") {
-      logger.debug("Getting all")
+  get("/") {
+
+    logger.debug("Getting all")
       new AsyncResult {
+        import scala.concurrent.duration._
+        override def timeout = tOut.duration
         val is = actor ? "all"
       }
   }
@@ -105,6 +109,7 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
     println(s"I have me a model object: ${model}")
 
       new AsyncResult {
+        override def timeout = tOut.duration
         val is = actor ? Seq("create", model)
       }
   }
@@ -114,27 +119,34 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
     logger.debug(s"Deleting something: ${id}")
 
     new AsyncResult {
+      override def timeout = tOut.duration
       val is = actor ? Seq("delete", id)
     }
   }
 
   val updateEntity = put("/:id") {
+    update
+  }
+
+  post("/:id") {
+    update
+  }
+
+  def update = {
     logger.debug("updating something")
 
-    getParsedModel[ObjectType].map { e =>
-      println(e)
-      new AsyncResult {
-        val is = actor ? Seq("update", e)
-      }
+    getParsedModel[ObjectType].map {
+      e =>
+        println(e)
+        new AsyncResult {
+          override def timeout = tOut.duration
+          val is = actor ? Seq("update", e)
+        }
     }.getOrElse {
 
       // TODO: Still return JS Validation error
       halt(status = 400, reason = "No Request body provided")
     }
-  }
-
-  post("/:id") {
-    updateEntity(params("id"))
   }
 
   val search = post("/search/") {
@@ -152,6 +164,7 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
     logger.debug(criteria.toString)
 
     new AsyncResult {
+      override def timeout = tOut.duration
       val is = actor ? Seq("search", criteria)
     }
   }

@@ -12,7 +12,7 @@ trait MongoSpecSupport {
 
   protected val databaseName = "test" + this.getClass.getSimpleName.toLowerCase
 
-  protected val databasePort = sys.env.get("MONGO_PORT").map( port => port.toInt ).getOrElse(17017)
+  protected val databasePort = sys.env.get("MONGO_PORT").map( _.toInt ).getOrElse(17017)
 
   protected lazy val mongoUri: String = s"mongodb://127.0.0.1:$databasePort/$databaseName"
 
@@ -31,7 +31,7 @@ trait Awaiting {
 
   implicit val ec = ExecutionContext.Implicits.global
 
-  val timeout = 5 seconds
+  val timeout = 1 seconds
 
   def await[A](future: Future[A])(implicit timeout: Duration = timeout) = Await.result(future, timeout)
 }

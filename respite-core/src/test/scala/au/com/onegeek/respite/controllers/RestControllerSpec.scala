@@ -118,7 +118,6 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoSp
         body should include ("\"username\":\"superman\",\"firstName\":\"Clarke\"}")
       }
 
-
       // Get response and then query
       await(repository.findAll).find(_.username.equals("superman")).size should equal (1)
     }
@@ -145,5 +144,14 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoSp
         u.username shouldNot equal("mfellows")
       )
     }
+
+    "Respond with 500 Internal Server error when Database is unavailable" in {
+
+    }
+
+    "Respond with 500 Internal Server error when Akka cluster is unavailable" in {
+
+    }
+
   }
 }

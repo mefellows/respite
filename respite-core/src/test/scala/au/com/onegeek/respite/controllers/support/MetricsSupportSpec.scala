@@ -28,8 +28,6 @@ class MetricsSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
   addServlet(new MetricsController("/metrics"), "/metrics")
 
   before {
-    //mongoProps = mongoStart(17123) // by default port = 12345 & version = Version.2.3.0
-
     // Clear out entries - only do this if you don't start/stop between tests
     await(repository.removeAll)
 
@@ -44,61 +42,125 @@ class MetricsSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
     val users = await(repository.findAll)
     users foreach(u =>
       println(u)
-      )
+    )
   }
 
-  "A MetricsSupport-ed servlet" should {
+  "A MetricsSupport-ed RestController servlet" should {
 
-    "Transparently instrument a 'get' method (CRUD)" in {
+    "Instrument a 'get' method (CRUD)" in {
       get("/users/") {
-        println(body)
-
-        // Body should not be impacted by metrics, check that
+        status should equal(200)
+        body should equal("[{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"},{\"id\":{\"$oid\":\"53b62e370100000100af8ece\"},\"username\":\"bmurray\",\"firstName\":\"Bill\"}]")
       }
       get("/metrics/") {
+        body should include("\"au.com.onegeek.respite.controllers.MetricSpecController.list\":{\"count\":1")
+      }
+      get("/metrics/health") {
         println(body)
-        body should include("\"au.com.onegeek.respite.controllers.MetricSpecController.get.list\":{\"count\":1")
+        status should equal(200)
+        body should include("\"RestController.Users.list\":{\"healthy\":true")
       }
     }
 
     "Transparently instrument a 'get/:id' method (CRUD)" in {
       get("/users/53b62e370100000100af8ecd") {
-        println(body)
+        status should equal(200)
+        body should equal("{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"}")
       }
       get("/metrics/") {
-        println(body)
-
-        // Body should not be impacted by metrics, check that
-        body should include("\"au.com.onegeek.respite.controllers.MetricSpecController.get.single\":{\"count\":1")
+        body should include("\"au.com.onegeek.respite.controllers.MetricSpecController.single\":{\"count\":1")
       }
     }
 
-    "Transparently instrument a random path, giving it a sensible name" in {
-      get("/users/fooaoeuaoeu/bar/baz") {
-        println(body)
-        // Body should not be impacted by metrics, check that
+    "Instrument a 'delete' method (CRUD)" in {
+      delete("/users/53b62e370100000100af8ecd") {
+        status should equal(200)
+        body should equal ("{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"}")
       }
       get("/metrics/") {
-        println(body)
+        body should include("\"au.com.onegeek.respite.controllers.MetricSpecController.delete\":{\"count\":1")
+      }
 
-        body should include("\"au.com.onegeek.respite.controllers.MetricSpecController.get.fooaoeuaoeubarbaz\":{\"count\":1")
+    }
+
+    "Instrument a 'put' method (CRUD)" in {
+      val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}"
+      put("/users/53b62e370100000100af8ecd", json, headers = Map("Content-Type" -> "application/json")) {
+        status should equal(200)
+        body should equal("{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}")
+      }
+      get("/metrics/") {
+        body should include("\"au.com.onegeek.respite.controllers.MetricSpecController.update\":{\"count\":1")
       }
     }
 
-    "properly instrument a non-declared RestController with sensible name" in {
+    "Instrument a 'post' update method (CRUD)" in {
+      val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}"
+      post("/users/53b62e370100000100af8ecd", json, headers = Map("Content-Type" -> "application/json")) {
+        status should equal(200)
+        body should equal("{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}")
+      }
+      get("/metrics/") {
+        body should include("\"au.com.onegeek.respite.controllers.MetricSpecController.update\":{\"count\":2")
+      }
+    }
+
+    "Instrument a 'post' create method (CRUD)" in {
+      val json = "{\"username\":\"asuperman\",\"firstName\":\"Clarke\"}"
+      post("/users/", json.toString, Map("Content-Type" -> "application/json")) {
+        status should equal(200)
+        body should include ("\"username\":\"asuperman\",\"firstName\":\"Clarke\"}")
+      }
+      get("/metrics/") {
+        body should include("\"au.com.onegeek.respite.controllers.MetricSpecController.create\":{\"count\":1")
+      }
+    }
+
+    "Instrument a non-REST / random path, giving it a sensible name" in {
+      get("/users/foo/bar/baz") {
+        println(body)
+        body should equal("foo")
+      }
+      get("/metrics/") {
+        body should include("\"au.com.onegeek.respite.controllers.MetricSpecController.get.foobarbaz\":{\"count\":1")
+      }
+    }
+  }
+
+  "A MetricsSupport-ed standard Scalatra Controller" should {
+
+     "Instrument a non-declared RestController with sensible name" in {
       get("/users2/") {
-        println(body)
-        // Body should not be impacted by metrics, check that
+        println(s"Body: $body")
+        body should equal("[{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"},{\"id\":{\"$oid\":\"53b62e370100000100af8ece\"},\"username\":\"bmurray\",\"firstName\":\"Bill\"}]")
       }
       get("/metrics/") {
         println(body)
-
-        body should include("\"RestController.Users.get.list\":{\"count\":1")
+        body should include("\"RestController.Users.list\":{\"count\":1")
       }
       get("/metrics/health") {
         println(body)
 
-//        body should include("\"RestController.Users.get.list\":{\"count\":1")
+        body should include("\"RestController.Users.list\":{\"healthy\":true")
+      }
+    }
+  }
+
+  "An unhealthy MetricsRestSupport-ed Controller" should {
+
+    "Report unhealthy when a RestController is not responding with 200 response" in {
+
+    }
+
+    "Report unhealthy when Database connection is gone" in {
+      mongoConnectorForTest.close()
+      get("/users/") {
+        status should equal(504)
+      }
+
+      // This happens early on in the event, why not regularly?
+      get("/metrics/health") {
+        body should include("\"RestController.Users.list\":{\"healthy\":false")
       }
     }
   }
