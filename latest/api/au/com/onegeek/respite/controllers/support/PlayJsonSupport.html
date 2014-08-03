@@ -50,7 +50,7 @@
           <div class="superTypes hiddenContent"><span class="extype" name="org.scalatra.ApiFormats">ApiFormats</span>, <span class="extype" name="org.scalatra.ScalatraBase">ScalatraBase</span>, <span class="extype" name="org.scalatra.CookieSupport">CookieSupport</span>, <span class="extype" name="org.scalatra.util.conversion.DefaultImplicitConversions">DefaultImplicitConversions</span>, <span class="extype" name="org.scalatra.util.conversion.LowPriorityImplicitConversions">LowPriorityImplicitConversions</span>, <span class="extype" name="org.scalatra.util.conversion.LowestPriorityImplicitConversions">LowestPriorityImplicitConversions</span>, <span class="extype" name="org.scalatra.util.conversion.TypeConverterSupport">TypeConverterSupport</span>, <span class="extype" name="org.scalatra.ScalatraParamsImplicits">ScalatraParamsImplicits</span>, <span class="extype" name="org.scalatra.Initializable">Initializable</span>, <span class="extype" name="org.scalatra.DynamicScope">DynamicScope</span>, <span class="extype" name="org.scalatra.RequestResponseScope">RequestResponseScope</span>, <span class="extype" name="org.scalatra.CoreDsl">CoreDsl</span>, <span class="extype" name="org.scalatra.Control">Control</span>, <span class="extype" name="org.scalatra.Handler">Handler</span>, <span class="extype" name="org.scalatra.ScalatraContext">ScalatraContext</span>, <span class="extype" name="org.scalatra.CookieContext">CookieContext</span>, <span class="extype" name="org.scalatra.SessionSupport">SessionSupport</span>, <span class="extype" name="org.scalatra.servlet.ServletApiImplicits">ServletApiImplicits</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
           <span class="toggle">Known Subclasses</span>
-          <div class="subClasses hiddenContent"><a href="../RespiteApiStack.html" class="extype" name="au.com.onegeek.respite.controllers.RespiteApiStack">RespiteApiStack</a>, <a href="../RestController.html" class="extype" name="au.com.onegeek.respite.controllers.RestController">RestController</a></div>
+          <div class="subClasses hiddenContent"><a href="../../security/AuthenticationApi.html" class="extype" name="au.com.onegeek.respite.security.AuthenticationApi">AuthenticationApi</a>, <a href="../RespiteApiStack.html" class="extype" name="au.com.onegeek.respite.controllers.RespiteApiStack">RespiteApiStack</a>, <a href="../RestController.html" class="extype" name="au.com.onegeek.respite.controllers.RestController">RestController</a></div>
         </div></div>
         
 
@@ -296,7 +296,7 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="org.scalatra.ApiFormats#acceptHeader" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="acceptHeader(implicitrequest:&lt;?&gt;):List[String]"></a>
+      <a id="acceptHeader(implicitrequest:javax.servlet.http.HttpServletRequest):List[String]"></a>
       <a id="acceptHeader(HttpServletRequest):List[String]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -309,7 +309,7 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ApiFormats</dd></dl></div>
     </li><li name="org.scalatra.ApiFormats#acceptedFormats" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="acceptedFormats(accepted:&lt;?&gt;):Boolean"></a>
+      <a id="acceptedFormats(accepted:Symbol*):Boolean"></a>
       <a id="acceptedFormats(Symbol*):Boolean"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -322,7 +322,7 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ApiFormats</dd></dl></div>
     </li><li name="org.scalatra.ApiFormats#addMimeMapping" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="addMimeMapping(mime:&lt;?&gt;,extension:&lt;?&gt;):Unit"></a>
+      <a id="addMimeMapping(mime:String,extension:String):Unit"></a>
       <a id="addMimeMapping(String,String):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -880,7 +880,7 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ApiFormats</dd></dl></div>
     </li><li name="org.scalatra.ApiFormats#formatForMimeTypes" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="formatForMimeTypes(mimeTypes:&lt;?&gt;):Option[String]"></a>
+      <a id="formatForMimeTypes(mimeTypes:String*):Option[String]"></a>
       <a id="formatForMimeTypes(String*):Option[String]"></a>
       <h4 class="signature">
       <span class="modifier_kind">

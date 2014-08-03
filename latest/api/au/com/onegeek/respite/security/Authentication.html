@@ -35,16 +35,13 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">Authentication</span><span class="result"> extends <span class="extype" name="org.scalatra.ScalatraBase">ScalatraBase</span> with <span class="extype" name="com.escalatesoft.subcut.inject.Injectable">Injectable</span></span>
+        <span class="name">Authentication</span><span class="result"> extends <span class="extype" name="org.scalatra.ScalatraBase">ScalatraBase</span> with <span class="extype" name="com.escalatesoft.subcut.inject.Injectable">Injectable</span> with <a href="../controllers/support/LoggingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.LoggingSupport">LoggingSupport</a></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>When this trait is used, the incoming request
-is checked for authentication based on the
-X-API-Key header.
-</p></div><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Authenticate Scalatra Servlets with an <a href="../models/ApiKey.html" class="extype" name="au.com.onegeek.respite.models.ApiKey">au.com.onegeek.respite.models.ApiKey</a> via the 'X-API-Key' and 'X-API_Application' headers.</p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="com.escalatesoft.subcut.inject.Injectable">Injectable</span>, <span class="extype" name="org.scalatra.ScalatraBase">ScalatraBase</span>, <span class="extype" name="org.scalatra.CookieSupport">CookieSupport</span>, <span class="extype" name="org.scalatra.util.conversion.DefaultImplicitConversions">DefaultImplicitConversions</span>, <span class="extype" name="org.scalatra.util.conversion.LowPriorityImplicitConversions">LowPriorityImplicitConversions</span>, <span class="extype" name="org.scalatra.util.conversion.LowestPriorityImplicitConversions">LowestPriorityImplicitConversions</span>, <span class="extype" name="org.scalatra.util.conversion.TypeConverterSupport">TypeConverterSupport</span>, <span class="extype" name="org.scalatra.ScalatraParamsImplicits">ScalatraParamsImplicits</span>, <span class="extype" name="org.scalatra.Initializable">Initializable</span>, <span class="extype" name="org.scalatra.DynamicScope">DynamicScope</span>, <span class="extype" name="org.scalatra.RequestResponseScope">RequestResponseScope</span>, <span class="extype" name="org.scalatra.CoreDsl">CoreDsl</span>, <span class="extype" name="org.scalatra.Control">Control</span>, <span class="extype" name="org.scalatra.Handler">Handler</span>, <span class="extype" name="org.scalatra.ScalatraContext">ScalatraContext</span>, <span class="extype" name="org.scalatra.CookieContext">CookieContext</span>, <span class="extype" name="org.scalatra.SessionSupport">SessionSupport</span>, <span class="extype" name="org.scalatra.servlet.ServletApiImplicits">ServletApiImplicits</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="../controllers/support/LoggingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.LoggingSupport">LoggingSupport</a>, <span class="extype" name="com.escalatesoft.subcut.inject.Injectable">Injectable</span>, <span class="extype" name="org.scalatra.ScalatraBase">ScalatraBase</span>, <span class="extype" name="org.scalatra.CookieSupport">CookieSupport</span>, <span class="extype" name="org.scalatra.util.conversion.DefaultImplicitConversions">DefaultImplicitConversions</span>, <span class="extype" name="org.scalatra.util.conversion.LowPriorityImplicitConversions">LowPriorityImplicitConversions</span>, <span class="extype" name="org.scalatra.util.conversion.LowestPriorityImplicitConversions">LowestPriorityImplicitConversions</span>, <span class="extype" name="org.scalatra.util.conversion.TypeConverterSupport">TypeConverterSupport</span>, <span class="extype" name="org.scalatra.ScalatraParamsImplicits">ScalatraParamsImplicits</span>, <span class="extype" name="org.scalatra.Initializable">Initializable</span>, <span class="extype" name="org.scalatra.DynamicScope">DynamicScope</span>, <span class="extype" name="org.scalatra.RequestResponseScope">RequestResponseScope</span>, <span class="extype" name="org.scalatra.CoreDsl">CoreDsl</span>, <span class="extype" name="org.scalatra.Control">Control</span>, <span class="extype" name="org.scalatra.Handler">Handler</span>, <span class="extype" name="org.scalatra.ScalatraContext">ScalatraContext</span>, <span class="extype" name="org.scalatra.CookieContext">CookieContext</span>, <span class="extype" name="org.scalatra.SessionSupport">SessionSupport</span>, <span class="extype" name="org.scalatra.servlet.ServletApiImplicits">ServletApiImplicits</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
           <span class="toggle">Known Subclasses</span>
           <div class="subClasses hiddenContent"><a href="AuthenticationApi.html" class="extype" name="au.com.onegeek.respite.security.AuthenticationApi">AuthenticationApi</a></div>
@@ -65,7 +62,7 @@ X-API-Key header.
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.onegeek.respite.security.Authentication"><span>Authentication</span></li><li class="in" name="com.escalatesoft.subcut.inject.Injectable"><span>Injectable</span></li><li class="in" name="org.scalatra.ScalatraBase"><span>ScalatraBase</span></li><li class="in" name="org.scalatra.CookieSupport"><span>CookieSupport</span></li><li class="in" name="org.scalatra.util.conversion.DefaultImplicitConversions"><span>DefaultImplicitConversions</span></li><li class="in" name="org.scalatra.util.conversion.LowPriorityImplicitConversions"><span>LowPriorityImplicitConversions</span></li><li class="in" name="org.scalatra.util.conversion.LowestPriorityImplicitConversions"><span>LowestPriorityImplicitConversions</span></li><li class="in" name="org.scalatra.util.conversion.TypeConverterSupport"><span>TypeConverterSupport</span></li><li class="in" name="org.scalatra.ScalatraParamsImplicits"><span>ScalatraParamsImplicits</span></li><li class="in" name="org.scalatra.Initializable"><span>Initializable</span></li><li class="in" name="org.scalatra.DynamicScope"><span>DynamicScope</span></li><li class="in" name="org.scalatra.RequestResponseScope"><span>RequestResponseScope</span></li><li class="in" name="org.scalatra.CoreDsl"><span>CoreDsl</span></li><li class="in" name="org.scalatra.Control"><span>Control</span></li><li class="in" name="org.scalatra.Handler"><span>Handler</span></li><li class="in" name="org.scalatra.ScalatraContext"><span>ScalatraContext</span></li><li class="in" name="org.scalatra.CookieContext"><span>CookieContext</span></li><li class="in" name="org.scalatra.SessionSupport"><span>SessionSupport</span></li><li class="in" name="org.scalatra.servlet.ServletApiImplicits"><span>ServletApiImplicits</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.onegeek.respite.security.Authentication"><span>Authentication</span></li><li class="in" name="au.com.onegeek.respite.controllers.support.LoggingSupport"><span>LoggingSupport</span></li><li class="in" name="com.escalatesoft.subcut.inject.Injectable"><span>Injectable</span></li><li class="in" name="org.scalatra.ScalatraBase"><span>ScalatraBase</span></li><li class="in" name="org.scalatra.CookieSupport"><span>CookieSupport</span></li><li class="in" name="org.scalatra.util.conversion.DefaultImplicitConversions"><span>DefaultImplicitConversions</span></li><li class="in" name="org.scalatra.util.conversion.LowPriorityImplicitConversions"><span>LowPriorityImplicitConversions</span></li><li class="in" name="org.scalatra.util.conversion.LowestPriorityImplicitConversions"><span>LowestPriorityImplicitConversions</span></li><li class="in" name="org.scalatra.util.conversion.TypeConverterSupport"><span>TypeConverterSupport</span></li><li class="in" name="org.scalatra.ScalatraParamsImplicits"><span>ScalatraParamsImplicits</span></li><li class="in" name="org.scalatra.Initializable"><span>Initializable</span></li><li class="in" name="org.scalatra.DynamicScope"><span>DynamicScope</span></li><li class="in" name="org.scalatra.RequestResponseScope"><span>RequestResponseScope</span></li><li class="in" name="org.scalatra.CoreDsl"><span>CoreDsl</span></li><li class="in" name="org.scalatra.Control"><span>Control</span></li><li class="in" name="org.scalatra.Handler"><span>Handler</span></li><li class="in" name="org.scalatra.ScalatraContext"><span>ScalatraContext</span></li><li class="in" name="org.scalatra.CookieContext"><span>CookieContext</span></li><li class="in" name="org.scalatra.SessionSupport"><span>SessionSupport</span></li><li class="in" name="org.scalatra.servlet.ServletApiImplicits"><span>ServletApiImplicits</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -328,19 +325,6 @@ X-API-Key header.
       </span>
       <span class="symbol">
         <span class="name">API_KEY_HEADER</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
-      </span>
-      </h4>
-      
-    </li><li name="au.com.onegeek.respite.security.Authentication#_log" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="_log:org.slf4j.Logger"></a>
-      <a id="_log:Logger"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">_log</span><span class="result">: <span class="extype" name="org.slf4j.Logger">Logger</span></span>
       </span>
       </h4>
       
@@ -1242,6 +1226,19 @@ X-API-Key header.
       <p class="shortcomment cmt">Rejects an API request with the standard 40x header and a human-friendly response message.</p><div class="fullcomment"><div class="comment cmt"><p>Rejects an API request with the standard 40x header and a human-friendly response message.
 </p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"></dd><dt>returns</dt><dd class="cmt"><p>
 </p></dd></dl></div>
+    </li><li name="au.com.onegeek.respite.controllers.support.LoggingSupport#logger" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="logger:org.slf4j.Logger"></a>
+      <a id="logger:Logger"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">logger</span><span class="result">: <span class="extype" name="org.slf4j.Logger">Logger</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../controllers/support/LoggingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.LoggingSupport">LoggingSupport</a></dd></dl></div>
     </li><li name="org.scalatra.util.conversion.LowestPriorityImplicitConversions#lowestPriorityAny2T" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="lowestPriorityAny2T[T](implicitevidence$1:Manifest[T]):org.scalatra.util.conversion.TypeConverter[Any,T]"></a>
       <a id="lowestPriorityAny2T[T](Manifest[T]):TypeConverter[Any,T]"></a>
@@ -2313,7 +2310,9 @@ X-API-Key header.
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="com.escalatesoft.subcut.inject.Injectable">
+        <div class="parent" name="au.com.onegeek.respite.controllers.support.LoggingSupport">
+              <h3>Inherited from <a href="../controllers/support/LoggingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.LoggingSupport">LoggingSupport</a></h3>
+            </div><div class="parent" name="com.escalatesoft.subcut.inject.Injectable">
               <h3>Inherited from <span class="extype" name="com.escalatesoft.subcut.inject.Injectable">Injectable</span></h3>
             </div><div class="parent" name="org.scalatra.ScalatraBase">
               <h3>Inherited from <span class="extype" name="org.scalatra.ScalatraBase">ScalatraBase</span></h3>

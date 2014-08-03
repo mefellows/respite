@@ -59,7 +59,7 @@
         <div id="types" class="types members">
               <h3>Type Members</h3>
               <ol><li name="au.com.onegeek.respite.security.Authentication" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="AuthenticationextendsScalatraBasewithInjectable"></a>
+      <a id="AuthenticationextendsScalatraBasewithInjectablewithLoggingSupport"></a>
       <a id="Authentication:Authentication"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -67,14 +67,12 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Authentication.html"><span class="name">Authentication</span></a><span class="result"> extends <span class="extype" name="org.scalatra.ScalatraBase">ScalatraBase</span> with <span class="extype" name="com.escalatesoft.subcut.inject.Injectable">Injectable</span></span>
+        <a href="Authentication.html"><span class="name">Authentication</span></a><span class="result"> extends <span class="extype" name="org.scalatra.ScalatraBase">ScalatraBase</span> with <span class="extype" name="com.escalatesoft.subcut.inject.Injectable">Injectable</span> with <a href="../controllers/support/LoggingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.LoggingSupport">LoggingSupport</a></span>
       </span>
       </h4>
-      <p class="comment cmt">When this trait is used, the incoming request
-is checked for authentication based on the
-X-API-Key header.</p>
+      <p class="comment cmt">Authenticate Scalatra Servlets with an <a href="../models/ApiKey.html" class="extype" name="au.com.onegeek.respite.models.ApiKey">au.com.onegeek.respite.models.ApiKey</a> via the 'X-API-Key' and 'X-API_Application' headers.</p>
     </li><li name="au.com.onegeek.respite.security.AuthenticationApi" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="AuthenticationApiextendsAuthenticationwithFutureSupport"></a>
+      <a id="AuthenticationApiextendsAuthenticationwithFutureSupportwithPlayJsonSupport[au.com.onegeek.respite.models.ApiKey]"></a>
       <a id="AuthenticationApi:AuthenticationApi"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -82,7 +80,7 @@ X-API-Key header.</p>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="AuthenticationApi.html"><span class="name">AuthenticationApi</span></a><span class="result"> extends <a href="Authentication.html" class="extype" name="au.com.onegeek.respite.security.Authentication">Authentication</a> with <span class="extype" name="org.scalatra.FutureSupport">FutureSupport</span></span>
+        <a href="AuthenticationApi.html"><span class="name">AuthenticationApi</span></a><span class="result"> extends <a href="Authentication.html" class="extype" name="au.com.onegeek.respite.security.Authentication">Authentication</a> with <span class="extype" name="org.scalatra.FutureSupport">FutureSupport</span> with <a href="../controllers/support/PlayJsonSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.PlayJsonSupport">PlayJsonSupport</a>[<a href="../models/ApiKey.html" class="extype" name="au.com.onegeek.respite.models.ApiKey">ApiKey</a>]</span>
       </span>
       </h4>
       
@@ -113,15 +111,15 @@ X-API-Key header.</p>
       </h4>
       <p class="comment cmt">Created by mfellows on 1/07/2014.</p>
     </li><li name="au.com.onegeek.respite.security.DatabaseAuthenticationStrategy" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DatabaseAuthenticationStrategyextendsAuthenticationStrategywithCachingSupport"></a>
-      <a id="DatabaseAuthenticationStrategy:DatabaseAuthenticationStrategy"></a>
+      <a id="DatabaseAuthenticationStrategy[ObjectID]extendsAuthenticationStrategywithLoggingSupport"></a>
+      <a id="DatabaseAuthenticationStrategy[ObjectID]:DatabaseAuthenticationStrategy[ObjectID]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="DatabaseAuthenticationStrategy.html"><span class="name">DatabaseAuthenticationStrategy</span></a><span class="result"> extends <a href="AuthenticationStrategy.html" class="extype" name="au.com.onegeek.respite.security.AuthenticationStrategy">AuthenticationStrategy</a> with <a href="../controllers/support/CachingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.CachingSupport">CachingSupport</a></span>
+        <a href="DatabaseAuthenticationStrategy.html"><span class="name">DatabaseAuthenticationStrategy</span></a><span class="tparams">[<span name="ObjectID">ObjectID</span>]</span><span class="result"> extends <a href="AuthenticationStrategy.html" class="extype" name="au.com.onegeek.respite.security.AuthenticationStrategy">AuthenticationStrategy</a> with <a href="../controllers/support/LoggingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.LoggingSupport">LoggingSupport</a></span>
       </span>
       </h4>
       <p class="comment cmt">This class implements a Database persisted Authentication Strategy, with
@@ -131,23 +129,7 @@ programmatic / API hooks to add/revoke access at runtime.</p>
 
         
 
-        <div id="values" class="values members">
-              <h3>Value Members</h3>
-              <ol><li name="au.com.onegeek.respite.security.SecurityUtil" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="SecurityUtil"></a>
-      <a id="SecurityUtil:SecurityUtil"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="SecurityUtil$.html"><span class="name">SecurityUtil</span></a>
-      </span>
-      </h4>
-      
-    </li></ol>
-            </div>
+        
 
         
 

@@ -35,7 +35,7 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">DatabaseAuthenticationStrategy</span><span class="result"> extends <a href="AuthenticationStrategy.html" class="extype" name="au.com.onegeek.respite.security.AuthenticationStrategy">AuthenticationStrategy</a> with <a href="../controllers/support/CachingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.CachingSupport">CachingSupport</a></span>
+        <span class="name">DatabaseAuthenticationStrategy</span><span class="tparams">[<span name="ObjectID">ObjectID</span>]</span><span class="result"> extends <a href="AuthenticationStrategy.html" class="extype" name="au.com.onegeek.respite.security.AuthenticationStrategy">AuthenticationStrategy</a> with <a href="../controllers/support/LoggingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.LoggingSupport">LoggingSupport</a></span>
       </span>
       </h4>
       
@@ -43,7 +43,7 @@
 programmatic / API hooks to add/revoke access at runtime.</p><p>Created by mfellows on 1/07/2014.
 </p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="../controllers/support/CachingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.CachingSupport">CachingSupport</a>, <a href="AuthenticationStrategy.html" class="extype" name="au.com.onegeek.respite.security.AuthenticationStrategy">AuthenticationStrategy</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="../controllers/support/LoggingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.LoggingSupport">LoggingSupport</a>, <a href="AuthenticationStrategy.html" class="extype" name="au.com.onegeek.respite.security.AuthenticationStrategy">AuthenticationStrategy</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -61,7 +61,7 @@ programmatic / API hooks to add/revoke access at runtime.</p><p>Created by mfell
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.onegeek.respite.security.DatabaseAuthenticationStrategy"><span>DatabaseAuthenticationStrategy</span></li><li class="in" name="au.com.onegeek.respite.controllers.support.CachingSupport"><span>CachingSupport</span></li><li class="in" name="au.com.onegeek.respite.security.AuthenticationStrategy"><span>AuthenticationStrategy</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.onegeek.respite.security.DatabaseAuthenticationStrategy"><span>DatabaseAuthenticationStrategy</span></li><li class="in" name="au.com.onegeek.respite.controllers.support.LoggingSupport"><span>LoggingSupport</span></li><li class="in" name="au.com.onegeek.respite.security.AuthenticationStrategy"><span>AuthenticationStrategy</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -82,15 +82,15 @@ programmatic / API hooks to add/revoke access at runtime.</p><p>Created by mfell
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="au.com.onegeek.respite.security.DatabaseAuthenticationStrategy#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(repository:uk.gov.hmrc.mongo.Repository[au.com.onegeek.respite.models.ApiKey,reactivemongo.bson.BSONObjectID]):au.com.onegeek.respite.security.DatabaseAuthenticationStrategy"></a>
-      <a id="&lt;init&gt;:DatabaseAuthenticationStrategy"></a>
+      <a id="&lt;init&gt;(repository:uk.gov.hmrc.mongo.Repository[au.com.onegeek.respite.models.ApiKey,ObjectID]):au.com.onegeek.respite.security.DatabaseAuthenticationStrategy[ObjectID]"></a>
+      <a id="&lt;init&gt;:DatabaseAuthenticationStrategy[ObjectID]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">DatabaseAuthenticationStrategy</span><span class="params">(<span name="repository">repository: <span class="extype" name="uk.gov.hmrc.mongo.Repository">Repository</span>[<a href="../models/ApiKey.html" class="extype" name="au.com.onegeek.respite.models.ApiKey">ApiKey</a>, <span class="extype" name="reactivemongo.bson.BSONObjectID">BSONObjectID</span>]</span>)</span>
+        <span class="name">DatabaseAuthenticationStrategy</span><span class="params">(<span name="repository">repository: <span class="extype" name="uk.gov.hmrc.mongo.Repository">Repository</span>[<a href="../models/ApiKey.html" class="extype" name="au.com.onegeek.respite.models.ApiKey">ApiKey</a>, <span class="extype" name="au.com.onegeek.respite.security.DatabaseAuthenticationStrategy.ObjectID">ObjectID</span>]</span>)</span>
       </span>
       </h4>
       
@@ -226,6 +226,20 @@ programmatic / API hooks to add/revoke access at runtime.</p><p>Created by mfell
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="au.com.onegeek.respite.security.DatabaseAuthenticationStrategy#createKey" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="createKey(apiKey:au.com.onegeek.respite.models.ApiKey)(implicitec:scala.concurrent.ExecutionContext):scala.concurrent.Future[Option[au.com.onegeek.respite.models.ApiKey]]"></a>
+      <a id="createKey(ApiKey)(ExecutionContext):Future[Option[ApiKey]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">createKey</span><span class="params">(<span name="apiKey">apiKey: <a href="../models/ApiKey.html" class="extype" name="au.com.onegeek.respite.models.ApiKey">ApiKey</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span><span class="result">: <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="scala.Option">Option</span>[<a href="../models/ApiKey.html" class="extype" name="au.com.onegeek.respite.models.ApiKey">ApiKey</a>]]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Create's an API Key in the MongoDB repository.</p><div class="fullcomment"><div class="comment cmt"><p>Create's an API Key in the MongoDB repository.</p></div><dl class="paramcmts block"><dt class="param">apiKey</dt><dd class="cmt"></dd><dt class="param">ec</dt><dd class="cmt"></dd><dt>returns</dt><dd class="cmt"><p>
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.onegeek.respite.security.DatabaseAuthenticationStrategy">DatabaseAuthenticationStrategy</a> → <a href="AuthenticationStrategy.html" class="extype" name="au.com.onegeek.respite.security.AuthenticationStrategy">AuthenticationStrategy</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -310,6 +324,19 @@ programmatic / API hooks to add/revoke access at runtime.</p><p>Created by mfell
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="au.com.onegeek.respite.controllers.support.LoggingSupport#logger" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="logger:org.slf4j.Logger"></a>
+      <a id="logger:Logger"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">logger</span><span class="result">: <span class="extype" name="org.slf4j.Logger">Logger</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../controllers/support/LoggingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.LoggingSupport">LoggingSupport</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -454,8 +481,8 @@ programmatic / API hooks to add/revoke access at runtime.</p><p>Created by mfell
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="au.com.onegeek.respite.controllers.support.CachingSupport">
-              <h3>Inherited from <a href="../controllers/support/CachingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.CachingSupport">CachingSupport</a></h3>
+        <div class="parent" name="au.com.onegeek.respite.controllers.support.LoggingSupport">
+              <h3>Inherited from <a href="../controllers/support/LoggingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.LoggingSupport">LoggingSupport</a></h3>
             </div><div class="parent" name="au.com.onegeek.respite.security.AuthenticationStrategy">
               <h3>Inherited from <a href="AuthenticationStrategy.html" class="extype" name="au.com.onegeek.respite.security.AuthenticationStrategy">AuthenticationStrategy</a></h3>
             </div><div class="parent" name="scala.AnyRef">
