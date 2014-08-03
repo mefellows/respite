@@ -90,16 +90,10 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
   protected def renderJsonPipeline[T](implicit t: ClassTag[T], fmt: Format[T]) = ({
     // Note the following from the JValueResult class -> Secret sauce is PartialFunctions?
     case jv: JsResult[T] if responseFormat == "json" =>
-      val writer = response.writer
       // JSON is always UTF-8
       response.characterEncoding = Some(Codec.UTF8.name)
       status = 200
-      jv match {
-        case model: JsSuccess[T] => writer.write(Json.toJson[T](model.get).toString)
-        case e: JsError =>
-          status = 400
-          writer.write(JsError.toFlatJson(e).toString)
-      }
+      response.writer.write(renderJson(jv))
       ()
       // Presumably due to Type Erasure, this never fires - Option[JsResult[T]] does first!
     case a: Option[T] if responseFormat == "json" =>
@@ -109,25 +103,6 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
           status = 404
           doNotFound
       }
-      ()
-    case Some(e: JsResult[T]) if responseFormat == "json" =>
-      val writer = response.writer
-      // JSON is always UTF-8
-      response.characterEncoding = Some(Codec.UTF8.name)
-      status = 200
-      e.get match {
-        case model: JsSuccess[T] => writer.write(Json.toJson[T](model.get).toString)
-        case e: JsError =>
-          writer.write(JsError.toFlatJson(e).toString)
-          status = 400
-      }
-      ()
-    case Some(model: T) if responseFormat == "json" =>
-      response.writer.write(renderJson(model))
-      ()
-    case None =>
-      status = 404
-      doNotFound
       ()
     case e: List[T] if responseFormat == "json" =>
       response.writer.write(renderJson(e))
@@ -143,7 +118,12 @@ trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormat
 
 
   def renderJson[T](model: JsResult[T])(implicit fmt: Format[T]): String = {
-    Json.toJson[T](model.get).toString
+    model match {
+      case model: JsSuccess[T] => Json.toJson[T](model.get).toString
+      case e: JsError =>
+        status = 400
+        JsError.toFlatJson(e).toString
+    }
   }
 
   def renderJson[T](model: T)(implicit fmt: Format[T]): String = {

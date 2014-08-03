@@ -55,7 +55,6 @@ object RespiteApplicationMetrics {
 * Created by mfellows on 23/06/2014.
 */
 trait Metrics extends InstrumentedBuilder with CheckedBuilder {
-  override lazy val metricBaseName = MetricName(getClass)
   val metricRegistry = RespiteApplicationMetrics.metricRegistry
   val registry = RespiteApplicationMetrics.healthChecksRegistry
 }
@@ -73,8 +72,7 @@ trait MetricsSupport extends ScalatraBase with Metrics with LoggingSupport {
       case "/:id" if method == Put => metrics.timer("update")
       case "/:id" if method == Delete => metrics.timer("delete")
       // Ideally capitalise/camelCase this. Also avoid collisions from above.
-      case _ if !path.toString.replaceAll("[^a-zA-Z0-9_-]", "").isEmpty => metrics.timer(method.toString.toLowerCase, path.replaceAll("[^a-zA-Z0-9_-]", ""))
-      case _ => metrics.timer(method.toString.toLowerCase)
+      case _ => metrics.timer(method.toString.toLowerCase, path.toString.drop(1).replaceAll("[\\/]", "_"))
     }
   }
 
@@ -97,14 +95,12 @@ trait MetricsSupport extends ScalatraBase with Metrics with LoggingSupport {
  */
 trait MetricsRestSupport[ObjectType <: Model[ObjectID], ObjectID] extends MetricsSupport { this: RestController[ObjectType, ObjectID] =>
 
-  val REST_CLASSNAME        = "au.com.onegeek.respite.controllers.RestController"
   val HEALTH_CHECK_TIMEOUT  = 100 millis
 
   // Metrics - override metrics base name if controller has not been subclassed (i.e. direct instantiation)
   override lazy val metricBaseName = {
     val ANON = ".*\\$\\$anon\\$.*"
     getClass.getName match {
-      case REST_CLASSNAME                     => MetricName(s"RestController.${collectionName.capitalize}")
       case name: String if name.matches(ANON) => MetricName(s"RestController.${collectionName.capitalize}")
       case name: String                       => MetricName(name)
     }
@@ -115,9 +111,12 @@ trait MetricsRestSupport[ObjectType <: Model[ObjectID], ObjectID] extends Metric
    * (what exactly does 'active' mean?)
    */
   healthCheck("list", s"List all entities in $metricBaseName failed") {
-    implicit def executor: ExecutionContext = ExecutionContext.global
+
 
     def check(): Boolean = {
+      // Default to failed health check
+      false
+
       try {
         val futureList = Await.result({
           this.actor ? "all"
@@ -125,7 +124,6 @@ trait MetricsRestSupport[ObjectType <: Model[ObjectID], ObjectID] extends Metric
 
         Await.result(futureList, HEALTH_CHECK_TIMEOUT) match {
           case l: List[ObjectType] => true
-          case _ => false
         }
       } catch {
         case _: Throwable => false

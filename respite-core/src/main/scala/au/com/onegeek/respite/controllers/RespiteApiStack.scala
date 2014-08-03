@@ -29,8 +29,4 @@ import org.scalatra._
 trait RespiteApiStack[T] extends ScalatraServlet with PlayJsonSupport[T] {
 
   implicit protected val jsonFormats: Formats = DefaultFormats
-
-  notFound {
-    resourceNotFound()
-  }
 }

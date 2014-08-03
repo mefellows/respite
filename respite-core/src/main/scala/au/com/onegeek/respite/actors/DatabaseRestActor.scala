@@ -95,7 +95,7 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
 
   def receive = {
     case "all"                                    => doAll()
-    case Seq("get", objectId: String, None)       => doGet(objectId)
+    case Seq("get", objectId: String)             => doGet(objectId)
     case Seq("create", modelInstance: ModelType)  => doCreate(modelInstance)
     case Seq("update", modelInstance: ModelType)  => doUpdate(modelInstance)
     case Seq("delete", modelInstance: ModelType)  => doDeleteEntity(modelInstance)

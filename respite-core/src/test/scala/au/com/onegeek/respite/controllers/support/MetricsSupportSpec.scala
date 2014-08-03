@@ -24,6 +24,7 @@ class MetricsSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
   val repository = new UserTestRepository
 
   addServlet(new MetricSpecController(repository = repository), "/users")
+  addServlet(new MetricSpecControllerWithCustomName(repository = repository), "/users3/")
   addServlet(new RestController[User, BSONObjectID]("users", User.format, repository) with MetricsRestSupport[User, BSONObjectID], "/users2")
   addServlet(new MetricsController("/metrics"), "/metrics")
 
@@ -122,8 +123,18 @@ class MetricsSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
         body should equal("foo")
       }
       get("/metrics/") {
-        body should include("\"au.com.onegeek.respite.controllers.MetricSpecController.get.foobarbaz\":{\"count\":1")
+        body should include("\"au.com.onegeek.respite.controllers.MetricSpecController.get.foo_bar_baz\":{\"count\":1")
       }
+    }
+
+    "Instrument an ~ path" in {
+      get("/users/~") {
+        body should equal("~")
+      }
+      get("/metrics/") {
+        body should include("\"au.com.onegeek.respite.controllers.MetricSpecController.get.~\":{\"count\":1")
+      }
+
     }
   }
 

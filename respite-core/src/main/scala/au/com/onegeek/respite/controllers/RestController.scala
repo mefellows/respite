@@ -71,21 +71,6 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
 
   implicit val tOut = Timeout(Duration.create(1, SECONDS))
 
-  def doSingle(id: String, method: String, modelInstance: Option[ObjectType] = None) = {
-    try {
-      new AsyncResult {
-        override def timeout = tOut.duration
-        val is = actor ? Seq(method, id, modelInstance)
-      }
-    }
-    catch {
-      case e: Exception => {
-        logger.error("Something died: " + e.getMessage)
-        BadRequest("You probably have a malformed id: " + e.getMessage)
-      }
-    }
-  }
-
   get("/") {
 
     logger.debug("Getting all")
@@ -97,9 +82,12 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
   }
 
   val getSingle = get("/:id") {
-    logger.debug("Getting something")
     val id = params("id")
-    doSingle(id, "get")
+    logger.debug(s"Getting entity by $id")
+    new AsyncResult {
+      override def timeout = tOut.duration
+      val is = actor ? Seq("get", id)
+    }
   }
 
   val createEntity = post("/") {
@@ -159,18 +147,18 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
    * Search keys should be in the form: search.key=value&search.key2=value2
    *
    */
-  get("/search/") {
-    val criteria = requestParamsToSearchCriteria(params)
-    logger.debug(criteria.toString)
-
-    new AsyncResult {
-      override def timeout = tOut.duration
-      val is = actor ? Seq("search", criteria)
-    }
-  }
-
-  def requestParamsToSearchCriteria(params: Params): List[(String, JsValue)] = {
-//    val searchCriteria: List[Tuple2[String, String]] = params.keys.filter(_.startsWith("search.")) foldLeft(List[Tuple2[String, String]]()) ( (list,k) => (k, params.get(s"search.$k")))
-    params.keys.filter(_.startsWith("search.")).map (_.replaceFirst("search.","")).foldLeft(List[(String, JsValue)]())((list,k) => list.::(k, JsString(params.as[String](s"search.$k"))) )
-  }
+//  get("/search/") {
+//    val criteria = requestParamsToSearchCriteria(params)
+//    logger.debug(criteria.toString)
+//
+//    new AsyncResult {
+//      override def timeout = tOut.duration
+//      val is = actor ? Seq("search", criteria)
+//    }
+//  }
+//
+//  def requestParamsToSearchCriteria(params: Params): List[(String, JsValue)] = {
+////    val searchCriteria: List[Tuple2[String, String]] = params.keys.filter(_.startsWith("search.")) foldLeft(List[Tuple2[String, String]]()) ( (list,k) => (k, params.get(s"search.$k")))
+//    params.keys.filter(_.startsWith("search.")).map (_.replaceFirst("search.","")).foldLeft(List[(String, JsValue)]())((list,k) => list.::(k, JsString(params.as[String](s"search.$k"))) )
+//  }
 }

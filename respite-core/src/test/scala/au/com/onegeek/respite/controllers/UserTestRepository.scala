@@ -62,10 +62,15 @@ class MetricSpecController(repository: ReactiveRepository[User, BSONObjectID])(o
   get("/foo/bar/baz") {
     "foo"
   }
+
+  get("/~") {
+    "~"
+  }
 }
 
 class MetricSpecControllerWithCustomName(repository: ReactiveRepository[User, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[User, BSONObjectID]("users", User.format, repository) with MetricsRestSupport[User, BSONObjectID] {
   override lazy val metricBaseName = {
     MetricName("MyAwesomeName")
   }
+
 }

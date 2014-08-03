@@ -41,9 +41,9 @@ libraryDependencies ++= Seq(
 
 instrumentSettings
 
-ScoverageKeys.minimumCoverage := 80
+ScoverageKeys.minimumCoverage := 90
 
-ScoverageKeys.failOnMinimumCoverage := false
+ScoverageKeys.failOnMinimumCoverage := true
 
 ScoverageKeys.highlighting := true
 

@@ -64,7 +64,7 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoSp
       }
     }
 
-    "Provide an API to fetch a single Model by it's ID" in {
+    "Provide an API to fetch a single Model by its ID" in {
       get("/users/53b62e370100000100af8ecd", headers = Map("Content-Type" -> "application/json")) {
         status should equal(200)
         body should equal("{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"}")
