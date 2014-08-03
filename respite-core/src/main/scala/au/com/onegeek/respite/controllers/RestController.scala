@@ -52,6 +52,21 @@ import scala.reflect.ClassTag
   whatever objects are required to complete the action - typically a case class
   instance of ObjectType constructed using JSON from the request body,
 */
+
+/**
+ * REST API base class with CRUD
+ *
+ *
+ *
+ * @param collectionName
+ * @param jsonFormatter
+ * @param repository
+ * @param bindingModule
+ * @param tag
+ * @param objectIdConverter
+ * @tparam ObjectType
+ * @tparam ObjectID
+ */
 class RestController[ObjectType <: Model[ObjectID], ObjectID]
     (val collectionName: String, jsonFormatter: Format[ObjectType], repository: Repository[ObjectType, ObjectID])
     (implicit val bindingModule: BindingModule, implicit val tag: ClassTag[ObjectType], implicit val objectIdConverter: String => ObjectID)

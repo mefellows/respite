@@ -25,13 +25,17 @@ trait MongoSpecSupport {
   }
 
 }
+
+/**
+ *
+ */
 trait Awaiting {
 
   import scala.concurrent._
 
   implicit val ec = ExecutionContext.Implicits.global
 
-  val timeout = 1 seconds
+  val timeout = 5 seconds
 
   def await[A](future: Future[A])(implicit timeout: Duration = timeout) = Await.result(future, timeout)
 }

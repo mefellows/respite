@@ -5,6 +5,9 @@ import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
 import org.scalatra.ScalatraServlet
 import au.com.onegeek.respite.test.{Awaiting, MongoSpecSupport}
 import org.scalatest.concurrent.ScalaFutures
+
+import scala.reflect.ClassTag
+
 //import com.github.simplyscala.MongoEmbedDatabase
 //import com.github.simplyscala.MongodProps
 import uk.gov.hmrc.mongo._
@@ -16,10 +19,9 @@ import reactivemongo.api.indexes.Index
 import au.com.onegeek.respite.models.ApiKey
 import au.com.onegeek.respite.ServletTestsBase
 import uk.gov.hmrc.mongo.ReactiveMongoFormats._
-import au.com.onegeek.respite.models.ModelJsonExtensions._
+  import au.com.onegeek.respite.models.ModelJsonExtensions._
 
-class ApiKeyTestRepository(implicit mc: MongoConnector)
-  extends ReactiveRepository[ApiKey, BSONObjectID]("testapikeys", mc.db, modelFormatForMongo {Json.format[ApiKey]}, ReactiveMongoFormats.objectIdFormats) {
+class ApiKeyTestRepository(implicit mc: MongoConnector) extends ReactiveRepository[ApiKey, BSONObjectID]("testapikeys", mc.db, modelFormatForMongo {Json.format[ApiKey]}, ReactiveMongoFormats.objectIdFormats) {
 
   override def ensureIndexes() = {
     collection.indexesManager.ensure(Index(Seq("application" -> IndexType.Ascending), name = Some("applicationFieldUniqueIdx"), unique = true, sparse = true))
@@ -38,7 +40,7 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
   val API_APP_HEADER = "X-API-Application";
   val validHeaders: Map[String, String] = Map(API_APP_HEADER -> "application-name", API_KEY_HEADER -> "key")
 
-  class AuthServlet extends TestServlet with Authentication {
+  class AuthServlet(implicit val tag: ClassTag[ApiKey]) extends TestServlet with Authentication {
     override implicit val authenticationStrategy = new DatabaseAuthenticationStrategy(repository)
 
     get("/") {
@@ -54,8 +56,6 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
   val authServletWithApi = new AuthServlet with AuthenticationApi
 
   before {
-    //mongoProps = mongoStart(17123)
-
     // Clear out entries
     await(repository.removeAll)
 
@@ -63,10 +63,6 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
     val key = ApiKey(id = BSONObjectID.generate, application = "application-name", description = "my description", key = "key")
     await(repository.insert(key))
 
-  }
-
-  after {
-    //mongoStop(mongoProps)
   }
 
   addServlet(authServlet, "/*")
@@ -117,10 +113,10 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
 
   "A Servlet with AuthenticationApi" should {
 
-    "provide a RESTful API to remove keys at runtime" in {
+    "Provide a RESTful API to remove keys at runtime" in {
       delete("/auth/token/key", headers = validHeaders) {
         status should equal (200)
-        body should include ("Some(ApiKey(BSONObjectID")
+        body should include ("\"application\":\"application-name\",\"description\":\"my description\",\"key\":\"key\"}")
       }
 
       // Key deleted, I should be rejected!
@@ -129,7 +125,28 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
       }
     }
 
-    "reject a request with incorrect key" in {
+    "Provide an API to create tokens at runtime" in {
+      val json = "{\"application\":\"hacker\",\"description\":\"news for hackers\",\"key\":\"1234\"}"
+
+      post("/auth/token/", json.toString, validHeaders ++ Map("Content-Type" -> "application/json")) {
+        println(s"heres my body: ${body}")
+        status should equal(200)
+        body should include("\"application\":\"hacker\"")
+      }
+    }
+
+    "Reject invalid token creation requests" in {
+      val json = "{\"application\":\"hacker\"}"
+
+      post("/auth/token/", json.toString, validHeaders ++ Map("Content-Type" -> "application/json")) {
+        println(s"heres my body: ${body}")
+        status should equal(400)
+        body should include("{\"obj.description\":[{\"msg\":\"error.path.missing\"")
+      }
+    }
+
+
+    "Reject a request with incorrect key" in {
       delete("/auth/token/notexist", headers = validHeaders) {
         status should equal (404)
       }

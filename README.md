@@ -103,6 +103,11 @@ Use the following Mixins to enhance your Controllers
 
 This is very early stages and subject to dramatic change - use at your own risk.
 
+
+## API Documentation
+
+http://mefellows.github.io/respite/latest/api/
+
 ## Built on top of giants...
 
 Thanks to the following projects for making this so awesome:

@@ -22,8 +22,11 @@
  */
 package au.com.onegeek.respite.models
 
-import uk.gov.hmrc.mongo.ReactiveMongoFormats
-import play.api.libs.json.Json
+import java.security.MessageDigest
+
+import uk.gov.hmrc.mongo.JsonExtensions._
+import uk.gov.hmrc.mongo.{JsonExtensions, ReactiveMongoFormats}
+import play.api.libs.json._
 import reactivemongo.bson.BSONObjectID
 import au.com.onegeek.respite.models.ModelJsonExtensions._
 
@@ -38,7 +41,35 @@ object ApiKey {
   import au.com.onegeek.respite.models.ModelJsonExtensions._
   import uk.gov.hmrc.mongo.ReactiveMongoFormats.objectIdFormats
 
-  implicit val format = modelFormat {
-    Json.format[ApiKey]
-  }
+  implicit val format = //modelFormatForApiKey {
+    modelFormat {
+      Json.format[ApiKey]
+    }
+//  }
+
+//  def generateKey(application: String, description: String): String = {
+//    new String(MessageDigest.getInstance("MD5").digest(application.+(description).getBytes()))
+//  }
+//
+//  /**
+//   * Use this Formatter for Mongo Repositories. It ensures the Id field of your Model object is always present,
+//   * and formatted correctly for ReactiveMongo database operations. Typically, you do not wish to use this
+//   * for in/out messaging via RestControllers etc.
+//   *
+//   * @param baseFormat Base formatter to wrap (typically, this is a `Json.format[Entity]`
+//   * @tparam A
+//   * @return
+//   */
+//  def modelFormatForApiKey[A](baseFormat: Format[A]): Format[A] = {
+//    import uk.gov.hmrc.mongo.ReactiveMongoFormats._
+//    import JsonExtensions._
+//
+//    new Format[A] {
+//      def reads(json: JsValue): JsResult[A] = {
+//        val hash: String = generateKey( (json \ "application").as[String], ((json \ "description").as[String]) )
+//        baseFormat.compose(withDefault("key", hash)).reads(json)
+//      }
+//      def writes(o: A): JsValue = baseFormat.writes(o)
+//    }
+//  }
 }

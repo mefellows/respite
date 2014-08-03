@@ -50,3 +50,13 @@ ScoverageKeys.highlighting := true
 coverallsSettings
 
 licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
+
+// GitHub Pages
+
+site.settings
+
+ghpages.settings
+
+git.remoteRepo := "git@github.com:mefellows/respite.git"
+
+site.includeScaladoc()

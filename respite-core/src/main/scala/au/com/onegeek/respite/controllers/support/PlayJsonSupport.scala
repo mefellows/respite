@@ -42,7 +42,7 @@ object PlayJsonSupport {
 @implicitNotFound(
   "No play JSON Reads/Writes defaults are in place. Try adding au.com.onegeek.respite.database.DefaultFormats or creating your own."
 )
-trait PlayJsonSupport[T] extends ScalatraBase  with ApiFormats { this: ApiFormats =>
+trait PlayJsonSupport[T] extends ScalatraBase with ApiFormats { this: ApiFormats =>
 
   import au.com.onegeek.respite.controllers.support.PlayJsonSupport._
 
