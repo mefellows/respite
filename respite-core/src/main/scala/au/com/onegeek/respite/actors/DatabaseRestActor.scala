@@ -35,6 +35,7 @@ import uk.gov.hmrc.mongo.Repository
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
+import au.com.onegeek.respite.controllers.support.LoggingSupport
 
 /**
  * Created by mfellows on 24/04/2014.
@@ -48,39 +49,12 @@ import scala.concurrent.{Await, ExecutionContext, Future}
  */
 class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](repository: Repository[ModelType, ObjectIDType])
 //                                                 (implicit val bindingModule: BindingModule, implicit val format: Format[ModelType], implicit val stringToId: String => ObjectIDType) extends Actor with Injectable {
-                                                 (implicit val format: Format[ModelType], implicit val stringToId: String => ObjectIDType) extends Actor {
-
-  val logger = LoggerFactory.getLogger(getClass)
-
-  val cache: Cache[Option[ModelType]] = LruCache(maxCapacity = 500,
-    initialCapacity = 16,
-    timeToLive = Duration.Inf,
-    timeToIdle = Duration.create(1.0, TimeUnit.MINUTES))
-
-  val listCache: Cache[List[ModelType]] = LruCache(maxCapacity = 500,
-    initialCapacity = 16,
-    timeToLive = Duration.Inf,
-    timeToIdle = Duration.create(1.0, TimeUnit.MINUTES))
+                                                 (implicit val format: Format[ModelType], implicit val stringToId: String => ObjectIDType) extends Actor with LoggingSupport {
 
   protected implicit def executor: ExecutionContext = ExecutionContext.global
 
-  //  val connection = injectOptional[DefaultDB] getOrElse {
-  //    throw new Exception("Database connection not supplied. Death. Ah, horrible horrible.")
-  //  }
-
   def doGet(id: String) = {
     logger.debug("Getting something");
-
-    //    sender ! doGetSingle(objectId).map({ model =>
-    //        model match {
-    //          case Some(model: ModelType) => {
-    //            println(Json.toJson(model))
-    //            Json.toJson(model)
-    //          }
-    //          case _ => NotFound("No object with that id")
-    //        }
-    //    })
-
     sender ! doGetSingle(id)
   }
 
@@ -110,24 +84,25 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
   }
 
   def doDeleteEntity(id: String) = {
-    logger.debug(s"Deleting something ${id}");
+    logger.debug(s"Deleting something by ID: ${id}");
     sender ! deleteEntity(id)
   }
 
-  def receive = {
-
-    case "all" => doAll()
-    case Seq("get", objectId: String, None) => doGet(objectId)
-    case Seq("create", modelInstance: ModelType) => println("yo, actor creatin"); doCreate(modelInstance)
-    case Seq("update", modelInstance: ModelType) => println("yo, actor updating something "); doUpdate(modelInstance)
-    case Seq("delete", objectID: String) => println("yo, actor deleting something"); doDeleteEntity(objectID)
-    //case Seq("search", search: List[(String, JsValue)]) => println("yo, actor search something"); doSearch(search: _*)
-    case _ => println("Ah, NFI what you're askin")
+  def doDeleteEntity(obj: ModelType) = {
+    logger.debug(s"Deleting entity: ${obj}");
+    sender ! deleteEntity(obj)
   }
 
-
-  // TODO: Compose futures together here to delete the entity, purge from cache and return to user...
-
+  def receive = {
+    case "all"                                    => doAll()
+    case Seq("get", objectId: String, None)       => doGet(objectId)
+    case Seq("create", modelInstance: ModelType)  => doCreate(modelInstance)
+    case Seq("update", modelInstance: ModelType)  => doUpdate(modelInstance)
+    case Seq("delete", modelInstance: ModelType)  => doDeleteEntity(modelInstance)
+    case Seq("delete", objectID: String)          => doDeleteEntity(objectID)
+    //case Seq("search", search: List[(String, JsValue)]) => println("yo, actor search something"); doSearch(search: _*)
+    case o: Any                                   => logger.debug(s"Received invalid message: $o"); None
+  }
 
   /**
    * Deletes an entity from the755147
@@ -139,7 +114,23 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
     for {
       e <- doGetSingle(id)
       d <- deleteEntityFromDB(id)
-      c <- deleteItemFromCache(e)
+//      c <- deleteItemFromCache(e)
+    } yield e.orElse(None)
+
+  }
+
+  /**
+   * Deletes an entity from the Database
+   *
+   * @param id
+   * @return
+   */
+  def deleteEntity(obj: ModelType): Future[Option[ModelType]] = {
+    println(s"Id: ${obj.id.toString}")
+    for {
+      e <- doGetSingle(obj.id)
+      d <- deleteEntityFromDB(obj)
+//      c <- deleteItemFromCache(e)
     } yield e.orElse(None)
 
   }
@@ -153,21 +144,8 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
   //    deleteEntityFromDB(user)
   //  }
 
-  def deleteEntityFromDB(obj: Option[ModelType]): Future[Option[ModelType]] = {
-
-    obj match {
-      case None => Future {
-        println("No user to delete: ")
-        None
-      }
-      case Some(obj) => {
-        println("Deleting object")
-        repository.removeById(obj.id).map {
-          e =>
-            Some(obj)
-        }
-      }
-    }
+  def deleteEntityFromDB(obj: ModelType): Future[Option[ModelType]] = {
+    repository.removeById(obj.id).map { e => Some(obj) }
   }
 
   def deleteEntityFromDB(id: String): Future[Option[ModelType]] = {
@@ -180,17 +158,17 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
 
   }
 
-  def deleteItemFromCache(key: Option[Any]): Future[Option[Any]] = {
-    Future {
-      key match {
-        case None => None
-        case Some(key) => {
-          cache.remove(key)
-          Some(key)
-        }
-      }
-    }
-  }
+//  def deleteItemFromCache(key: Option[Any]): Future[Option[Any]] = {
+//    Future {
+//      key match {
+//        case None => None
+//        case Some(key) => {
+//          cache.remove(key)
+//          Some(key)
+//        }
+//      }
+//    }
+//  }
 
   def createEntity(obj: ModelType): Future[ModelType] = {
     println(s"Saving this guy ${obj}")
@@ -212,36 +190,19 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
    *
    * @return
    */
-//  def doList: Future[List[ModelType]] = listCache("list-users") {
-  def doList: Future[List[ModelType]] = {
-    repository.findAll
-//    val list = Await.result(repository.findAll, 500 millis)
-//    println(list)
-//    Future {
-//      list
-//    }
-  }
+  def doList: Future[List[ModelType]] = repository.findAll
 
-  //
-//  def doGetSingle(id: String): Future[Option[ModelType]] = cache(id) {
   def doGetSingle(id: String): Future[Option[ModelType]] = {
-
     logger.info(s"Fetching records by id ${id}")
     repository.findById(id)
-
-//    val foo = Await.result({
-//      repository.findById(id)
-//    }, 100 millis)
-//
-//    println(s"I have me a foo: ${foo}")
-//
-//    Future {
-//      foo
-//    }
-
   }
 
-  def doSearch(search: (String, JsValueWrapper)*) {
-    repository.find(search: _*)
+  def doGetSingle(id: ObjectIDType): Future[Option[ModelType]] = {
+    logger.info(s"Fetching records by id ${id}")
+    repository.findById(id)
   }
+
+//  def doSearch(search: (String, JsValueWrapper)*) {
+//    repository.find(search: _*)
+//  }
 }
