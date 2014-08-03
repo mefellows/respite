@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>security - au.com.onegeek.respite.security</title>
+          <meta name="description" content="security - au.com.onegeek.respite.security" />
+          <meta name="keywords" content="security au.com.onegeek.respite.security" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../index.html';
+            var hash = 'au.com.onegeek.respite.security.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../../package.html" class="extype" name="au">au</a>.<a href="../../../package.html" class="extype" name="au.com">com</a>.<a href="../../package.html" class="extype" name="au.com.onegeek">onegeek</a>.<a href="../package.html" class="extype" name="au.com.onegeek.respite">respite</a></p>
+        <h1>security</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">security</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="au.com.onegeek.respite.security.Authentication" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="AuthenticationextendsScalatraBasewithInjectable"></a>
+      <a id="Authentication:Authentication"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Authentication.html"><span class="name">Authentication</span></a><span class="result"> extends <span class="extype" name="org.scalatra.ScalatraBase">ScalatraBase</span> with <span class="extype" name="com.escalatesoft.subcut.inject.Injectable">Injectable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">When this trait is used, the incoming request
+is checked for authentication based on the
+X-API-Key header.</p>
+    </li><li name="au.com.onegeek.respite.security.AuthenticationApi" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="AuthenticationApiextendsAuthenticationwithFutureSupport"></a>
+      <a id="AuthenticationApi:AuthenticationApi"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="AuthenticationApi.html"><span class="name">AuthenticationApi</span></a><span class="result"> extends <a href="Authentication.html" class="extype" name="au.com.onegeek.respite.security.Authentication">Authentication</a> with <span class="extype" name="org.scalatra.FutureSupport">FutureSupport</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="au.com.onegeek.respite.security.AuthenticationStrategy" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="AuthenticationStrategyextendsAnyRef"></a>
+      <a id="AuthenticationStrategy:AuthenticationStrategy"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="AuthenticationStrategy.html"><span class="name">AuthenticationStrategy</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">An API Authentication Strategy for the Authentication Trait.</p>
+    </li><li name="au.com.onegeek.respite.security.ConfigAuthenticationStrategy" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ConfigAuthenticationStrategyextendsAuthenticationStrategy"></a>
+      <a id="ConfigAuthenticationStrategy:ConfigAuthenticationStrategy"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ConfigAuthenticationStrategy.html"><span class="name">ConfigAuthenticationStrategy</span></a><span class="result"> extends <a href="AuthenticationStrategy.html" class="extype" name="au.com.onegeek.respite.security.AuthenticationStrategy">AuthenticationStrategy</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Created by mfellows on 1/07/2014.</p>
+    </li><li name="au.com.onegeek.respite.security.DatabaseAuthenticationStrategy" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DatabaseAuthenticationStrategyextendsAuthenticationStrategywithCachingSupport"></a>
+      <a id="DatabaseAuthenticationStrategy:DatabaseAuthenticationStrategy"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="DatabaseAuthenticationStrategy.html"><span class="name">DatabaseAuthenticationStrategy</span></a><span class="result"> extends <a href="AuthenticationStrategy.html" class="extype" name="au.com.onegeek.respite.security.AuthenticationStrategy">AuthenticationStrategy</a> with <a href="../controllers/support/CachingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.CachingSupport">CachingSupport</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">This class implements a Database persisted Authentication Strategy, with
+programmatic / API hooks to add/revoke access at runtime.</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="au.com.onegeek.respite.security.SecurityUtil" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SecurityUtil"></a>
+      <a id="SecurityUtil:SecurityUtil"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="SecurityUtil$.html"><span class="name">SecurityUtil</span></a>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../lib/template.js"></script>
+    </body>
+      </html>
