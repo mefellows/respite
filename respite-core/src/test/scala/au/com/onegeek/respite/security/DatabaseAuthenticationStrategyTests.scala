@@ -34,7 +34,6 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
 
   class TestServlet(implicit val bindingModule: BindingModule) extends ScalatraServlet with Injectable
 
-//  var mongoProps: MongodProps = null
   val repository = new ApiKeyTestRepository
   val API_KEY_HEADER = "X-API-Key";
   val API_APP_HEADER = "X-API-Application";
@@ -45,10 +44,6 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
 
     get("/") {
       "OK"
-    }
-
-    override def initialize(config: ConfigT) {
-      super.initialize(config)
     }
   }
 
@@ -111,7 +106,7 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
     }
   }
 
-  "A Servlet with AuthenticationApi" should {
+  "A Servlet secured with DatabaseAuthenticationStrategy with AuthenticationApi" should {
 
     "Provide a RESTful API to remove keys at runtime" in {
       delete("/auth/token/key", headers = validHeaders) {
@@ -149,6 +144,20 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
     "Reject a request with incorrect key" in {
       delete("/auth/token/notexist", headers = validHeaders) {
         status should equal (404)
+      }
+    }
+  }
+
+  "An Servlet secured with DatabaseAuthenticationStrategy with a slow / unavailable Database" should {
+
+    "Respond with a 503" in {
+      mongoConnectorForTest.close()
+      // Key deleted, I should be rejected!
+      get("/", headers = validHeaders) {
+
+        println(body)
+        println(status)
+        status should equal (503)
       }
     }
   }

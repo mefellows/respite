@@ -47,9 +47,9 @@ object ApiKey {
     }
 //  }
 
-//  def generateKey(application: String, description: String): String = {
-//    new String(MessageDigest.getInstance("MD5").digest(application.+(description).getBytes()))
-//  }
+  def generateKey(application: String, description: String): String = {
+    MessageDigest.getInstance("MD5").digest(application.+(description).getBytes()).map(0xFF & _).map { "%02x".format(_) }.foldLeft(""){_ + _}
+  }
 //
 //  /**
 //   * Use this Formatter for Mongo Repositories. It ensures the Id field of your Model object is always present,

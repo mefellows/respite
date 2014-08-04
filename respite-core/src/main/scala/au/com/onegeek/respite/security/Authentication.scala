@@ -32,7 +32,7 @@ import play.api.libs.json.{Format, JsError, Json, JsSuccess}
 import reactivemongo.api.DefaultDB
 import spray.caching.{LruCache, Cache}
 import java.util.concurrent.TimeUnit
-import scala.concurrent.{ExecutionContext, Future, Await}
+import scala.concurrent._
 import reactivemongo.bson.BSONDocument
 import scala.concurrent.duration._
 
@@ -51,6 +51,7 @@ trait Authentication extends ScalatraBase with Injectable with LoggingSupport {
   val API_KEY_HEADER = "X-API-Key";
   val API_APP_HEADER = "X-API-Application";
   val API_ERROR_HEADER = "X-API-Fault-Description";
+  val BLOCKING_TIMEOUT = 100 millis
 
   /**
    * A simple interceptor that checks for the existence
@@ -65,22 +66,22 @@ trait Authentication extends ScalatraBase with Injectable with LoggingSupport {
     logger.debug("Looking for some headers..." + header + ", " + app)
 
     List(app, header) match {
-      case List(Some(x), Some(y)) => {
-        logger.debug("Awaiting a result...")
-        val key = Await.result(authenticationStrategy.authenticate(x, y), 100 millis)
+      case List(Some(appName), Some(appKey)) => {
+        try {
+          logger.debug(s"Looking up key '$appKey' from AuthenticationStrategy '$authenticationStrategy")
+          val key = Await.result(authenticationStrategy.authenticate(appName, appKey), BLOCKING_TIMEOUT)
 
-        key match {
-          case Some(k) => {
-            logger.debug(s"Found key: ${k}")
+          key match {
+            case Some(k) => {
+              logger.debug(s"Found key: ${k}")
+            }
+            case None => {
+              logger.debug(s"No or invalid API keys provided. Result of lookup ${key}")
+              rejectRequest()
+            }
           }
-          case None => {
-            logger.debug(s"No or invalid API keys provided. Result of lookup ${key}")
-            rejectRequest()
-          }
-          case _ => {
-            logger.debug(s"ok, somethihng else happened")
-            rejectRequest()
-          }
+        } catch {
+          case e: TimeoutException => rejectRequest(status = 503, reason = "Temporarily unable to authenticate")
         }
       }
       case _ => {
@@ -96,8 +97,8 @@ trait Authentication extends ScalatraBase with Injectable with LoggingSupport {
    * @param reason
    * @return
    */
-  def rejectRequest(reason: String = s"Invalid authentication: X-API-* headers ('${API_KEY_HEADER}', '${API_APP_HEADER}') not provided or invalid") = {
-    halt(status = 401, headers = Map("WWW-Authenticate" -> "API-Key", API_ERROR_HEADER -> reason))
+  def rejectRequest(status: Integer = 401, reason: String = s"Invalid authentication: X-API-* headers ('${API_KEY_HEADER}', '${API_APP_HEADER}') not provided or invalid") = {
+    halt(status = status, headers = Map("WWW-Authenticate" -> "API-Key", API_ERROR_HEADER -> reason))
   }
 
   /**
@@ -108,6 +109,16 @@ trait Authentication extends ScalatraBase with Injectable with LoggingSupport {
    */
   def keyNotFound(reason: String = s"Key provided not found") = {
     halt(status = 404, reason = reason)
+  }
+
+  /**
+   * Rejects an API request with the standard 40x header and a human-friendly response message.
+   *
+   * @param reason
+   * @return
+   */
+  def keyExists(reason: String = s"Key already exists") = {
+    halt(status = 400, reason = reason)
   }
 
 }
@@ -122,7 +133,7 @@ trait AuthenticationApi extends Authentication with FutureSupport with PlayJsonS
     new AsyncResult {
     logger.debug("Removing a key")
 
-      val key = params.get("key").getOrElse(keyNotFound("Invalid request, no key provided"))
+      val key = params.get("key").get
       val is = for {
        result <- authenticationStrategy.revokeKey(key)
       } yield result.orElse(keyNotFound("Invalid or no key provided"))
@@ -135,7 +146,7 @@ trait AuthenticationApi extends Authentication with FutureSupport with PlayJsonS
       val token = parsedModel[ApiKey]
       val is = for {
         result <- authenticationStrategy.createKey(token.get)
-      } yield result
+      } yield result.orElse(keyExists())
     }
   }
 }
