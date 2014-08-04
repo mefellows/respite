@@ -22,7 +22,7 @@
  */
 package au.com.onegeek.respite.security
 
-import au.com.onegeek.respite.controllers.support.CachingSupport
+import au.com.onegeek.respite.controllers.support.{LoggingSupport, CachingSupport}
 import uk.gov.hmrc.mongo.Repository
 import au.com.onegeek.respite.models.ApiKey
 import reactivemongo.bson.BSONObjectID
@@ -35,22 +35,38 @@ import play.api.libs.json.Json
  *
  * Created by mfellows on 1/07/2014.
  */
-class DatabaseAuthenticationStrategy(repository: Repository[ApiKey, BSONObjectID]) extends AuthenticationStrategy with CachingSupport {
+class DatabaseAuthenticationStrategy[ObjectID] (repository: Repository[ApiKey, ObjectID]) extends AuthenticationStrategy with LoggingSupport {
 
   val API_TOKENS_COLLECTION = "apitokens"
 
   override def authenticate(appName: String, apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = {
-    println(s"Authenticating key: ${apiKey} and app: ${appName}")
+    logger.debug(s"Authenticating key: ${apiKey} and app: ${appName}")
       for {
         keys <- repository.find("key" -> apiKey, "application" -> appName)
       } yield keys.headOption
   }
 
   override def revokeKey(apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = {
-    println(s"Revoking key: ${apiKey}")
+    logger.debug(s"Revoking key: ${apiKey}")
       for {
         keys <- repository.find("key" -> apiKey)
         result <- repository.remove("key" -> apiKey)
       } yield keys.headOption
+  }
+
+  /**
+   * Create's an API Key in the MongoDB repository.
+   * @param apiKey
+   * @param ec
+   * @return
+   */
+  override def createKey(apiKey: ApiKey)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = {
+    logger.debug(s"Creating key: ${apiKey}")
+      for {
+        result <- repository.insert(apiKey)
+      } yield result.ok match {
+        case true => Some(apiKey)
+        case false => None
+      }
   }
 }

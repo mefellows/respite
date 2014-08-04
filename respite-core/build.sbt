@@ -28,6 +28,8 @@ libraryDependencies ++= Seq(
   Dependencies.Compile.sprayUtil,
   Dependencies.Compile.playJson,
   Dependencies.Compile.playMongo,
+  Dependencies.Compile.metrics,
+  Dependencies.Compile.metricsAdmin,
   Dependencies.Compile.ehCacheCore,
   Dependencies.Compile.simpleMongo,
   Dependencies.Compile.jettyServlet,
@@ -39,12 +41,22 @@ libraryDependencies ++= Seq(
 
 instrumentSettings
 
-ScoverageKeys.minimumCoverage := 80
+ScoverageKeys.minimumCoverage := 95
 
-ScoverageKeys.failOnMinimumCoverage := false
+ScoverageKeys.failOnMinimumCoverage := true
 
 ScoverageKeys.highlighting := true
 
 coverallsSettings
 
 licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
+
+// GitHub Pages
+
+site.settings
+
+ghpages.settings
+
+git.remoteRepo := "git@github.com:mefellows/respite.git"
+
+site.includeScaladoc()

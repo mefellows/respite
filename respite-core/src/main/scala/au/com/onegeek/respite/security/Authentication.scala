@@ -22,35 +22,36 @@
  */
 package au.com.onegeek.respite.security
 
+import au.com.onegeek.respite.controllers.RestController
+import au.com.onegeek.respite.controllers.support.{PlayJsonSupport, LoggingSupport}
+import au.com.onegeek.respite.models.ApiKey
 import org.scalatra.{FutureSupport, AsyncResult, ScalatraBase}
 import com.escalatesoft.subcut.inject.Injectable
 import org.slf4j.LoggerFactory
+import play.api.libs.json.{Format, JsError, Json, JsSuccess}
 import reactivemongo.api.DefaultDB
 import spray.caching.{LruCache, Cache}
 import java.util.concurrent.TimeUnit
-import scala.concurrent.{ExecutionContext, Future, Await}
+import scala.concurrent._
 import reactivemongo.bson.BSONDocument
 import scala.concurrent.duration._
 
+
 /**
- * Created by mfellows on 11/05/2014.
+ * Authenticate Scalatra Servlets with an [[au.com.onegeek.respite.models.ApiKey]] via the 'X-API-Key' and 'X-API_Application' headers.
+ *
  */
-/**
- * When this trait is used, the incoming request
- * is checked for authentication based on the
- * X-API-Key header.
- */
-trait Authentication extends ScalatraBase with Injectable {
+trait Authentication extends ScalatraBase with Injectable with LoggingSupport {
 
   protected implicit def executor: ExecutionContext = ExecutionContext.global
 
   // Override this strategy for more explicit control
   implicit val authenticationStrategy: AuthenticationStrategy
 
-  val _log = LoggerFactory.getLogger(getClass)
   val API_KEY_HEADER = "X-API-Key";
   val API_APP_HEADER = "X-API-Application";
   val API_ERROR_HEADER = "X-API-Fault-Description";
+  val BLOCKING_TIMEOUT = 100 millis
 
   /**
    * A simple interceptor that checks for the existence
@@ -62,29 +63,29 @@ trait Authentication extends ScalatraBase with Injectable {
     val header = Option(request.getHeader(API_KEY_HEADER));
     val app = Option(request.getHeader(API_APP_HEADER));
 
-    _log.debug("Looking for some headers..." + header + ", " + app)
+    logger.debug("Looking for some headers..." + header + ", " + app)
 
     List(app, header) match {
-      case List(Some(x), Some(y)) => {
-        _log.debug("Awaiting a result...")
-        val key = Await.result(authenticationStrategy.authenticate(x, y), 100 millis)
+      case List(Some(appName), Some(appKey)) => {
+        try {
+          logger.debug(s"Looking up key '$appKey' from AuthenticationStrategy '$authenticationStrategy")
+          val key = Await.result(authenticationStrategy.authenticate(appName, appKey), BLOCKING_TIMEOUT)
 
-        key match {
-          case Some(k) => {
-            _log.debug(s"Found key: ${k}")
+          key match {
+            case Some(k) => {
+              logger.debug(s"Found key: ${k}")
+            }
+            case None => {
+              logger.debug(s"No or invalid API keys provided. Result of lookup ${key}")
+              rejectRequest()
+            }
           }
-          case None => {
-            _log.debug(s"No or invalid API keys provided. Result of lookup ${key}")
-            rejectRequest()
-          }
-          case _ => {
-            _log.debug(s"ok, somethihng else happened")
-            rejectRequest()
-          }
+        } catch {
+          case e: TimeoutException => rejectRequest(status = 503, reason = "Temporarily unable to authenticate")
         }
       }
       case _ => {
-        _log.debug("Oh oh, no headers!")
+        logger.debug("Oh oh, no headers!")
         rejectRequest()
       }
     }
@@ -96,8 +97,8 @@ trait Authentication extends ScalatraBase with Injectable {
    * @param reason
    * @return
    */
-  def rejectRequest(reason: String = s"Invalid authentication: X-API-* headers ('${API_KEY_HEADER}', '${API_APP_HEADER}') not provided or invalid") = {
-    halt(status = 401, headers = Map("WWW-Authenticate" -> "API-Key", API_ERROR_HEADER -> reason))
+  def rejectRequest(status: Integer = 401, reason: String = s"Invalid authentication: X-API-* headers ('${API_KEY_HEADER}', '${API_APP_HEADER}') not provided or invalid") = {
+    halt(status = status, headers = Map("WWW-Authenticate" -> "API-Key", API_ERROR_HEADER -> reason))
   }
 
   /**
@@ -110,18 +111,42 @@ trait Authentication extends ScalatraBase with Injectable {
     halt(status = 404, reason = reason)
   }
 
+  /**
+   * Rejects an API request with the standard 40x header and a human-friendly response message.
+   *
+   * @param reason
+   * @return
+   */
+  def keyExists(reason: String = s"Key already exists") = {
+    halt(status = 400, reason = reason)
+  }
+
 }
 
-trait AuthenticationApi extends Authentication with FutureSupport { this: Authentication =>
+trait AuthenticationApi extends Authentication with FutureSupport with PlayJsonSupport[ApiKey] {
 
+  override implicit val format = ApiKey.format
+  /**
+   *
+   */
   delete("/token/:key") {
     new AsyncResult {
-    _log.debug("Removing a key")
+    logger.debug("Removing a key")
 
-      val key = params.get("key").getOrElse(keyNotFound("Invalid request, no key provided"))
+      val key = params.get("key").get
       val is = for {
        result <- authenticationStrategy.revokeKey(key)
       } yield result.orElse(keyNotFound("Invalid or no key provided"))
+    }
+  }
+
+  post("/token/?") {
+    logger.debug("Creating a token")
+    new AsyncResult() {
+      val token = parsedModel[ApiKey]
+      val is = for {
+        result <- authenticationStrategy.createKey(token.get)
+      } yield result.orElse(keyExists())
     }
   }
 }

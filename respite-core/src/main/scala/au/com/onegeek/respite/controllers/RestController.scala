@@ -33,15 +33,9 @@ import org.scalatra._
 import play.api.libs.json._
 import uk.gov.hmrc.mongo.Repository
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{Future, ExecutionContext}
 import scala.concurrent.duration.{Duration, SECONDS}
 import scala.reflect.ClassTag
-
-
-/**
- * Created by mfellows on 24/04/2014.
- */
-
 
 /*
   Base controller class. Each controller is bound to a case class representing
@@ -59,106 +53,98 @@ import scala.reflect.ClassTag
   instance of ObjectType constructed using JSON from the request body,
 */
 
-
-/*
- * Proposed approach:
- *
- * Step 1: Create a generic CRUD Rest Controller (which is basically what the below does)
- * Step 2.1: Create a type class system that models the main objects required - e.g. a data store representation etc. that can be swapped out
- * Step 2.2: Design any annotations/types required to allow for persistance in the model e.g. @Model or with 'Model' type class
- * Step 3: Create a generic way of dealing with configuration files -> Environment files. Create a `Scalaman` project as a Foreman equivalent?
- * Step 4: Remove the requirement of 'Angular' in the framework and replace with Akka etc.
- * Step 5: Create the default folder 'structure' and 'the Scalam way' of doing things - be opinionated but still allow for customisation
+/**
+ * REST API base class with CRUD
  *
  *
- * Use Stackable Traits / Features (similar to Skinny) to allow for customisation of behaviour.
- * USe type system where possible (do annotations use Type system or not? Assume not)
- * Remove try/catch. *shudders*
  *
- * End: Create/update yeoman generator to get started quickly, and allow for commands to add new models, services and so on
+ * @param collectionName
+ * @param jsonFormatter
+ * @param repository
+ * @param bindingModule
+ * @param tag
+ * @param objectIdConverter
+ * @tparam ObjectType
+ * @tparam ObjectID
  */
-
-// TODO: Consider making RestController an abstract/Trait and creating specific, concrete implementations (Reactive, Postgres... versions)
 class RestController[ObjectType <: Model[ObjectID], ObjectID]
-    (collectionName: String, jsonFormatter: Format[ObjectType], repository: Repository[ObjectType, ObjectID])
+    (val collectionName: String, jsonFormatter: Format[ObjectType], repository: Repository[ObjectType, ObjectID])
     (implicit val bindingModule: BindingModule, implicit val tag: ClassTag[ObjectType], implicit val objectIdConverter: String => ObjectID)
-//    (implicit val bindingModule: BindingModule, implicit val tag: ClassTag[ObjectType])
     extends RespiteApiStack[ObjectType]
     with MethodOverride
     with FutureSupport
     with Injectable
-    with LoggingSupport { this: LoggingSupport =>
+    with LoggingSupport {
+  this: LoggingSupport =>
 
   val system = inject[ActorSystem]
   override implicit val format = jsonFormatter
 
-
   val actor = system.actorOf(Props(new DatabaseRestActor[ObjectType, ObjectID](repository)))
 
-  protected implicit def executor: ExecutionContext = system.dispatcher
-//  protected implicit def objectIdConverter: BSONObjectID => String
+  protected implicit def executor: ExecutionContext = ExecutionContext.global
 
-
-  implicit val tOut = Timeout(Duration.create(10, SECONDS))
-
-  def doSingle(id: String, method: String, modelInstance: Option[ObjectType] = None) = {
-    try {
-      new AsyncResult {
-        val is = actor ? Seq(method, id, modelInstance)
-      }
-    }
-    catch {
-      case e: Exception => {
-        logger.error("Something died: " + e.getMessage)
-        BadRequest("You probably have a malformed id: " + e.getMessage)
-      }
-    }
-  }
+  implicit val tOut = Timeout(Duration.create(1, SECONDS))
 
   get("/") {
+
     logger.debug("Getting all")
+      new AsyncResult {
+        import scala.concurrent.duration._
+        override def timeout = tOut.duration
+        val is = actor ? "all"
+      }
+  }
+
+  val getSingle = get("/:id") {
+    val id = params("id")
+    logger.debug(s"Getting entity by $id")
     new AsyncResult {
-      val is = actor ? "all"
+      override def timeout = tOut.duration
+      val is = actor ? Seq("get", id)
     }
   }
 
-  get("/:id") {
-    logger.debug("Getting something")
-    val id = params("id")
-    doSingle(id, "get")
-  }
-
-  post("/") {
+  val createEntity = post("/") {
     logger.debug("creating something")
       val model = getParsedModel[ObjectType].get
 
     println(s"I have me a model object: ${model}")
 
       new AsyncResult {
+        override def timeout = tOut.duration
         val is = actor ? Seq("create", model)
       }
   }
 
-  delete("/:id") {
+  val deleteEntity = delete("/:id") {
     val id = params("id")
     logger.debug(s"Deleting something: ${id}")
 
     new AsyncResult {
+      override def timeout = tOut.duration
       val is = actor ? Seq("delete", id)
     }
-    //    val modelInstance = Json.parse(request.body).validate[ObjectType]
-    //    val id = params("id")
-    //    doSingle(id, "update", Some(modelInstance))
   }
 
-  put("/:id") {
+  val updateEntity = put("/:id") {
+    update
+  }
+
+  post("/:id") {
+    update
+  }
+
+  def update = {
     logger.debug("updating something")
 
-    getParsedModel[ObjectType].map { e =>
-      println(e)
-      new AsyncResult {
-        val is = actor ? Seq("update", e)
-      }
+    getParsedModel[ObjectType].map {
+      e =>
+        println(e)
+        new AsyncResult {
+          override def timeout = tOut.duration
+          val is = actor ? Seq("update", e)
+        }
     }.getOrElse {
 
       // TODO: Still return JS Validation error
@@ -166,8 +152,7 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
     }
   }
 
-
-  post("/search/") {
+  val search = post("/search/") {
 
   }
 
@@ -177,17 +162,18 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
    * Search keys should be in the form: search.key=value&search.key2=value2
    *
    */
-  get("/search/") {
-    val criteria = requestParamsToSearchCriteria(params)
-    logger.debug(criteria.toString)
-
-    new AsyncResult {
-      val is = actor ? Seq("search", criteria)
-    }
-  }
-
-  def requestParamsToSearchCriteria(params: Params): List[(String, JsValue)] = {
-//    val searchCriteria: List[Tuple2[String, String]] = params.keys.filter(_.startsWith("search.")) foldLeft(List[Tuple2[String, String]]()) ( (list,k) => (k, params.get(s"search.$k")))
-    params.keys.filter(_.startsWith("search.")).map (_.replaceFirst("search.","")).foldLeft(List[(String, JsValue)]())((list,k) => list.::(k, JsString(params.as[String](s"search.$k"))) )
-  }
+//  get("/search/") {
+//    val criteria = requestParamsToSearchCriteria(params)
+//    logger.debug(criteria.toString)
+//
+//    new AsyncResult {
+//      override def timeout = tOut.duration
+//      val is = actor ? Seq("search", criteria)
+//    }
+//  }
+//
+//  def requestParamsToSearchCriteria(params: Params): List[(String, JsValue)] = {
+////    val searchCriteria: List[Tuple2[String, String]] = params.keys.filter(_.startsWith("search.")) foldLeft(List[Tuple2[String, String]]()) ( (list,k) => (k, params.get(s"search.$k")))
+//    params.keys.filter(_.startsWith("search.")).map (_.replaceFirst("search.","")).foldLeft(List[(String, JsValue)]())((list,k) => list.::(k, JsString(params.as[String](s"search.$k"))) )
+//  }
 }

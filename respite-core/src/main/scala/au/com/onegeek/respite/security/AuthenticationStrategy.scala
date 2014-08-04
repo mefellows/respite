@@ -35,6 +35,7 @@ import au.com.onegeek.respite.models.ApiKey
  * Created by mfellows on 1/07/2014.
  */
 trait AuthenticationStrategy {
-  def authenticate(appName: String, apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = ???
-  def revokeKey(apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = ???
+  def authenticate(appName: String, apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]]
+  def revokeKey(apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]]
+  def createKey(apiKey: ApiKey)(implicit ec: ExecutionContext): Future[Option[ApiKey]]
 }

@@ -26,12 +26,12 @@ import scala.concurrent.{ExecutionContext, Future}
 import au.com.onegeek.respite.models.ApiKey
 
 /**
- * Created by mfellows on 1/07/2014.
+ * Simple AuthenticationStrategy utilizing an in-memory Map.
  */
 trait ConfigAuthenticationStrategy extends AuthenticationStrategy {
 
   type Key = String
-  protected val keys: Map[Key, ApiKey]
+  protected var keys: Map[Key, ApiKey]
 
   override def authenticate(appName: String, apiKey: Key)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = {
     Future {
@@ -41,8 +41,23 @@ trait ConfigAuthenticationStrategy extends AuthenticationStrategy {
 
   override def revokeKey(apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = {
     Future {
-      // Cannot revoke Keys as it's config based
-      None
+      keys.get(apiKey) match {
+        case Some(key) =>
+          keys = keys.filter({ _._1 != apiKey})
+          Some(key)
+        case None => None
+      }
+    }
+  }
+  override def createKey(apiKey: ApiKey)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = {
+    Future {
+      keys.get(apiKey.key) match {
+        case Some(key) =>
+          None
+        case None =>
+          keys = keys + (apiKey.key -> apiKey)
+          Some(apiKey)
+      }
     }
   }
 }

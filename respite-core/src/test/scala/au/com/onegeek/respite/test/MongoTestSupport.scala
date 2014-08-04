@@ -12,7 +12,7 @@ trait MongoSpecSupport {
 
   protected val databaseName = "test" + this.getClass.getSimpleName.toLowerCase
 
-  protected val databasePort = sys.env.get("MONGO_PORT").map( port => port.toInt).getOrElse(27017)
+  protected val databasePort = sys.env.get("MONGO_PORT").map( _.toInt ).getOrElse(17017)
 
   protected lazy val mongoUri: String = s"mongodb://127.0.0.1:$databasePort/$databaseName"
 
@@ -25,6 +25,10 @@ trait MongoSpecSupport {
   }
 
 }
+
+/**
+ *
+ */
 trait Awaiting {
 
   import scala.concurrent._

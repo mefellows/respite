@@ -39,6 +39,15 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
       None
     }
 
+    get("/jsresult/success") {
+      JsSuccess(User(id = BSONObjectID("53aeb92ab65f2a89219ddcfb"), username="foo", firstName = "bar"))
+    }
+
+    get("/jsresult/failure") {
+      val json = "{\"firstName\":\"Matt\", \"nousername\":\"foo\"}"
+      Json.parse(json).validate[User]
+    }
+
     get("/list") {
       List(User(id = BSONObjectID("53aeb92ab65f2a89219ddcfb"), username="foo", firstName = "bar"))
     }
@@ -132,6 +141,20 @@ class PlayJsonSupportSpec extends ServletTestsBase with ScalaFutures with Awaiti
       post("/", "{\"id\":{\"$oid\":\"53af77a90100000100a16ffb\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"}", Map("Content-Type" -> "application/json")) {
         status should equal(200)
         body should equal("{\"id\":{\"$oid\":\"53af77a90100000100a16ffb\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"}")
+      }
+    }
+
+    "Send a 400 status code and error message when a JsResult[JsError] is serialised" in {
+      get("/jsresult/failure") {
+        status should equal(400)
+        body should equal ("{\"obj.username\":[{\"msg\":\"error.path.missing\",\"args\":[]}]}")
+      }
+    }
+
+    "Send a 200 status code and a JSON representation of a Model if JsResult[JsSuccess] is serialised" in {
+      get("/jsresult/success") {
+        status should equal(200)
+        println(body)
       }
     }
   }

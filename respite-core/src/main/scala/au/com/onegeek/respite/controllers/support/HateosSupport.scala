@@ -38,31 +38,31 @@ package au.com.onegeek.respite.controllers.support
 trait HateosSupport {
 
   //could add an additional field specifying MIME-type, for example
-  case class Link(href: String, method: String)
-
-  type HateoasLinks = Map[String, Link]
-
-  //case class for a response containing a Collection of items
-  case class ListResponse(_links: HateoasLinks, _embedded: Map[String, List[Any]])
-
-  object HateoasLinkFactory {
-    //could (should) add a function for generating a "custom" action link
-    def createSelfLink(uri: String) = {
-      ("self" -> new Link(uri, "GET"))
-    }
-
-    //create Create!
-    def createCreateLink(uri: String) = {
-      ("create" -> new Link(uri, "POST"))
-    }
-
-    def createUpdateLink(uri: String) = {
-      ("update" -> new Link(uri, "PUT"))
-    }
-
-    def createDeleteLink(uri: String) = {
-      ("delete" -> new Link(uri, "DELETE"))
-    }
-  }
+//  case class Link(href: String, method: String)
+//
+//  type HateoasLinks = Map[String, Link]
+//
+//  //case class for a response containing a Collection of items
+//  case class ListResponse(_links: HateoasLinks, _embedded: Map[String, List[Any]])
+//
+//  object HateoasLinkFactory {
+//    //could (should) add a function for generating a "custom" action link
+//    def createSelfLink(uri: String) = {
+//      ("self" -> new Link(uri, "GET"))
+//    }
+//
+//    //create Create!
+//    def createCreateLink(uri: String) = {
+//      ("create" -> new Link(uri, "POST"))
+//    }
+//
+//    def createUpdateLink(uri: String) = {
+//      ("update" -> new Link(uri, "PUT"))
+//    }
+//
+//    def createDeleteLink(uri: String) = {
+//      ("delete" -> new Link(uri, "DELETE"))
+//    }
+//  }
 
 }
