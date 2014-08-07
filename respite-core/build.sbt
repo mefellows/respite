@@ -36,7 +36,9 @@ libraryDependencies ++= Seq(
   Dependencies.Compile.jettyWebapp,
   Dependencies.Compile.Test.scalatest,
   Dependencies.Compile.Test.scalatestMongo,
-  Dependencies.Compile.Test.scalatraTest
+  Dependencies.Compile.Test.scalatraTest,
+  Dependencies.Compile.Test.scalaMock,
+  Dependencies.Compile.Test.mockito
 )
 
 instrumentSettings

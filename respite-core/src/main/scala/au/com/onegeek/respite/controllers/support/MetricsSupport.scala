@@ -97,7 +97,6 @@ trait MetricsRestSupport[ObjectType <: Model[ObjectID], ObjectID] extends Metric
 
   val HEALTH_CHECK_TIMEOUT  = 100 millis
 
-  // Metrics - override metrics base name if controller has not been subclassed (i.e. direct instantiation)
   override lazy val metricBaseName = {
     val ANON = ".*\\$\\$anon\\$.*"
     getClass.getName match {

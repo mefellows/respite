@@ -3,15 +3,18 @@
 REST should be easy - Respite is a reactive & modular micro-framework for REST applications written in Scala.
 
 [![Build Status](https://travis-ci.org/mefellows/respite.svg)](https://travis-ci.org/mefellows/respite)
-[![Coverage Status](https://coveralls.io/repos/mefellows/respite/badge.png?branch=master)](https://coveralls.io/r/mefellows/respite?branch=master)
+[![Coverage Status](https://coveralls.io/repos/mefellows/respite/badge.png?branch=feature/caching)](https://coveralls.io/r/mefellows/respite?branch=feature/caching)
 
 ## Features
 
-* Easy OAuth2.0 integration
-* API usage metrics (With an API and GUI)
-* Extensible REST/CRUD Pipeline caching support (via CachingSupport with EHCache and in-memory Spray caching)
-* Distributed Database Access and Integration Layer via Reactive Mongo and Akka, with CRUD out-of-the-box
+* API usage metrics
+* Extensible REST caching support (via CachingSupport with EHCache and in-memory Spray caching)
+* Database integration, with CRUD out-of-the-box, via Reactive Mongo and Akka
 * In-built JSON <-> Case Class marshalling & validation via play-json
+
+Todo
+
+* OAuth 2.0 Security integration
 
 ## Getting Started
 
@@ -93,15 +96,24 @@ class ScalatraBootstrap extends LifeCycle {
 
 Use the following Mixins to enhance your Controllers
 
-* CachingSupport - to provide access to a Caching DSL within your routes
+* CachingSupport - to provide automatic Route caching & an ad-hoc Caching DSL within your routes
+* MetricSupport - for detailed instrumentation of API calls with its own API + Administration user interface
+
+## Roadmap
+
+* Metrics
+ * GUI with pretty charts and stuff
+ * Persistent metrics sink
+* Oauth 2.0 Integration
+ * Provider Server
+ * Client Server
 * HateosSupport - to link data models together (not required for Mongo setup)
 * PaginationSupport - to enable REST pagination on CRUD objects
-* RepositorySupport - for enhanced Repository access
-* MetricSupport - for detailed instrumentation of API calls with its own API + Administration user interface
+
 
 ## Status
 
-This is very early stages and subject to dramatic change - use at your own risk.
+This is early stages and subject to dramatic change - use at your own risk.
 
 
 ## API Documentation
@@ -110,12 +122,12 @@ http://mefellows.github.io/respite/latest/api/
 
 ## Built on top of giants...
 
-Thanks to the following projects for making this so awesome:
+We use the following components so you know it's made of good:
 
-* Scalatra
-* Reactive Mongo
-* Play JSON library
-* Metrics
+* [Scalatra] (http://www.scalatra.org)
+* [Reactive Mongo] (http://reactivemongo.org/)
+* [Play JSON library] (http://www.playframework.com/documentation/2.1.1/ScalaJson)
+* [Metrics](https://github.com/codahale/metrics)
 
 ## Livin' on the edge?
 

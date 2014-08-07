@@ -22,12 +22,44 @@
  */
 package au.com.onegeek.respite.controllers.support
 
+import nl.grons.metrics.scala.Timer
+import org.scalatra._
+
 /**
  * Mixin this Trait into any class, Controller etc. to gain some extra caching magic.
  *
  *
  * Created by mfellows on 23/06/2014.
  */
+
+trait MetricsSupport extends ScalatraBase with Metrics with LoggingSupport {
+  def getTimer(path: String, method: HttpMethod): Timer = {
+    path match {
+      case "/" if method == Get => metrics.timer("list")
+      case "/:id" if method == Get => metrics.timer("single")
+      case "/" if method == Post => metrics.timer("create")
+      case "/:id" if method == Post => metrics.timer("update")
+      case "/:id" if method == Put => metrics.timer("update")
+      case "/:id" if method == Delete => metrics.timer("delete")
+      // Ideally capitalise/camelCase this. Also avoid collisions from above.
+      case _ => metrics.timer(method.toString.toLowerCase, path.toString.drop(1).replaceAll("[\\/]", "_"))
+    }
+  }
+
+  override protected def addRoute(method: HttpMethod, transformers: Seq[RouteTransformer], action: => Any): Route = {
+    val path = transformers.foldLeft("")((path, transformer) => path.concat(transformer.toString()))
+
+    logger.debug(s"Instrumenting path $path on ${metricBaseName.name}")
+
+    super.addRoute(method, transformers, {
+      getTimer(path, method).time {
+        logger.debug(s"Instrumenting Action")
+        action
+      }
+    })
+  }
+}
+
 trait CachingSupport {
 
 //  implicit val cacheProvider: CachingStrategy = SprayCachingStrategy
@@ -61,3 +93,5 @@ trait CachingSupport {
   // don't couple the caching API with specific cache, but do provide a sensible default (In-memory using Spray or Play's API)
 
 }
+
+trait Memoization extends CachingSupport

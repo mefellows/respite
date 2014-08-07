@@ -43,9 +43,11 @@ object Dependencies {
     // Test
 
     object Test {
-      val scalatest        = "org.scalatest"             %  "scalatest_2.10"           % "2.1.0"                     % "test"
-      val scalatraTest     = "org.scalatra"              %% "scalatra-scalatest"       % "2.2.2"                     % "test"
-      val scalatestMongo   = "com.github.simplyscala"    %% "scalatest-embedmongo"     % "0.2.1"                     % "test"
+      val scalatest        = "org.scalatest"             %  "scalatest_2.10"              % "2.1.0"                     % "test"
+      val scalatraTest     = "org.scalatra"              %% "scalatra-scalatest"          % "2.2.2"                     % "test"
+      val scalatestMongo   = "com.github.simplyscala"    %% "scalatest-embedmongo"        % "0.2.1"                     % "test"
+      val scalaMock        = "org.scalamock"             %% "scalamock-scalatest-support" % "3.0.1"                     % "test"
+      val mockito          = "org.mockito"               %  "mockito-core"                % "1.9.5"                     % "test"
     }
 
   }

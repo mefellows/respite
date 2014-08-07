@@ -87,7 +87,6 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
   implicit val tOut = Timeout(Duration.create(1, SECONDS))
 
   get("/") {
-
     logger.debug("Getting all")
       new AsyncResult {
         import scala.concurrent.duration._
