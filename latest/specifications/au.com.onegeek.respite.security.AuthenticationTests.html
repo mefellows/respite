@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+      <head>
+        <title>ScalaTest Suite au.com.onegeek.respite.security.AuthenticationTests Results</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta http-equiv="Expires" content="-1"/>
+        <meta http-equiv="Pragma" content="no-cache"/>
+        <link href="css/styles.css" rel="stylesheet"/>
+        
+        <script type="text/javascript">
+          function toggleDetails(contentId, linkId) {
+  var ele = document.getElementById(contentId);
+  var text = document.getElementById(linkId);
+  if(ele.style.display == "block") {
+    ele.style.display = "none";
+    text.innerHTML = "(Show Details)";
+  }
+  else {
+    ele.style.display = "block";
+    text.innerHTML = "(Hide Details)";
+  }
+}
+function hideOpenInNewTabIfRequired() {
+  if (top === self) { document.getElementById('printlink').style.display = 'none'; }
+}
+
+        </script>
+      </head>
+      <body class="specification">
+        <div id="suite_header_name">AuthenticationTests</div>
+        <div id="suite_header_statistic_passed">
+          Tests: total 11, succeeded 11, failed 0, canceled 0, ignored 0, pending 0
+        </div>
+        <div id="b56ecc10-b1a3-491c-b8f4-19584a0cc6f0" class="scope" style="margin-left: 0px;">
+      A secured servlet
+    </div><div id="f591b415-8974-4bb3-9602-a34a8c9e7793" class="test_passed" style="margin-left: 0px;">
+      <dl>
+        <dt>should reject requests without an API Key</dt>
+      </dl>
+    </div><div id="e67d553c-83c2-45eb-8e8f-684a9e93e643" class="test_passed" style="margin-left: 0px;">
+      <dl>
+        <dt>should reject requests with an invalid API Key</dt>
+      </dl>
+    </div><div id="dc688fe0-61bd-413f-8c23-05c32722c3a1" class="test_passed" style="margin-left: 0px;">
+      <dl>
+        <dt>should accept requests with a valid API Key</dt>
+      </dl>
+    </div><div id="f63fcbcb-4ac6-4255-ba8f-5dd7d1d6474e" class="test_passed" style="margin-left: 0px;">
+      <dl>
+        <dt>should Serialise to/from a sane JSON format</dt>
+      </dl>
+    </div><div id="05b2189c-61ea-459c-8dcf-2300f62c667e" class="test_passed" style="margin-left: 0px;">
+      <dl>
+        <dt>should Generate a default key</dt>
+      </dl>
+    </div><div id="b98b8d01-95e3-4f17-99b3-0e2e79985c3b" class="scope" style="margin-left: 0px;">
+      An AuthenticationApi Servlet secured with ConfigAuthenticationStrategy
+    </div><div id="19d1aec8-2ae3-45ab-9547-14e35794dd3f" class="test_passed" style="margin-left: 0px;">
+      <dl>
+        <dt>should Provide a RESTful API to remove keys at runtime</dt>
+      </dl>
+    </div><div id="a6c6cd85-efb0-4743-8961-b938a03be4d5" class="test_passed" style="margin-left: 0px;">
+      <dl>
+        <dt>should Provide a RESTful API to remove keys at runtime - return 404 if key doesn't exist</dt>
+      </dl>
+    </div><div id="e4cd6d3f-f20b-45a9-8517-84011396fde9" class="test_passed" style="margin-left: 0px;">
+      <dl>
+        <dt>should Provide a RESTful API to remove keys at runtime - return 405 if key not provided</dt>
+      </dl>
+    </div><div id="eddf98ad-0d64-4234-ac67-01ac300e95a9" class="test_passed" style="margin-left: 0px;">
+      <dl>
+        <dt>should Provide an API to create tokens at runtime</dt>
+      </dl>
+    </div><div id="a2c88990-852d-4130-91ad-b0d4bb4fdc41" class="test_passed" style="margin-left: 0px;">
+      <dl>
+        <dt>should Provide an API to create tokens at runtime - return 400 if key exists</dt>
+      </dl>
+    </div><div id="baacfa32-fdb0-4909-95e7-64ccdc751a0e" class="test_passed" style="margin-left: 0px;">
+      <dl>
+        <dt>should Provide an API to create tokens at runtime - Reject invalid token creation requests</dt>
+      </dl>
+    </div>
+        <table id="suite_footer">
+          <tr id="suite_footer_id">
+            <td id="suite_footer_id_label_passed">Suite ID</td>
+            <td id="suite_footer_id_value" colspan="5">au.com.onegeek.respite.security.AuthenticationTests</td>
+          </tr>
+          <tr id="suite_footer_class">
+            <td id="suite_footer_class_label_passed">Class name</td>
+            <td id="suite_footer_class_value" colspan="5">au.com.onegeek.respite.security.AuthenticationTests</td>
+          </tr>
+          <tr id="suite_footer_duration">
+            <td id="suite_footer_duration_label_passed">Total duration</td>
+            <td id="suite_footer_duration_value" colspan="2">
+              1 second, 404 milliseconds
+              </td>
+          </tr>
+        </table>
+           <div id="printlink">(<a href="au.com.onegeek.respite.security.AuthenticationTests.html" target="_blank">Open AuthenticationTests in new tab</a>)</div>
+      </body>
+      <script type="text/javascript">
+        hideOpenInNewTabIfRequired();
+      </script>
+    </html>
