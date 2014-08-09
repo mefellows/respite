@@ -58,19 +58,46 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.onegeek.respite.controllers.support.CachingSupport" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="CachingSupportextendsAnyRef"></a>
-      <a id="CachingSupport:CachingSupport"></a>
+              <ol><li name="au.com.onegeek.respite.controllers.support.Cache" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Cache[T]extendsCache[T]"></a>
+      <a id="Cache[T]:Cache[T]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="CachingSupport.html"><span class="name">CachingSupport</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="Cache.html"><span class="name">Cache</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="spray.caching.Cache">spray.caching.Cache</span>[<span class="extype" name="au.com.onegeek.respite.controllers.support.Cache.T">T</span>]</span>
       </span>
       </h4>
-      <p class="comment cmt">Mixin this Trait into any class, Controller etc.</p>
+      <p class="comment cmt">Models a canonical Caching interface for use by the Caching Abstraction
+</p>
+    </li><li name="au.com.onegeek.respite.controllers.support.CachingRouteSupport" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CachingRouteSupportextendsScalatraBasewithLoggingSupportwithCachingSupport[org.scalatra.Route]"></a>
+      <a id="CachingRouteSupport:CachingRouteSupport"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="CachingRouteSupport.html"><span class="name">CachingRouteSupport</span></a><span class="result"> extends <span class="extype" name="org.scalatra.ScalatraBase">ScalatraBase</span> with <a href="LoggingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.LoggingSupport">LoggingSupport</a> with <a href="CachingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.CachingSupport">CachingSupport</a>[<span class="extype" name="org.scalatra.Route">Route</span>]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Automatically cache CRUD and idempotent routes plus a handy Caching DSL.</p>
+    </li><li name="au.com.onegeek.respite.controllers.support.CachingSupport" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CachingSupport[T]extendsAnyRef"></a>
+      <a id="CachingSupport[T]:CachingSupport[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="CachingSupport.html"><span class="name">CachingSupport</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Generic caching DSL for objects and Routes.</p>
     </li><li name="au.com.onegeek.respite.controllers.support.DatabaseSupport" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="DatabaseSupportextendsAnyRef"></a>
       <a id="DatabaseSupport:DatabaseSupport"></a>
@@ -110,6 +137,19 @@
       </span>
       </h4>
       <p class="comment cmt">Mixin this Trait into any class, Controller etc.</p>
+    </li><li name="au.com.onegeek.respite.controllers.support.Memoization" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Memoization[T]extendsCachingSupport[T]"></a>
+      <a id="Memoization[T]:Memoization[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Memoization.html"><span class="name">Memoization</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="CachingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.CachingSupport">CachingSupport</a>[<span class="extype" name="au.com.onegeek.respite.controllers.support.Memoization.T">T</span>]</span>
+      </span>
+      </h4>
+      
     </li><li name="au.com.onegeek.respite.controllers.support.Metrics" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="MetricsextendsInstrumentedBuilderwithCheckedBuilder"></a>
       <a id="Metrics:Metrics"></a>
@@ -220,6 +260,19 @@
       </span>
       </h4>
       <p class="comment cmt">Created by mfellows on 28/06/2014.</p>
+    </li><li name="au.com.onegeek.respite.controllers.support.SprayCache" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SprayCache[T]extendsCache[T]"></a>
+      <a id="SprayCache[T]:SprayCache[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="SprayCache.html"><span class="name">SprayCache</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="Cache.html" class="extype" name="au.com.onegeek.respite.controllers.support.Cache">Cache</a>[<span class="extype" name="au.com.onegeek.respite.controllers.support.SprayCache.T">T</span>]</span>
+      </span>
+      </h4>
+      
     </li></ol>
             </div>
 

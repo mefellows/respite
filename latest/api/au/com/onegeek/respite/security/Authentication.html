@@ -328,6 +328,19 @@
       </span>
       </h4>
       
+    </li><li name="au.com.onegeek.respite.security.Authentication#BLOCKING_TIMEOUT" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="BLOCKING_TIMEOUT:scala.concurrent.duration.FiniteDuration"></a>
+      <a id="BLOCKING_TIMEOUT:FiniteDuration"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">BLOCKING_TIMEOUT</span><span class="result">: <span class="extype" name="scala.concurrent.duration.FiniteDuration">FiniteDuration</span></span>
+      </span>
+      </h4>
+      
     </li><li name="org.scalatra.ScalatraBase#addRoute" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="addRoute(method:org.scalatra.HttpMethod,transformers:Seq[org.scalatra.Route=&gt;org.scalatra.Route],action:=&gt;Any):org.scalatra.Route"></a>
       <a id="addRoute(HttpMethod,Seq[(Route)⇒Route],⇒Any):Route"></a>
@@ -1211,6 +1224,21 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="au.com.onegeek.respite.security.Authentication#keyExists" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="keyExists(reason:String):Nothing"></a>
+      <a id="keyExists(String):Nothing"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">keyExists</span><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">s&quot;Key already exists&quot;</span></span>)</span><span class="result">: <span class="extype" name="scala.Nothing">Nothing</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Rejects an API request with the standard 40x header and a human-friendly response message.</p><div class="fullcomment"><div class="comment cmt"><p>Rejects an API request with the standard 40x header and a human-friendly response message.
+</p></div><dl class="paramcmts block"><dt class="param">reason</dt><dd class="cmt"></dd><dt>returns</dt><dd class="cmt"><p>
+</p></dd></dl></div>
     </li><li name="au.com.onegeek.respite.security.Authentication#keyNotFound" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="keyNotFound(reason:String):Nothing"></a>
       <a id="keyNotFound(String):Nothing"></a>
@@ -1500,15 +1528,15 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ScalatraBase</dd></dl></div>
     </li><li name="au.com.onegeek.respite.security.Authentication#rejectRequest" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="rejectRequest(reason:String):Nothing"></a>
-      <a id="rejectRequest(String):Nothing"></a>
+      <a id="rejectRequest(status:Integer,reason:String):Nothing"></a>
+      <a id="rejectRequest(Integer,String):Nothing"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">rejectRequest</span><span class="params">(<span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span> = <span class="defval" name='<span class="name"><a href="#API_APP_HEADER:String">s&quot;Invalid authentication: X-API-* headers ('${API_KEY_HEADER}', '${API_APP_HEADER}') not provided or invalid&quot;</a></span>'>...</span></span>)</span><span class="result">: <span class="extype" name="scala.Nothing">Nothing</span></span>
+        <span class="name">rejectRequest</span><span class="params">(<span name="status">status: <span class="extype" name="java.lang.Integer">Integer</span> = <span class="symbol">401</span></span>, <span name="reason">reason: <span class="extype" name="scala.Predef.String">String</span> = <span class="defval" name='<span class="name"><a href="#API_APP_HEADER:String">s&quot;Invalid authentication: X-API-* headers ('${API_KEY_HEADER}', '${API_APP_HEADER}') not provided or invalid&quot;</a></span>'>...</span></span>)</span><span class="result">: <span class="extype" name="scala.Nothing">Nothing</span></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Rejects an API request with the standard 40x header and a human-friendly response message.</p><div class="fullcomment"><div class="comment cmt"><p>Rejects an API request with the standard 40x header and a human-friendly response message.

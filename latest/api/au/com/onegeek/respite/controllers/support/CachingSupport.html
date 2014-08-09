@@ -35,14 +35,17 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">CachingSupport</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <span class="name">CachingSupport</span><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Mixin this Trait into any class, Controller etc. to gain some extra caching magic.</p><p>Created by mfellows on 23/06/2014.
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Generic caching DSL for objects and Routes.
 </p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div><div class="toggleContainer block">
+          <span class="toggle">Known Subclasses</span>
+          <div class="subClasses hiddenContent"><a href="CachingRouteSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.CachingRouteSupport">CachingRouteSupport</a>, <a href="Memoization.html" class="extype" name="au.com.onegeek.respite.controllers.support.Memoization">Memoization</a></div>
         </div></div>
         
 
@@ -164,6 +167,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="au.com.onegeek.respite.controllers.support.CachingSupport#cache" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="cache:spray.caching.Cache[T]"></a>
+      <a id="cache:spray.caching.Cache[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">cache</span><span class="result">: <span class="extype" name="spray.caching.Cache">spray.caching.Cache</span>[<span class="extype" name="au.com.onegeek.respite.controllers.support.CachingSupport.T">T</span>]</span>
+      </span>
+      </h4>
+      
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
       <a id="clone():AnyRef"></a>

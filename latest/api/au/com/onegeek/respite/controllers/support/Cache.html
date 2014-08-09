@@ -2,17 +2,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
         <head>
-          <title>DefaultFormats - au.com.onegeek.respite.database.DefaultFormats</title>
-          <meta name="description" content="DefaultFormats - au.com.onegeek.respite.database.DefaultFormats" />
-          <meta name="keywords" content="DefaultFormats au.com.onegeek.respite.database.DefaultFormats" />
+          <title>Cache - au.com.onegeek.respite.controllers.support.Cache</title>
+          <meta name="description" content="Cache - au.com.onegeek.respite.controllers.support.Cache" />
+          <meta name="keywords" content="Cache au.com.onegeek.respite.controllers.support.Cache" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
-      <link href="../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
-      <link href="../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <link href="../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
       <script type="text/javascript">
          if(top === self) {
-            var url = '../../../../../index.html';
-            var hash = 'au.com.onegeek.respite.database.DefaultFormats';
+            var url = '../../../../../../index.html';
+            var hash = 'au.com.onegeek.respite.controllers.support.Cache';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -24,9 +24,9 @@
         </head>
         <body class="type">
       <div id="definition">
-        <a href="DefaultFormats$.html" title="Go to companion"><img src="../../../../../lib/trait_to_object_big.png" /></a>
-        <p id="owner"><a href="../../../../package.html" class="extype" name="au">au</a>.<a href="../../../package.html" class="extype" name="au.com">com</a>.<a href="../../package.html" class="extype" name="au.com.onegeek">onegeek</a>.<a href="../package.html" class="extype" name="au.com.onegeek.respite">respite</a>.<a href="package.html" class="extype" name="au.com.onegeek.respite.database">database</a></p>
-        <h1><a href="DefaultFormats$.html" title="Go to companion">DefaultFormats</a></h1>
+        <img src="../../../../../../lib/trait_big.png" />
+        <p id="owner"><a href="../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../package.html" class="extype" name="au.com.onegeek">onegeek</a>.<a href="../../package.html" class="extype" name="au.com.onegeek.respite">respite</a>.<a href="../package.html" class="extype" name="au.com.onegeek.respite.controllers">controllers</a>.<a href="package.html" class="extype" name="au.com.onegeek.respite.controllers.support">support</a></p>
+        <h1>Cache</h1>
       </div>
 
       <h4 id="signature" class="signature">
@@ -35,16 +35,17 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">DefaultFormats</span><span class="result"> extends <a href="PlayJsonFormats.html" class="extype" name="au.com.onegeek.respite.database.PlayJsonFormats">PlayJsonFormats</a></span>
+        <span class="name">Cache</span><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="spray.caching.Cache">spray.caching.Cache</span>[<span class="extype" name="au.com.onegeek.respite.controllers.support.Cache.T">T</span>]</span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Models a canonical Caching interface for use by the Caching Abstraction
+</p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="PlayJsonFormats.html" class="extype" name="au.com.onegeek.respite.database.PlayJsonFormats">PlayJsonFormats</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="spray.caching.Cache">spray.caching.Cache</span>[<span class="extype" name="au.com.onegeek.respite.controllers.support.Cache.T">T</span>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
           <span class="toggle">Known Subclasses</span>
-          <div class="subClasses hiddenContent"><a href="DefaultFormats$.html" class="extype" name="au.com.onegeek.respite.database.DefaultFormats">DefaultFormats</a></div>
+          <div class="subClasses hiddenContent"><a href="SprayCache.html" class="extype" name="au.com.onegeek.respite.controllers.support.SprayCache">SprayCache</a></div>
         </div></div>
         
 
@@ -62,7 +63,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.onegeek.respite.database.DefaultFormats"><span>DefaultFormats</span></li><li class="in" name="au.com.onegeek.respite.database.PlayJsonFormats"><span>PlayJsonFormats</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.onegeek.respite.controllers.support.Cache"><span>Cache</span></li><li class="in" name="spray.caching.Cache"><span>Cache</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -82,12 +83,96 @@
         <div id="allMembers">
         
 
-        
-
-        
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="spray.caching.Cache.Keyed" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="KeyedextendsAnyRef"></a>
+      <a id="Keyed:Keyed"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Keyed</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Cache</dd></dl></div>
+    </li></ol>
+            </div>
 
         <div id="values" class="values members">
-              <h3>Value Members</h3>
+              <h3>Abstract Value Members</h3>
+              <ol><li name="spray.caching.Cache#apply" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="apply(key:Any,genValue:()=&gt;scala.concurrent.Future[V])(implicitec:scala.concurrent.ExecutionContext):scala.concurrent.Future[V]"></a>
+      <a id="apply(Any,()⇒Future[T])(ExecutionContext):Future[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">apply</span><span class="params">(<span name="key">key: <span class="extype" name="scala.Any">Any</span></span>, <span name="genValue">genValue: () ⇒ <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="au.com.onegeek.respite.controllers.support.Cache.T">T</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span><span class="result">: <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="au.com.onegeek.respite.controllers.support.Cache.T">T</span>]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Cache</dd></dl></div>
+    </li><li name="spray.caching.Cache#clear" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="clear():Unit"></a>
+      <a id="clear():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">clear</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Cache</dd></dl></div>
+    </li><li name="spray.caching.Cache#get" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="get(key:Any):Option[scala.concurrent.Future[V]]"></a>
+      <a id="get(Any):Option[Future[T]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">get</span><span class="params">(<span name="key">key: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="au.com.onegeek.respite.controllers.support.Cache.T">T</span>]]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Cache</dd></dl></div>
+    </li><li name="spray.caching.Cache#remove" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="remove(key:Any):Option[scala.concurrent.Future[V]]"></a>
+      <a id="remove(Any):Option[Future[T]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">remove</span><span class="params">(<span name="key">key: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="au.com.onegeek.respite.controllers.support.Cache.T">T</span>]]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Cache</dd></dl></div>
+    </li><li name="spray.caching.Cache#size" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="size:Int"></a>
+      <a id="size:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">size</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Cache</dd></dl></div>
+    </li></ol>
+            </div>
+
+        <div id="values" class="values members">
+              <h3>Concrete Value Members</h3>
               <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:AnyRef):Boolean"></a>
       <a id="!=(AnyRef):Boolean"></a>
@@ -153,6 +238,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="spray.caching.Cache#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="apply(key:Any):Cache.this.Keyed"></a>
+      <a id="apply(Any):Keyed"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">apply</span><span class="params">(<span name="key">key: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <a href="#KeyedextendsAnyRef" class="extmbr" name="au.com.onegeek.respite.controllers.support.Cache.Keyed">Keyed</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Cache</dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -178,7 +276,7 @@
         <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="defval" name="classOf[java.lang.CloneNotSupportedException]">...</span>
@@ -223,7 +321,7 @@
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="symbol">classOf[java.lang.Throwable]</span>
@@ -308,19 +406,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="au.com.onegeek.respite.database.PlayJsonFormats#objectIdFormat" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="objectIdFormat:play.api.libs.json.Format[reactivemongo.bson.BSONObjectID]"></a>
-      <a id="objectIdFormat:Format[BSONObjectID]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">objectIdFormat</span><span class="result">: <span class="extype" name="play.api.libs.json.Format">Format</span>[<span class="extype" name="reactivemongo.bson.BSONObjectID">BSONObjectID</span>]</span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="PlayJsonFormats.html" class="extype" name="au.com.onegeek.respite.database.PlayJsonFormats">PlayJsonFormats</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -413,8 +498,8 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="au.com.onegeek.respite.database.PlayJsonFormats">
-              <h3>Inherited from <a href="PlayJsonFormats.html" class="extype" name="au.com.onegeek.respite.database.PlayJsonFormats">PlayJsonFormats</a></h3>
+        <div class="parent" name="spray.caching.Cache">
+              <h3>Inherited from <span class="extype" name="spray.caching.Cache">spray.caching.Cache</span>[<span class="extype" name="au.com.onegeek.respite.controllers.support.Cache.T">T</span>]</h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
@@ -435,6 +520,6 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../lib/template.js"></script>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../lib/template.js"></script>
     </body>
       </html>
