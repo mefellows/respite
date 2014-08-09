@@ -1,7 +1,8 @@
-import com.typesafe.sbt.site.PamfletSupport
+import com.typesafe.sbt.site.{JekyllImpl, PamfletSupport}
 import respite.Dependencies
 import com.typesafe.sbt.SbtGit._
 import sbt._
+import com.typesafe.sbt.site.JekyllSupport._
 
 name := "respite-core"
 
@@ -81,7 +82,9 @@ site.addMappingsToSiteDir(files, "latest/specifications")
 
 site.includeScaladoc()
 
-site.jekyllSupport("site")
+sourceDirectory in Jekyll := file("site")
+
+site.jekyllSupport()
 
 testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-h", specificationDir)
 
