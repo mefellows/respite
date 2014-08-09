@@ -10,7 +10,7 @@ title:            Respite
 tagline:          'A reactive and modular micro-framework for REST apps in Scala'
 description:      'A reactive and modular micro-framework for REST apps written in Scala. Made with &hearts; by <a href="https://twitter.com/matthewfellows" target="_blank">@matthewfellows</a>.'
 url:              https://github.com/mefellows/respite
-baseurl:          /respite
+baseurl:          /
 
 author:
   name:           'Matt Fellows'
