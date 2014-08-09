@@ -23,9 +23,7 @@ Fetch from Maven Central, currently only Snapshots are available:
 In your build.{sbt, scala}:
 
 ```scala
-resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-
-libraryDependencies += "au.com.onegeek" %% "respite" % "0.0.1-SNAPSHOT"
+libraryDependencies += "au.com.onegeek" %% "respite" % "0.0.1"
 ```
 ### Create a Model
 ```scala

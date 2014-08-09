@@ -11,7 +11,7 @@ import scoverage.ScoverageSbtPlugin.instrumentSettings
 object RespiteBuild extends Build {
   val Organization = "au.com.onegeek"
   val Name = "Respite REST Framework"
-  val Version = "0.0.1-SNAPSHOT"
+  val Version = "0.0.1"
 //
 
 //  seq(SbtStartScript.startScriptForClassesSettings: _*)
