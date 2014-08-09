@@ -22,7 +22,7 @@
  */
 package au.com.onegeek.respite.security
 
-import au.com.onegeek.respite.controllers.support.{LoggingSupport, CachingSupport}
+import au.com.onegeek.respite.controllers.support.{LoggingSupport}
 import uk.gov.hmrc.mongo.Repository
 import au.com.onegeek.respite.models.ApiKey
 import reactivemongo.bson.BSONObjectID
