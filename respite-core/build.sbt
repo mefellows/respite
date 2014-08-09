@@ -1,5 +1,7 @@
+import com.typesafe.sbt.site.PamfletSupport
 import respite.Dependencies
 import com.typesafe.sbt.SbtGit._
+import sbt._
 
 name := "respite-core"
 
@@ -58,19 +60,29 @@ licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 
 site.settings
 
-//site.siteMappings <++= Seq(file1 -> "location.html", file2 -> "image.png")
-//lazy val Tutorial = config("tutorial")
-
-//site.addMappingsToSiteDir(mappings in Tutorial, s"""target/test-ouput""")
-
-//site.addMappingsToSiteDir(Seq(file1 -> "location.html", file2 -> "image.png"), "foo")
-
 ghpages.settings
 
 git.remoteRepo := "git@github.com:mefellows/respite.git"
 
+// Publish Test Specifications
+val specificationDir = "respite-core/target/site/latest/specifications/"
+
+val output = file(specificationDir)
+
+lazy val files = taskKey[Seq[(File, String)]]("Specifications to publish to GH Pages")
+
+files := {
+  for {
+    (file, name) <- (output ** AllPassFilter --- output x relativeTo(output))
+  } yield file -> name
+}
+
+site.addMappingsToSiteDir(files, "latest/specifications")
+
 site.includeScaladoc()
 
-testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-reports")
+site.jekyllSupport("site")
+
+testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-h", specificationDir)
 
 testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oDSI")
