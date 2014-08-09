@@ -23,7 +23,7 @@ Fetch from Maven Central, currently only Snapshots are available:
 In your build.{sbt, scala}:
 
 ```scala
-libraryDependencies += "au.com.onegeek" %% "respite" % "0.0.1"
+libraryDependencies += "au.com.onegeek" %% "respite-core" % "0.0.1"
 ```
 ### Create a Model
 ```scala
