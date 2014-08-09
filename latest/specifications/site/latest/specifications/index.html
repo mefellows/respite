@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+      <head>
+        <title>ScalaTest Results</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta http-equiv="Expires" content="-1"/>
+        <meta http-equiv="Pragma" content="no-cache"/>
+        <link href="css/styles.css" rel="stylesheet"/>
+        
+        <script type="text/javascript" src="js/d3.v2.min.js"></script>
+        <script type="text/javascript" src="js/sorttable.js"></script>
+        <script type="text/javascript">
+          var tagMap = {};
+var SUCCEEDED_BIT = 1;
+var FAILED_BIT = 2;
+var IGNORED_BIT = 4;
+var PENDING_BIT = 8;
+var CANCELED_BIT = 16;
+function applyFilter() {
+  var mask = 0;
+  if (document.getElementById('succeeded_checkbox').checked)
+    mask |= SUCCEEDED_BIT;
+  if (document.getElementById('failed_checkbox').checked)
+    mask |= FAILED_BIT;
+  if (document.getElementById('ignored_checkbox').checked)
+    mask |= IGNORED_BIT;
+  if (document.getElementById('pending_checkbox').checked)
+    mask |= PENDING_BIT;
+  if (document.getElementById('canceled_checkbox').checked)
+    mask |= CANCELED_BIT;
+  for (var key in tagMap) {
+    if (tagMap.hasOwnProperty(key)) {
+      var bitSet = tagMap[key];
+      var element = document.getElementById(key);
+      if ((bitSet & mask) != 0)
+        element.style.display = "table-row";
+      else 
+        element.style.display = "none";
+    }
+  }
+}
+function showDetails(suiteName) {
+  document.getElementById('details_view').innerHTML = "<iframe src='" + suiteName + ".html' width='100%' height='100%'></iframe>";
+}
+function resizeDetailsView() {
+  var headerView = document.getElementById('scalatest-header');
+  var detailsView = document.getElementById('details_view');
+  var summaryView = document.getElementById('summary_view');
+  var left = summaryView.offsetWidth + 30;
+  detailsView.style.left = left + "px";
+  detailsView.style.width = (window.innerWidth - left - 30) + "px";
+  detailsView.style.height = (window.innerHeight - headerView.offsetHeight - 20) + "px";
+}
+
+        </script>
+      </head>
+      <body onresize="resizeDetailsView()">
+        <div class="scalatest-report"> 
+          <div id="scalatest-header" class="scalatest-header-passed">
+      <div id="title">
+        ScalaTest Results
+      </div>
+
+      <div id="summary">
+        <p id="duration">Run completed in 4 seconds, 181 milliseconds.</p>    
+        <p id="totalTests">Total number of tests run: 86</p>
+        <p id="suiteSummary">Suites: completed 11, aborted 0</p>
+        <p id="testSummary">Tests: succeeded 86, failed 0, canceled 0, ignored 0, pending 0</p>
+      </div>
+    </div>
+          <table id="summary_view">
+            <tr id="summary_view_row_1">
+              <td id="summary_view_row_1_chart">
+                <div id="chart_div"></div>
+              </td>
+              <td id="summary_view_row_1_legend">
+                <table id="summary_view_row_1_legend_table">
+                  <tr id="summary_view_row_1_legend_table_row_succeeded">
+                    <td id="summary_view_row_1_legend_succeeded_label">Succeeded</td>
+                    <td id="summary_view_row_1_legend_succeeded_count">86</td>
+                    <td id="summary_view_row_1_legend_succeeded_percent">(100%)</td>
+                  </tr>
+                  <tr id="summary_view_row_1_legend_table_row_failed">
+                    <td id="summary_view_row_1_legend_failed_label">Failed</td>
+                    <td id="summary_view_row_1_legend_failed_count">0</td>
+                    <td id="summary_view_row_1_legend_failed_percent">(0%)</td>
+                  </tr>
+                  <tr id="summary_view_row_1_legend_table_row_canceled">
+                    <td id="summary_view_row_1_legend_canceled_label">Canceled</td>
+                    <td id="summary_view_row_1_legend_canceled_count">0</td>
+                    <td id="summary_view_row_1_legend_canceled_percent">(0%)</td>
+                  </tr>
+                  <tr id="summary_view_row_1_legend_table_row_ignored">
+                    <td id="summary_view_row_1_legend_ignored_label">Ignored</td>
+                    <td id="summary_view_row_1_legend_ignored_count">0</td>
+                    <td id="summary_view_row_1_legend_ignored_percent">(0%)</td>
+                  </tr>
+                  <tr id="summary_view_row_1_legend_table_row_pending">
+                    <td id="summary_view_row_1_legend_pending_label">Pending</td>
+                    <td id="summary_view_row_1_legend_pending_count">0</td>
+                    <td id="summary_view_row_1_legend_pending_percent">(0%)</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr id="summary_view_row_2">
+              <td id="summary_view_row_2_results" colspan="2">
+                <div id="display-filters">
+      <input id="succeeded_checkbox" name="succeeded_checkbox" type="checkbox" checked="checked" onchange="applyFilter()"/> <label id="succeeded_checkbox_label" for="passed_checkbox">Succeeded</label>
+      <input id="failed_checkbox" name="failed_checkbox" type="checkbox" checked="checked" onchange="applyFilter()"/> <label id="failed_checkbox_label" for="failed_checkbox">Failed</label>
+      <input id="canceled_checkbox" name="canceled_checkbox" type="checkbox" checked="checked" onchange="applyFilter()"/> <label id="canceled_checkbox_label" for="canceled_checkbox">Canceled</label>
+      <input id="ignored_checkbox" name="ignored_checkbox" type="checkbox" checked="checked" onchange="applyFilter()"/> <label id="ignored_checkbox_label" for="ignored_checkbox">Ignored</label>
+      <input id="pending_checkbox" name="pending_checkbox" type="checkbox" checked="checked" onchange="applyFilter()"/> <label id="pending_checkbox_label" for="pending_checkbox">Pending</label>
+    </div>
+                <table class="sortable">
+      <tr>
+        <td>Suite</td>
+        <td>Duration (ms.)</td>
+        <td>Succeeded</td>
+        <td>Failed</td>
+        <td>Canceled</td>
+        <td>Ignored</td>
+        <td>Pending</td>
+        <td>Total</td>
+      </tr>
+    <tr id="409abadf-a4de-48f8-b35e-82c04604061b">
+      <td class="suite_name_passed_all"><a href="javascript: showDetails('au.com.onegeek.respite.security.AuthenticationTests')">AuthenticationTests</a></td>
+      <td class="duration_passed_all">1404</td>
+      <td class="succeeded">11</td>
+      <td class="failed_zero">0</td>
+      <td class="canceled_zero">0</td>
+      <td class="ignored_zero">0</td>
+      <td class="pending_zero">0</td>
+      <td class="total_passed_all">11</td>
+    </tr><tr id="76dc0c7a-02cd-4fd7-bea3-2d853590dbfc">
+      <td class="suite_name_passed_all"><a href="javascript: showDetails('au.com.onegeek.respite.controllers.support.CachingSupportSpec')">CachingSupportSpec</a></td>
+      <td class="duration_passed_all">779</td>
+      <td class="succeeded">12</td>
+      <td class="failed_zero">0</td>
+      <td class="canceled_zero">0</td>
+      <td class="ignored_zero">0</td>
+      <td class="pending_zero">0</td>
+      <td class="total_passed_all">12</td>
+    </tr><tr id="f88c9ba2-3ce2-4880-b5bd-f84673426a58">
+      <td class="suite_name_passed_all"><a href="javascript: showDetails('au.com.onegeek.respite.security.DatabaseAuthenticationStrategyTests')">DatabaseAuthenticationStrategyTests</a></td>
+      <td class="duration_passed_all">1169</td>
+      <td class="succeeded">8</td>
+      <td class="failed_zero">0</td>
+      <td class="canceled_zero">0</td>
+      <td class="ignored_zero">0</td>
+      <td class="pending_zero">0</td>
+      <td class="total_passed_all">8</td>
+    </tr><tr id="4f1067c1-e8bc-47b6-bed6-2e0095955bcf">
+      <td class="suite_name_passed_all"><a href="javascript: showDetails('au.com.onegeek.respite.actors.DatabaseRestActorSpec')">DatabaseRestActorSpec</a></td>
+      <td class="duration_passed_all">984</td>
+      <td class="succeeded">10</td>
+      <td class="failed_zero">0</td>
+      <td class="canceled_zero">0</td>
+      <td class="ignored_zero">0</td>
+      <td class="pending_zero">0</td>
+      <td class="total_passed_all">10</td>
+    </tr><tr id="4c769906-8559-4e72-82f2-a0f39029bd40">
+      <td class="suite_name_passed_all"><a href="javascript: showDetails('au.com.onegeek.respite.models.JsonFormatsSpec')">JsonFormatsSpec</a></td>
+      <td class="duration_passed_all">125</td>
+      <td class="succeeded">4</td>
+      <td class="failed_zero">0</td>
+      <td class="canceled_zero">0</td>
+      <td class="ignored_zero">0</td>
+      <td class="pending_zero">0</td>
+      <td class="total_passed_all">4</td>
+    </tr><tr id="97a5f46b-f3d3-4e15-a7de-09073618841e">
+      <td class="suite_name_passed_all"><a href="javascript: showDetails('au.com.onegeek.respite.controllers.support.MetricsSupportSpec')">MetricsSupportSpec</a></td>
+      <td class="duration_passed_all">1964</td>
+      <td class="succeeded">11</td>
+      <td class="failed_zero">0</td>
+      <td class="canceled_zero">0</td>
+      <td class="ignored_zero">0</td>
+      <td class="pending_zero">0</td>
+      <td class="total_passed_all">11</td>
+    </tr><tr id="121e8cbb-8685-4af7-8595-12efaf7cba87">
+      <td class="suite_name_passed_all"><a href="javascript: showDetails('au.com.onegeek.respite.models.ModelTests')">ModelTests</a></td>
+      <td class="duration_passed_all">811</td>
+      <td class="succeeded">5</td>
+      <td class="failed_zero">0</td>
+      <td class="canceled_zero">0</td>
+      <td class="ignored_zero">0</td>
+      <td class="pending_zero">0</td>
+      <td class="total_passed_all">5</td>
+    </tr><tr id="674c8279-f4a6-4eb6-bc0a-60e329317a1f">
+      <td class="suite_name_passed_all"><a href="javascript: showDetails('au.com.onegeek.respite.controllers.support.PlayJsonSupportSpec')">PlayJsonSupportSpec</a></td>
+      <td class="duration_passed_all">1393</td>
+      <td class="succeeded">10</td>
+      <td class="failed_zero">0</td>
+      <td class="canceled_zero">0</td>
+      <td class="ignored_zero">0</td>
+      <td class="pending_zero">0</td>
+      <td class="total_passed_all">10</td>
+    </tr><tr id="69014d63-9deb-4694-ba97-368202cda31a">
+      <td class="suite_name_passed_all"><a href="javascript: showDetails('au.com.onegeek.respite.models.RepositorySpec')">RepositorySpec</a></td>
+      <td class="duration_passed_all">830</td>
+      <td class="succeeded">4</td>
+      <td class="failed_zero">0</td>
+      <td class="canceled_zero">0</td>
+      <td class="ignored_zero">0</td>
+      <td class="pending_zero">0</td>
+      <td class="total_passed_all">4</td>
+    </tr><tr id="f5e88bb5-b94b-4bc2-984e-a68b2a7888ff">
+      <td class="suite_name_passed_all"><a href="javascript: showDetails('au.com.onegeek.respite.controllers.RestControllerSpec')">RestControllerSpec</a></td>
+      <td class="duration_passed_all">1028</td>
+      <td class="succeeded">11</td>
+      <td class="failed_zero">0</td>
+      <td class="canceled_zero">0</td>
+      <td class="ignored_zero">0</td>
+      <td class="pending_zero">0</td>
+      <td class="total_passed_all">11</td>
+    </tr><tr id="633a4f6c-b73a-4f21-91d6-62f7cc554988">
+      <td class="suite_name_passed_all"><a href="javascript: showDetails('au.com.onegeek.respite.ServletTestsBase')">ServletTestsBase</a></td>
+      <td class="duration_passed_all">4</td>
+      <td class="succeeded_zero">0</td>
+      <td class="failed_zero">0</td>
+      <td class="canceled_zero">0</td>
+      <td class="ignored_zero">0</td>
+      <td class="pending_zero">0</td>
+      <td class="total_passed_all">0</td>
+    </tr>
+    </table>
+              </td>
+            </tr>
+          </table>
+          <div id="details_view">
+            <span id="click_suite_hint">Click on suite name to view details.</span> <br/>
+            <span id="click_column_hint">Click on column name to sort.</span>
+          </div>
+        </div>
+        <script type="text/javascript">
+          /* modified from http://www.permadi.com/tutorial/cssGettingBackgroundColor/index.html - */
+function getBgColor(elementId)
+{
+  var element = document.getElementById(elementId);
+  if (element.currentStyle)
+    return element.currentStyle.backgroundColor;
+  if (window.getComputedStyle)
+  {
+    var elementStyle=window.getComputedStyle(element,"");
+    if (elementStyle)
+      return elementStyle.getPropertyValue("background-color");
+  }
+  // Return 0 if both methods failed.
+  return 0;
+}
+var data = [86, 0, 0, 0, 0];
+var color = [getBgColor('summary_view_row_1_legend_succeeded_label'), 
+             getBgColor('summary_view_row_1_legend_failed_label'), 
+             getBgColor('summary_view_row_1_legend_ignored_label'), 
+             getBgColor('summary_view_row_1_legend_pending_label'), 
+             getBgColor('summary_view_row_1_legend_canceled_label')
+            ];
+var width = document.getElementById('chart_div').offsetWidth,
+    height = document.getElementById('chart_div').offsetHeight,
+    outerRadius = Math.min(width, height) / 2,
+    innerRadius = 0,
+    donut = d3.layout.pie(),
+    arc = d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius);
+var vis = d3.select("#chart_div")
+            .append("svg")
+            .data([data])
+            .attr("width", width)
+            .attr("height", height);
+var arcs = vis.selectAll("g.arc")
+              .data(donut)
+              .enter().append("g")
+              .attr("class", "arc")
+              .attr("transform", "translate(" + outerRadius + "," + outerRadius + ")");
+arcs.append("path")
+    .attr("fill", function(d, i) { return color[i]; })
+    .attr("d", arc);
+
+        </script>
+        <script type="text/javascript">
+          tagMap = { 
+"409abadf-a4de-48f8-b35e-82c04604061b": 1, 
+"4f1067c1-e8bc-47b6-bed6-2e0095955bcf": 1, 
+"121e8cbb-8685-4af7-8595-12efaf7cba87": 1, 
+"633a4f6c-b73a-4f21-91d6-62f7cc554988": 1, 
+"76dc0c7a-02cd-4fd7-bea3-2d853590dbfc": 1, 
+"69014d63-9deb-4694-ba97-368202cda31a": 1, 
+"97a5f46b-f3d3-4e15-a7de-09073618841e": 1, 
+"f5e88bb5-b94b-4bc2-984e-a68b2a7888ff": 1, 
+"f88c9ba2-3ce2-4880-b5bd-f84673426a58": 1, 
+"674c8279-f4a6-4eb6-bc0a-60e329317a1f": 1, 
+"4c769906-8559-4e72-82f2-a0f39029bd40": 1};
+applyFilter();
+        </script>
+        <script type="text/javascript">
+          resizeDetailsView();
+        </script>
+      </body>
+    </html>
