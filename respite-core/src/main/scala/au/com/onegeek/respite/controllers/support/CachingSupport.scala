@@ -22,35 +22,86 @@
  */
 package au.com.onegeek.respite.controllers.support
 
+import java.util.concurrent.TimeUnit
+import javax.servlet.http.HttpServletRequest
+
 import nl.grons.metrics.scala.Timer
 import org.scalatra._
+import spray.caching.{LruCache, ExpiringLruCache}
+
+import scala.concurrent.{Await, ExecutionContext}
+import scala.concurrent.duration._
+
+/**
+ * Models a canonical Caching interface for use by the Caching Abstraction
+ */
+trait Cache[T] extends spray.caching.Cache[T] {
+
+}
+
+trait SprayCache[T] extends Cache[T] {
+
+}
 
 /**
  * Generic caching DSL for objects and Routes.
  */
-trait CachingSupport {}
+trait CachingSupport[T] {
+  implicit val cache: spray.caching.Cache[T] = new spray.caching.ExpiringLruCache[T](maxCapacity = 500,
+    initialCapacity = 16,
+    timeToLive = Duration.Inf,
+    timeToIdle = Duration.Inf) //with Cache[T]
+
+}
 
 
 /**
  * Automatically cache CRUD and idempotent routes plus a handy Caching DSL.
  *
+ * Note that use of this will automatically convert your routes into {{{FutureSupport}}} routes as cache retrieval
+ * is asynchronous.
+ *
  */
-trait CachingRouteSupport extends ScalatraBase with LoggingSupport {
+trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingSupport[Route] { this: FutureSupport =>
 
-  override protected def addRoute(method: HttpMethod, transformers: Seq[RouteTransformer], action: => Any): Route = {
-    val path = transformers.foldLeft("")((path, transformer) => path.concat(transformer.toString()))
-    logger.debug(s"Caching path $path on ${getClass}")
+  val listCache: spray.caching.Cache[Any] = LruCache()
 
-    method match {
-      case Get | Options | Head =>
-        super.addRoute(method, transformers, {
-        logger.debug(s"Caching instrumented path $path on ${getClass}")
-          action
-        })
-      case _ =>
-        super.addRoute(method, transformers, action)
+  override protected def addRoute(method: HttpMethod, transformers: Seq[RouteTransformer], action: => Any): Route =  {
+      val path = transformers.foldLeft("")((path, transformer) => path.concat(transformer.toString()))
+      logger.debug(s"Caching path $path on ${getClass}")
+
+      method match {
+        case Get | Options | Head =>
+
+            // How to map params etc.? Some Path's will be implemented where params aren't captured in signature.
+
+            // Hash the request params? => This could be a security issue if known i.e. slam site with squillions of combinations of k/v and consume memory
+
+            // Also, don't cache 40x/50x errors?
+            //          cachey("oeu") {
+//            super.addRoute(method, transformers, listCache(request.pathInfo) { logger.debug("Caching initial call"); action })
+            super.addRoute(method, transformers, {
+//              val key = s"${request.getMethod}${request.pathInfo}${request.parameters.foldLeft()}"
+              val key = s"${request.getMethod}${request.pathInfo}}"
+              logger.debug(s"Returning cached route $path on path ${request.pathInfo} in class ${getClass} with key ${key}")
+              listCache(key) {
+                action
+              }
+            })
+            //          }
+
+        case _ =>
+          super.addRoute(method, transformers, action)
+      }
     }
+
+
+  delete("/cache/expire") {
+    listCache.clear()
   }
+
+//    super.addRoute(method, transformers, action)
+//  }
 
 //  implicit val cacheProvider: CachingStrategy = SprayCachingStrategy
 
@@ -84,4 +135,4 @@ trait CachingRouteSupport extends ScalatraBase with LoggingSupport {
 
 }
 
-trait Memoization extends CachingSupport
+trait Memoization[T] extends CachingSupport[T]

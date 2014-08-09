@@ -35,6 +35,7 @@ libraryDependencies ++= Seq(
   Dependencies.Compile.jettyServlet,
   Dependencies.Compile.jettyWebapp,
   Dependencies.Compile.Test.scalatest,
+  Dependencies.Compile.Test.pegdown,
   Dependencies.Compile.Test.scalatestMongo,
   Dependencies.Compile.Test.scalatraTest,
   Dependencies.Compile.Test.scalaMock,
@@ -57,8 +58,19 @@ licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 
 site.settings
 
+//site.siteMappings <++= Seq(file1 -> "location.html", file2 -> "image.png")
+//lazy val Tutorial = config("tutorial")
+
+//site.addMappingsToSiteDir(mappings in Tutorial, s"""target/test-ouput""")
+
+//site.addMappingsToSiteDir(Seq(file1 -> "location.html", file2 -> "image.png"), "foo")
+
 ghpages.settings
 
 git.remoteRepo := "git@github.com:mefellows/respite.git"
 
 site.includeScaladoc()
+
+testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-reports")
+
+testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oDSI")

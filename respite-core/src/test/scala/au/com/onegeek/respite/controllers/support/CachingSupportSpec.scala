@@ -20,7 +20,7 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
 
   val repository = new UserTestRepository
 
-  addServlet(new RestController[User, BSONObjectID]("users", User.format, repository) with CachingSupport, "/users")
+  addServlet(new RestController[User, BSONObjectID]("users", User.format, repository) with CachingRouteSupport, "/users")
 
   before {
     // Clear out entries - only do this if you don't start/stop between tests
@@ -40,19 +40,76 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
     )
   }
 
-  "A CachingSupport-ed RestController servlet" should {
+  "A CachingRouteSupport-ed RestController servlet" should {
+
+
+    markup { """
+
+Mutable Set
+-----------
+
+A set is a collection that contains no duplicate elements.
+
+To implement a concrete mutable set, you need to provide implementations
+of the following methods:
+
+    def contains(elem: A): Boolean
+    def iterator: Iterator[A]
+    def += (elem: A): this.type
+    def -= (elem: A): this.type
+
+If you wish that methods like `take`,
+`drop`, `filter` return the same kind of set,
+you should also override:
+
+    def empty: This
+
+It is also good idea to override methods `foreach` and
+`size` for efficiency.
+
+             """ }
 
     "with idempotent RESTful calls" should {
 
       "cache GET requests" in {
+        // Inject Caching Strategy into CachingRouteSupport
 
+        // Assert empty cache, and request /users/
+
+        // Assert cache has 1 item in it for 'list'
       }
 
-      "expire GET requests on non-idempotent REST calls" in {
+      "expire GET requests (cache entries) on non-idempotent REST calls (POST, PUT, DELETE)" in {
 
       }
     }
-    "Caching (CRUD)" in {
+
+    "with CRUD calls" should {
+
+      "Cache HEAD requests " in {
+
+      }
+
+      "Cache OPTIONS requests " in {
+
+      }
+
+      "Cache GET requests " in {
+
+      }
+
+      "Cache DELETE requests" in {
+
+      }
+
+      "Not cache PUT requests" in {
+
+      }
+
+      "Not cache POST requests" in {
+
+      }
+
 //      fail("not yet implemented")
 //      get("/users/") {
 //        status should equal(200)
@@ -68,7 +125,25 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
 //      }
     }
 
-    "" in {
+    "Provide an API to expire the cache" in {
+
+    }
+
+    "Provide an API to expire individual cache entries" in {
+
+    }
+  }
+
+  "A CacheSupport-ed class" should {
+    "when providing a caching DSL" should {
+
+      "Cache arbitrary objects" in {
+
+      }
+
+      "" in {
+
+      }
 
     }
   }
