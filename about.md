@@ -1,6 +1,6 @@
 ---
 layout: page
-title: About Respite
+title: About
 ---
 
 <p class="message">
@@ -51,7 +51,7 @@ trait MetricsSupport extends ScalatraBase with Metrics with LoggingSupport {
 
 ## Setup
 
-Some fun facts about the setup of this project include:
+Some fun facts about the setup of this project include this:
 
 * Built for [Jekyll](http://jekyllrb.com)
 * Developed on GitHub and hosted for free on [GitHub Pages](https://pages.github.com)
