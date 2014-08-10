@@ -1,4 +1,7 @@
 import com.typesafe.sbt.SbtGit._
+import SonatypeKeys._
+
+sonatypeSettings
 
 publishMavenStyle := true
 
@@ -19,13 +22,6 @@ publishArtifact in Test := false
 
 pomExtra := (
   <url>http://github.com/mefellows/respite</url>
-    <licenses>
-      <license>
-        <name>MIT License</name>
-        <url>http://opensource.org/licenses/MIT</url>
-        <distribution>repo</distribution>
-      </license>
-    </licenses>
     <scm>
       <url>git@github.com:mefellows/respite.git</url>
       <connection>scm:git:git@github.com:mefellows/respite.git</connection>

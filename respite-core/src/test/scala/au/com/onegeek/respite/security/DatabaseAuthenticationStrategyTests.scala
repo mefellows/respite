@@ -39,7 +39,7 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
   val API_APP_HEADER = "X-API-Application";
   val validHeaders: Map[String, String] = Map(API_APP_HEADER -> "application-name", API_KEY_HEADER -> "key")
 
-  class AuthServlet(implicit val tag: ClassTag[ApiKey]) extends TestServlet with Authentication {
+  class TestAuthServlet extends AuthServlet {
     override implicit val authenticationStrategy = new DatabaseAuthenticationStrategy(repository)
 
     get("/") {
@@ -47,8 +47,10 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
     }
   }
 
-  val authServlet = new AuthServlet
-  val authServletWithApi = new AuthServlet with AuthenticationApi
+  class TestApiAuthServlet extends MongoDatabaseAuthServlet(repository)
+
+  val authServlet = new TestAuthServlet
+  val authServletWithApi = new TestApiAuthServlet
 
   before {
     // Clear out entries
@@ -140,6 +142,12 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
       }
     }
 
+    "List all keys" in {
+      get("/auth/tokens/", headers = validHeaders) {
+        status should equal (200)
+        body should include ("\"application\":\"application-name\",\"description\":\"my description\",\"key\":\"key\"}]")
+      }
+    }
 
     "Reject a request with incorrect key" in {
       delete("/auth/token/notexist", headers = validHeaders) {

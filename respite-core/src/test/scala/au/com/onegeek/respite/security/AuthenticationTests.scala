@@ -96,6 +96,14 @@ class AuthenticationTests extends ServletTestsBase with ScalaFutures {
   }
 
   "An AuthenticationApi Servlet secured with ConfigAuthenticationStrategy" should {
+
+    "Provide a RESTful API to list keys at runtime" in {
+      get("/auth/tokens/", headers = validHeaders) {
+        status should equal (200)
+        println(body)
+      }
+    }
+
     "Provide a RESTful API to remove keys at runtime" in {
       delete("/auth/token/testkey2", headers = validHeaders) {
         println(body)

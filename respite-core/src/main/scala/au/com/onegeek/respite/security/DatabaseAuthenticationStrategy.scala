@@ -69,4 +69,14 @@ class DatabaseAuthenticationStrategy[ObjectID] (repository: Repository[ApiKey, O
         case false => None
       }
   }
+
+  /**
+   * Get all API Keys
+   */
+  override def getKeys(implicit ec: ExecutionContext): Future[List[ApiKey]] = {
+    logger.debug(s"Fetchinng all keys")
+      for {
+        result <- repository.findAll
+      } yield result
+  }
 }

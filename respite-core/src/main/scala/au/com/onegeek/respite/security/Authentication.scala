@@ -25,23 +25,25 @@ package au.com.onegeek.respite.security
 import au.com.onegeek.respite.controllers.RestController
 import au.com.onegeek.respite.controllers.support.{PlayJsonSupport, LoggingSupport}
 import au.com.onegeek.respite.models.ApiKey
-import org.scalatra.{FutureSupport, AsyncResult, ScalatraBase}
-import com.escalatesoft.subcut.inject.Injectable
+import org.scalatra.{ScalatraServlet, FutureSupport, AsyncResult, ScalatraBase}
 import org.slf4j.LoggerFactory
 import play.api.libs.json.{Format, JsError, Json, JsSuccess}
 import reactivemongo.api.DefaultDB
 import spray.caching.{LruCache, Cache}
 import java.util.concurrent.TimeUnit
+import uk.gov.hmrc.mongo.Repository
+
 import scala.concurrent._
-import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.{BSONObjectID, BSONDocument}
 import scala.concurrent.duration._
+import scala.reflect.ClassTag
 
 
 /**
  * Authenticate Scalatra Servlets with an [[au.com.onegeek.respite.models.ApiKey]] via the 'X-API-Key' and 'X-API_Application' headers.
  *
  */
-trait Authentication extends ScalatraBase with Injectable with LoggingSupport {
+trait Authentication extends ScalatraBase with LoggingSupport {
 
   protected implicit def executor: ExecutionContext = ExecutionContext.global
 
@@ -140,6 +142,15 @@ trait AuthenticationApi extends Authentication with FutureSupport with PlayJsonS
     }
   }
 
+  get("/tokens/") {
+    logger.debug("Fetching all tokens")
+    new AsyncResult() {
+      val is = for {
+        result <- authenticationStrategy.getKeys
+      } yield result
+    }
+  }
+
   post("/token/?") {
     logger.debug("Creating a token")
     new AsyncResult() {
@@ -149,4 +160,10 @@ trait AuthenticationApi extends Authentication with FutureSupport with PlayJsonS
       } yield result.orElse(keyExists())
     }
   }
+}
+
+abstract class AuthServlet(implicit val tag: ClassTag[ApiKey]) extends ScalatraServlet with Authentication with AuthenticationApi
+
+class MongoDatabaseAuthServlet(repository: Repository[ApiKey, BSONObjectID]) extends AuthServlet {
+  override implicit val authenticationStrategy = new DatabaseAuthenticationStrategy(repository)
 }

@@ -8,7 +8,8 @@ REST should be easy - Respite is a reactive & modular micro-framework for REST a
 ## Features
 
 * API usage metrics
-* Extensible REST caching support (via CachingSupport with EHCache and in-memory Spray caching)
+* API Key Security
+* Extensible REST caching support & DSL 
 * Database integration, with CRUD out-of-the-box, via Reactive Mongo and Akka
 * In-built JSON <-> Case Class marshalling & validation via play-json
 
@@ -18,14 +19,14 @@ Todo
 
 ## Getting Started
 
-Fetch from Maven Central, currently only Snapshots are available:
-
-In your build.{sbt, scala}:
+In your ```build.{sbt, scala}```:
 
 ```scala
 libraryDependencies += "au.com.onegeek" %% "respite-core" % "0.0.1"
 ```
+
 ### Create a Model
+
 ```scala
 case class User(id: BSONObjectID = BSONObjectID.generate, username: String, firstName: String) extends Model[BSONObjectID]
 
@@ -90,12 +91,14 @@ class ScalatraBootstrap extends LifeCycle {
         }
     ]
 
-### Add Support for ...
+### Mixin some magic...
 
-Use the following Mixins to enhance your Controllers
+Use the following Mixins to enhance your Routes:
 
-* CachingSupport - to provide automatic Route caching & an ad-hoc Caching DSL within your routes
-* MetricSupport - for detailed instrumentation of API calls with its own API + Administration user interface
+* Authentication - for standard API Key security for your Routes
+* CachingRouteSupport - to provide automatic CRUD & idempotent route caching & a simple caching DSL
+* CachingSupport - for a simple caching DSL on non-RESTy routes 
+* MetricSupport - for automatic & detailed instrumentation and health checks API for your API calls and routes
 
 ## Roadmap
 
@@ -114,9 +117,12 @@ Use the following Mixins to enhance your Controllers
 This is early stages and subject to dramatic change - use at your own risk.
 
 
-## API Documentation
+## Documentation
 
-http://mefellows.github.io/respite/latest/api/
+* [Example Project](https://github.com/mefellows/respite/tree/master/respite-examples)
+* [Project Documentation](http://respite.onegeek.com.au/) - DRAFT
+* [API documentation](http://respite.onegeek.com.au/latest/api/#package)
+* [Test Specifications](http://respite.onegeek.com.au/latest/specifications/)
 
 ## Built on top of giants...
 
@@ -129,7 +135,7 @@ We use the following components so you know it's made of good:
 
 ## Livin' on the edge?
 
-To get nightly/development versions, add the following snapshot repository and version:
+To get nightly/development versions, add the following snapshot repository and version
 
 ```scala
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"

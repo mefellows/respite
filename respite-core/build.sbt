@@ -51,7 +51,7 @@ ScoverageKeys.highlighting := true
 
 coverallsSettings
 
-licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
+licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
 
 // GitHub Pages
 

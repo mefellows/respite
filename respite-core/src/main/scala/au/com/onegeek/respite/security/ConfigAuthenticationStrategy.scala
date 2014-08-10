@@ -60,4 +60,10 @@ trait ConfigAuthenticationStrategy extends AuthenticationStrategy {
       }
     }
   }
+
+  override def getKeys(implicit ec: ExecutionContext): Future[List[ApiKey]] = {
+    Future {
+      keys.values.toList
+    }
+  }
 }

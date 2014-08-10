@@ -24,18 +24,20 @@ package au.com.onegeek.respite.examples.models
 
 import au.com.onegeek.respite.controllers.RestController
 import au.com.onegeek.respite.models.ModelJsonExtensions._
-import au.com.onegeek.respite.models.{Model}
+import au.com.onegeek.respite.models.{ApiKey, Model}
+import au.com.onegeek.respite.security.{Authentication, ConfigAuthenticationStrategy, AuthServlet, MongoDatabaseAuthServlet}
 import com.escalatesoft.subcut.inject.BindingModule
 import org.joda.time.DateTime
 import play.api.libs.json.Json
 import reactivemongo.api.indexes.{IndexType, Index}
 import reactivemongo.bson.BSONObjectID
+import scala.concurrent.ExecutionContext
 import scala.reflect._
 import uk.gov.hmrc.mongo.{ReactiveMongoFormats, ReactiveRepository, MongoConnector}
 import uk.gov.hmrc.mongo.ReactiveMongoFormats.objectIdFormats
 import au.com.onegeek.respite.models.ModelJsonExtensions._
 import scala.reflect.ClassTag
-import au.com.onegeek.respite.controllers.support.MetricsRestSupport
+import au.com.onegeek.respite.controllers.support.{MetricsSupport, MetricsRestSupport}
 
 /**
  * Created by mfellows on 16/07/2014.
@@ -91,9 +93,32 @@ class AccountRepository(implicit mc: MongoConnector)
 
 // Controllers
 
+// Authentication API with default keys
+
+object AuthenticationFoo {
+
+  object ConfigAuthStrategy extends ConfigAuthenticationStrategy {
+    override var keys = Map("testkey" -> ApiKey(application = "testapp", description = "Test application", key = "testkey")) ++
+                        Map("murray" -> ApiKey(application = "bill", description = "Test application", key = "murray"))
+
+
+  }
+
+  implicit val authenticationStrategy = ConfigAuthStrategy
+}
+
+import AuthenticationFoo._
+
+class SimpleAuthServlet extends AuthServlet with MetricsSupport {
+  override implicit val authenticationStrategy = ConfigAuthStrategy
+}
+
 // Example of concrete sub-class of RestController
 
-class UserController(repository: ReactiveRepository[User, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[User, BSONObjectID]("users", User.format, repository) with MetricsRestSupport[User, BSONObjectID] {}
+class UserController(repository: ReactiveRepository[User, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[User, BSONObjectID]("users", User.format, repository) with MetricsRestSupport[User, BSONObjectID] with Authentication {
+  override protected implicit def executor: ExecutionContext = ExecutionContext.global
+  override implicit val authenticationStrategy = ConfigAuthStrategy
+}
 
 class ProductController(repository: ReactiveRepository[Product, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[Product], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[Product, BSONObjectID]("products", Product.format, repository) with MetricsRestSupport[Product, BSONObjectID] {}
 
