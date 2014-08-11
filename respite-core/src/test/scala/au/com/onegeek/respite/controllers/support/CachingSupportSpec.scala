@@ -42,33 +42,6 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
 
   "A CachingRouteSupport-ed RestController servlet" should {
 
-
-    markup { """
-
-Mutable Set
------------
-
-A set is a collection that contains no duplicate elements.
-
-To implement a concrete mutable set, you need to provide implementations
-of the following methods:
-
-    def contains(elem: A): Boolean
-    def iterator: Iterator[A]
-    def += (elem: A): this.type
-    def -= (elem: A): this.type
-
-If you wish that methods like `take`,
-`drop`, `filter` return the same kind of set,
-you should also override:
-
-    def empty: This
-
-It is also good idea to override methods `foreach` and
-`size` for efficiency.
-
-             """ }
-
     "with idempotent RESTful calls" should {
 
       "cache GET requests" in {
