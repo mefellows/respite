@@ -51,7 +51,6 @@ trait CachingSupport[T] {
     initialCapacity = 16,
     timeToLive = Duration.Inf,
     timeToIdle = Duration.Inf) //with Cache[T]
-
 }
 
 

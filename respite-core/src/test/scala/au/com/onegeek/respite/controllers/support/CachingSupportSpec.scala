@@ -6,9 +6,12 @@ import au.com.onegeek.respite.controllers._
 import au.com.onegeek.respite.models.{Cat, User}
 import au.com.onegeek.respite.test.{Awaiting, MongoSpecSupport}
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatra.Route
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.mongo._
 import org.scalamock.scalatest.MockFactory
+
+import scala.concurrent.duration.Duration
 
 /**
  * Created by mfellows on 29/06/2014.
@@ -19,6 +22,9 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
   import au.com.onegeek.respite.models.ModelJsonExtensions._
 
   val repository = new UserTestRepository
+
+//  class MockedCachingRouteSupport extends  CachingRouteSupport {
+//    override implicit val listCache = mock
 
   addServlet(new RestController[User, BSONObjectID]("users", User.format, repository) with CachingRouteSupport, "/users")
 
@@ -45,7 +51,8 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
     "with idempotent RESTful calls" should {
 
       "cache GET requests" in {
-        // Inject Caching Strategy into CachingRouteSupport
+        // Inject Mock Caching Strategy into CachingRouteSupport and count entries
+
 
         // Assert empty cache, and request /users/
 
@@ -117,6 +124,16 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
       "" in {
 
       }
+
+    }
+  }
+
+  "A Cache" should {
+    "Never consume more memory than allowed" in {
+
+    }
+
+    "Store high-use objects in memory and fall back to 2nd-level cache?" in {
 
     }
   }
