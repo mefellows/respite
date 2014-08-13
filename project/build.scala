@@ -11,16 +11,11 @@ import scoverage.ScoverageSbtPlugin.instrumentSettings
 object RespiteBuild extends Build {
   val Organization = "au.com.onegeek"
   val Name = "Respite REST Framework"
-  val Version = "0.0.1"
-//
-
-//  seq(SbtStartScript.startScriptForClassesSettings: _*)
+  val Version = "0.2.0-SNAPSHOT"
 
   lazy val core = Project (
     "respite-core",
     file("respite-core"),
-//    settings = Seq(com.typesafe.sbt.SbtStartScript.startScriptForClassesSettings: _*) ++ Defaults.defaultSettings ++ ScalatraPlugin.scalatraWithJRebel ++ scalateSettings ++ Seq(
-//    settings = Defaults.defaultSettings ++ bintray.Plugin.bintraySettings ++ Seq(
     settings = Defaults.defaultSettings ++ Seq(
       organization := Organization,
       name := Name,

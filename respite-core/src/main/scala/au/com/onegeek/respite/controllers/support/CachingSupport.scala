@@ -81,8 +81,8 @@ trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingS
 //            super.addRoute(method, transformers, listCache(request.pathInfo) { logger.debug("Caching initial call"); action })
             super.addRoute(method, transformers, {
 //              val key = s"${request.getMethod}${request.pathInfo}${request.parameters.foldLeft()}"
-              val key = s"${request.getMethod}${request.pathInfo}}"
-              logger.debug(s"Returning cached route $path on path ${request.pathInfo} in class ${getClass} with key ${key}")
+              val key = s"${request.getMethod}${request.pathInfo}"
+              logger.debug(s"Returning cached route $path on path ${request.pathInfo} in class ${getClass} with key '${key}'")
               listCache(key) {
                 action
               }

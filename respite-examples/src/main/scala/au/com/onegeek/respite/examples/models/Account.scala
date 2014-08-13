@@ -94,29 +94,19 @@ class AccountRepository(implicit mc: MongoConnector)
 // Controllers
 
 // Authentication API with default keys
-
-object AuthenticationFoo {
-
-  object ConfigAuthStrategy extends ConfigAuthenticationStrategy {
-    override var keys = Map("testkey" -> ApiKey(application = "testapp", description = "Test application", key = "testkey")) ++
-                        Map("murray" -> ApiKey(application = "bill", description = "Test application", key = "murray"))
-
-
-  }
-
-  implicit val authenticationStrategy = ConfigAuthStrategy
+object ConfigAuthStrategy extends ConfigAuthenticationStrategy {
+  override var keys = Map("testkey" -> ApiKey(application = "testapp", description = "Test application", key = "testkey")) ++
+                      Map("murray" -> ApiKey(application = "bill", description = "Test application", key = "murray"))
 }
 
-import AuthenticationFoo._
-
 class SimpleAuthServlet extends AuthServlet with MetricsSupport {
+  override protected implicit def executor: ExecutionContext = ExecutionContext.global
   override implicit val authenticationStrategy = ConfigAuthStrategy
 }
 
 // Example of concrete sub-class of RestController
 
 class UserController(repository: ReactiveRepository[User, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[User, BSONObjectID]("users", User.format, repository) with MetricsRestSupport[User, BSONObjectID] with Authentication with CachingRouteSupport {
-  override protected implicit def executor: ExecutionContext = ExecutionContext.global
   override implicit val authenticationStrategy = ConfigAuthStrategy
 }
 

@@ -3,15 +3,21 @@ package au.com.onegeek.respite.controllers.support
 import au.com.onegeek.respite.ServletTestsBase
 import au.com.onegeek.respite.config.TestConfigurationModule
 import au.com.onegeek.respite.controllers._
-import au.com.onegeek.respite.models.{Cat, User}
+import au.com.onegeek.respite.models.{ApiKey, Cat, User}
+import au.com.onegeek.respite.security.Authentication
 import au.com.onegeek.respite.test.{Awaiting, MongoSpecSupport}
+import com.escalatesoft.subcut.inject.{Injectable, BindingModule}
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatra.Route
+import org.scalatra.{FutureSupport, ScalatraServlet, Route}
 import reactivemongo.bson.BSONObjectID
+import spray.caching.LruCache
 import uk.gov.hmrc.mongo._
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.mock.MockitoSugar._
 
-import scala.concurrent.duration.Duration
+import scala.concurrent.{Future, Await, Promise, ExecutionContext}
+import scala.concurrent.duration._
+import scala.reflect.ClassTag
 
 /**
  * Created by mfellows on 29/06/2014.
@@ -22,11 +28,25 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
   import au.com.onegeek.respite.models.ModelJsonExtensions._
 
   val repository = new UserTestRepository
+  val m = mock[spray.caching.Cache[Any]]
+  val myCache: spray.caching.Cache[Any] = LruCache()
 
-//  class MockedCachingRouteSupport extends  CachingRouteSupport {
-//    override implicit val listCache = mock
+  class MockedCachingRouteSupport extends ScalatraServlet with FutureSupport with CachingRouteSupport {
+    protected implicit def executor: ExecutionContext = ExecutionContext.global
+//    override implicit val listCache = m
+    override val listCache: spray.caching.Cache[Any] = myCache
 
-  addServlet(new RestController[User, BSONObjectID]("users", User.format, repository) with CachingRouteSupport, "/users")
+    get("/") {
+      "OK"
+    }
+
+    post("/notcacheable") {
+      println("not cached")
+    }
+
+  }
+
+  addServlet(new MockedCachingRouteSupport, "/")
 
   before {
     // Clear out entries - only do this if you don't start/stop between tests
@@ -44,6 +64,9 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
     users foreach(u =>
       println(u)
     )
+
+    myCache.clear()
+    println(s"My cache size: ${myCache.size}")
   }
 
   "A CachingRouteSupport-ed RestController servlet" should {
@@ -51,6 +74,40 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
     "with idempotent RESTful calls" should {
 
       "cache GET requests" in {
+        myCache.size should equal (0)
+
+        get("/") {
+          myCache.size should equal (1)
+          body should equal("OK")
+          status should equal(200)
+
+          myCache.get("GET").flatMap { f =>
+            val r = f.map({ b =>
+              b should equal("OK")
+              Some(b)
+            })
+            Some(r)
+          }.getOrElse( {
+            fail("Future didn't return 'OK' Response")
+          })
+        }
+
+        get("/") {
+          body should equal("OK")
+          status should equal(200)
+          myCache.get("GET") should not be Nil
+
+          myCache.get("GET").flatMap { f =>
+            val r = f.map({ b =>
+              b should equal("OK")
+              Some(b)
+            })
+            Some(r)
+          }.getOrElse( {
+            fail("Future didn't return 'OK' Response")
+          })
+
+        }
         // Inject Mock Caching Strategy into CachingRouteSupport and count entries
 
 
@@ -61,6 +118,25 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
 
       "expire GET requests (cache entries) on non-idempotent REST calls (POST, PUT, DELETE)" in {
 
+        get("/") {
+          myCache.get("GET").flatMap { f =>
+            val r = f.map({ b =>
+              b should equal("OK")
+              Some(b)
+            })
+            Some(r)
+          }.getOrElse( {
+            fail("Future didn't return 'OK' Response")
+          })
+
+        }
+
+        delete("/cache/expire") {
+          status should equal(200)
+          myCache.size should equal(0)
+
+          // Note: Entries aren't removed immediately it seems, but upon retrieval after 'clear'
+        }
       }
     }
 
@@ -87,6 +163,21 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
       }
 
       "Not cache POST requests" in {
+        val size = myCache.size
+        post("/notcacheable") {
+          myCache.size should equal(size)
+        }
+      }
+
+      "Cache 40x" in {
+
+      }
+
+      "Cache 30x" in {
+
+      }
+
+      "Cache 50x" in {
 
       }
 

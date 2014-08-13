@@ -45,7 +45,7 @@ import scala.reflect.ClassTag
  */
 trait Authentication extends ScalatraBase with LoggingSupport {
 
-  protected implicit def executor: ExecutionContext = ExecutionContext.global
+  protected implicit def executor: ExecutionContext
 
   // Override this strategy for more explicit control
   implicit val authenticationStrategy: AuthenticationStrategy
@@ -165,5 +165,6 @@ trait AuthenticationApi extends Authentication with FutureSupport with PlayJsonS
 abstract class AuthServlet(implicit val tag: ClassTag[ApiKey]) extends ScalatraServlet with Authentication with AuthenticationApi
 
 class MongoDatabaseAuthServlet(repository: Repository[ApiKey, BSONObjectID]) extends AuthServlet {
+  protected implicit def executor: ExecutionContext = ExecutionContext.global
   override implicit val authenticationStrategy = new DatabaseAuthenticationStrategy(repository)
 }

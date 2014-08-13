@@ -3,8 +3,6 @@ import com.typesafe.sbt.SbtGit._
 
 name := "respite-core"
 
-//libraryDependencies ++= Dependencies.Compile.
-
 resolvers += "Typesafe" at "http://repo.typesafe.com/typesafe/releases/"
 
 resolvers += "Akka Repo" at "http://repo.akka.io/repository"
@@ -54,16 +52,9 @@ coverallsSettings
 
 licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
 
-// GitHub Pages
+// GitHub Pages, API Docu and Test Specs
 
 site.settings
-
-//site.siteMappings <++= Seq(file1 -> "location.html", file2 -> "image.png")
-//lazy val Tutorial = config("tutorial")
-
-//site.addMappingsToSiteDir(mappings in Tutorial, s"""target/test-ouput""")
-
-//site.addMappingsToSiteDir(Seq(file1 -> "location.html", file2 -> "image.png"), "foo")
 
 ghpages.settings
 

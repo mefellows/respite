@@ -6,6 +6,7 @@ import org.scalatra.ScalatraServlet
 import au.com.onegeek.respite.test.{Awaiting, MongoSpecSupport}
 import org.scalatest.concurrent.ScalaFutures
 
+import scala.concurrent.ExecutionContext
 import scala.reflect.ClassTag
 
 //import com.github.simplyscala.MongoEmbedDatabase
@@ -40,6 +41,7 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
   val validHeaders: Map[String, String] = Map(API_APP_HEADER -> "application-name", API_KEY_HEADER -> "key")
 
   class TestAuthServlet extends AuthServlet {
+    protected implicit def executor: ExecutionContext = ExecutionContext.global
     override implicit val authenticationStrategy = new DatabaseAuthenticationStrategy(repository)
 
     get("/") {
