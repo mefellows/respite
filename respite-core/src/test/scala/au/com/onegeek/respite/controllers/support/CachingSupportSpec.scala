@@ -33,7 +33,6 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
 
   class MockedCachingRouteSupport extends ScalatraServlet with FutureSupport with CachingRouteSupport {
     protected implicit def executor: ExecutionContext = ExecutionContext.global
-//    override implicit val listCache = m
     override val listCache: spray.caching.Cache[Any] = myCache
 
     get("/") {
@@ -108,35 +107,16 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
           })
 
         }
+
         // Inject Mock Caching Strategy into CachingRouteSupport and count entries
 
 
-        // Assert empty cache, and request /users/
+        // Check that Actual method was not invoked more than once!!
 
-        // Assert cache has 1 item in it for 'list'
       }
 
-      "expire GET requests (cache entries) on non-idempotent REST calls (POST, PUT, DELETE)" in {
+      "expire GET requests (cache entries) on non-idempotent REST calls (POST, PUT, DELETE) for matching URLs" in {
 
-        get("/") {
-          myCache.get("GET").flatMap { f =>
-            val r = f.map({ b =>
-              b should equal("OK")
-              Some(b)
-            })
-            Some(r)
-          }.getOrElse( {
-            fail("Future didn't return 'OK' Response")
-          })
-
-        }
-
-        delete("/cache/expire") {
-          status should equal(200)
-          myCache.size should equal(0)
-
-          // Note: Entries aren't removed immediately it seems, but upon retrieval after 'clear'
-        }
       }
     }
 
@@ -197,10 +177,37 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
     }
 
     "Provide an API to expire the cache" in {
+      get("/") {
+        myCache.get("GET").flatMap { f =>
+          val r = f.map({ b =>
+            b should equal("OK")
+            Some(b)
+          })
+          Some(r)
+        }.getOrElse( {
+          fail("Future didn't return 'OK' Response")
+        })
 
+      }
+
+      delete("/cache/expire") {
+        status should equal(200)
+        myCache.size should equal(0)
+
+        // Note: Entries aren't removed immediately it seems, but upon retrieval after 'clear'
+      }
     }
 
     "Provide an API to expire individual cache entries" in {
+
+      get("/") { }
+
+      delete("/cache/expire//") {
+        status should equal(200)
+        myCache.size should equal(0)
+
+        // Note: Entries aren't removed immediately it seems, but upon retrieval after 'clear'
+      }
 
     }
   }
