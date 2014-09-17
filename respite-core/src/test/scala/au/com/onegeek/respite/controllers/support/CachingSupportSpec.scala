@@ -30,10 +30,11 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
   val repository = new UserTestRepository
   val m = mock[spray.caching.Cache[Any]]
   val myCache: spray.caching.Cache[Any] = LruCache()
+  val BLOCKING_TIMEOUT = 100 millis
 
   class MockedCachingRouteSupport extends ScalatraServlet with FutureSupport with CachingRouteSupport {
     protected implicit def executor: ExecutionContext = ExecutionContext.global
-    override val listCache: spray.caching.Cache[Any] = myCache
+    override implicit val cache = myCache
 
     get("/") {
       "OK"
@@ -45,7 +46,7 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
 
   }
 
-  addServlet(new MockedCachingRouteSupport, "/")
+  addServlet(new MockedCachingRouteSupport, "/cache/*")
 
   before {
     // Clear out entries - only do this if you don't start/stop between tests
@@ -68,6 +69,12 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
     println(s"My cache size: ${myCache.size}")
   }
 
+  def assertCacheResult(key: String, result: Any, msg: String): Unit = {
+      val res = Await.result(myCache.get(key).get, BLOCKING_TIMEOUT)
+      myCache.get(key) should not be Nil
+      res should equal(result)
+  }
+
   "A CachingRouteSupport-ed RestController servlet" should {
 
     "with idempotent RESTful calls" should {
@@ -75,37 +82,17 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
       "cache GET requests" in {
         myCache.size should equal (0)
 
-        get("/") {
+        get("/cache") {
           myCache.size should equal (1)
           body should equal("OK")
           status should equal(200)
-
-          myCache.get("GET").flatMap { f =>
-            val r = f.map({ b =>
-              b should equal("OK")
-              Some(b)
-            })
-            Some(r)
-          }.getOrElse( {
-            fail("Future didn't return 'OK' Response")
-          })
+          assertCacheResult("GET", "OK", "Future didn't return 'OK' Response")
         }
 
-        get("/") {
+        get("/cache") {
           body should equal("OK")
           status should equal(200)
-          myCache.get("GET") should not be Nil
-
-          myCache.get("GET").flatMap { f =>
-            val r = f.map({ b =>
-              b should equal("OK")
-              Some(b)
-            })
-            Some(r)
-          }.getOrElse( {
-            fail("Future didn't return 'OK' Response")
-          })
-
+          assertCacheResult("GET", "OK", "Future didn't return 'OK' Response")
         }
 
         // Inject Mock Caching Strategy into CachingRouteSupport and count entries
@@ -144,7 +131,7 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
 
       "Not cache POST requests" in {
         val size = myCache.size
-        post("/notcacheable") {
+        post("/cache/notcacheable") {
           myCache.size should equal(size)
         }
       }
@@ -160,37 +147,15 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
       "Cache 50x" in {
 
       }
-
-//      fail("not yet implemented")
-//      get("/users/") {
-//        status should equal(200)
-//        body should equal("[{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"},{\"id\":{\"$oid\":\"53b62e370100000100af8ece\"},\"username\":\"bmurray\",\"firstName\":\"Bill\"}]")
-//      }
-//      get("/metrics/") {
-//        body should include("\"au.com.onegeek.respite.controllers.MetricSpecController.list\":{\"count\":1")
-//      }
-//      get("/metrics/health") {
-//        println(body)
-//        status should equal(200)
-//        body should include("\"RestController.Users.list\":{\"healthy\":true")
-//      }
     }
 
     "Provide an API to expire the cache" in {
-      get("/") {
-        myCache.get("GET").flatMap { f =>
-          val r = f.map({ b =>
-            b should equal("OK")
-            Some(b)
-          })
-          Some(r)
-        }.getOrElse( {
-          fail("Future didn't return 'OK' Response")
-        })
-
+      get("/cache") {
+       assertCacheResult("GET", "OK", "Expected 'OK'")
+        myCache.size should equal(1)
       }
 
-      delete("/cache/expire") {
+      delete("/cache/cache/expire") {
         status should equal(200)
         myCache.size should equal(0)
 
@@ -200,9 +165,9 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
 
     "Provide an API to expire individual cache entries" in {
 
-      get("/") { }
+      get("/cache") { }
 
-      delete("/cache/expire//") {
+      delete("/cache/cache/expire/GET") {
         status should equal(200)
         myCache.size should equal(0)
 

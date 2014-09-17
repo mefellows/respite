@@ -22,91 +22,37 @@
  */
 package au.com.onegeek.respite.controllers.support
 
-import org.scalatra._
-import spray.caching.{ValueMagnet, ExpiringLruCache, LruCache}
+import java.util.concurrent.TimeUnit
+import javax.servlet.http.HttpServletRequest
 
-import scala.concurrent.{Promise, Future, ExecutionContext}
+import nl.grons.metrics.scala.Timer
+import org.scalatra._
+import spray.caching.{LruCache, ExpiringLruCache}
+
+import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration._
-import scala.util.control.NonFatal
 
 /**
  * Models a canonical Caching interface for use by the Caching Abstraction
  */
-trait Cache[V] { cache =>
-
-//  /**
-//   * Selects the (potentially non-existing) cache entry with the given key.
-//   */
-//  def apply(key: Any) = new Keyed(key)
-//
-//  class Keyed(key: Any) {
-//    /**
-//     * Returns either the cached Future for the key or evaluates the given call-by-name argument
-//     * which produces either a value instance of type `V` or a `Future[V]`.
-//     */
-//    def apply(magnet: => ValueMagnet[V])(implicit ec: ExecutionContext): Future[V] =
-//      cache.apply(key, () ⇒ try magnet.future catch { case NonFatal(e) ⇒ Future.failed(e) })
-//
-//    /**
-//     * Returns either the cached Future for the key or evaluates the given function which
-//     * should lead to eventual completion of the promise.
-//     */
-//    def apply[U](f: Promise[V] => U)(implicit ec: ExecutionContext): Future[V] =
-//      cache.apply(key, () ⇒ { val p = Promise[V](); f(p); p.future })
-//  }
-//
-//  /**
-//   * Returns either the cached Future for the given key or evaluates the given value generating
-//   * function producing a `Future[V]`.
-//   */
-//  def apply(key: Any, genValue: () ⇒ Future[V])(implicit ec: ExecutionContext): Future[V]
-//
-//  /**
-//   * Retrieves the future instance that is currently in the cache for the given key.
-//   * Returns None if the key has no corresponding cache entry.
-//   */
-//  def get(key: Any): Option[Future[V]]
-//
-//  /**
-//   * Removes the cache item for the given key. Returns the removed item if it was found (and removed).
-//   */
-//  def remove(key: Any): Option[Future[V]]
-//
-//  /**
-//   * Clears the cache by removing all entries.
-//   */
-//  def clear()
-//
-//  /**
-//   * Returns the upper bound for the number of currently cached entries.
-//   * Note that this number might not reflect the exact number of active, unexpired
-//   * cache entries, since expired entries are only evicted upon next access
-//   * (or by being thrown out by a capacity constraint).
-//   */
-//  def size: Int
-}
-
-trait SprayCache[V] extends Cache[V] {
+trait Cache[T] extends spray.caching.Cache[T] {
 
 }
 
-trait MemcachedCache[V] extends Cache[V] {
-
-}
-
-trait EHCache[V] extends Cache[V] {
+trait SprayCache[T] extends Cache[T] {
 
 }
 
 /**
  * Generic caching DSL for objects and Routes.
  */
-trait SprayCachingSupport[V] {
-  implicit val cache: spray.caching.Cache[V] = new spray.caching.ExpiringLruCache[V](maxCapacity = 500,
+trait CachingSupport[T] {
+  implicit val cache: spray.caching.Cache[T] = new spray.caching.ExpiringLruCache[T](maxCapacity = 500,
     initialCapacity = 16,
     timeToLive = Duration.Inf,
-    timeToIdle = Duration.Inf)
+    timeToIdle = Duration.Inf) //with Cache[T]
 }
+
 
 /**
  * Automatically cache CRUD and idempotent routes plus a handy Caching DSL.
@@ -115,19 +61,13 @@ trait SprayCachingSupport[V] {
  * is asynchronous.
  *
  */
-trait CachingRouteSupport extends ScalatraBase with LoggingSupport with SprayCachingSupport[Any] { this: FutureSupport =>
+trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingSupport[Any] { this: FutureSupport =>
 
 //  val listCache: spray.caching.Cache[Any] = LruCache()
 
   override protected def addRoute(method: HttpMethod, transformers: Seq[RouteTransformer], action: => Any): Route =  {
       val path = transformers.foldLeft("")((path, transformer) => path.concat(transformer.toString()))
       logger.debug(s"Caching path $path on ${getClass}")
-
-
-//    Use the following as a guide to HTTP caching
-//    http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.9 (Browser rules)
-
-//  Consider reviewing strategies from Varnish/Nginx - how do they create and invalidate keys?
 
       method match {
         case Get | Options | Head =>
@@ -137,17 +77,14 @@ trait CachingRouteSupport extends ScalatraBase with LoggingSupport with SprayCac
             // Hash the request params? => This could be a security issue if known i.e. slam site with squillions of combinations of k/v and consume memory
 
             // Also, don't cache 40x/50x errors?
-            //          cachey("oeu") {
-//            super.addRoute(method, transformers, listCache(request.pathInfo) { logger.debug("Caching initial call"); action })
             super.addRoute(method, transformers, {
 //              val key = s"${request.getMethod}${request.pathInfo}${request.parameters.foldLeft()}"
               val key = s"${request.getMethod}${request.pathInfo}"
-              logger.debug(s"Returning cached route $path on path ${request.pathInfo} in class ${getClass} with key '${key}'")
+              logger.debug(s"Returning cached route $path on path ${request.pathInfo} in class ${getClass} with key ${key}")
               cache(key) {
                 action
               }
             })
-            //          }
 
         case _ =>
           super.addRoute(method, transformers, action)
@@ -156,12 +93,12 @@ trait CachingRouteSupport extends ScalatraBase with LoggingSupport with SprayCac
 
 
   delete("/cache/expire") {
-    listCache.clear()
+    cache.clear()
   }
 
   delete("/cache/expire/:key") {
     val key = params.get("key").get
-    listCache.remove(key)
+    cache.remove(key)
   }
 
 //    super.addRoute(method, transformers, action)
@@ -198,3 +135,5 @@ trait CachingRouteSupport extends ScalatraBase with LoggingSupport with SprayCac
   // don't couple the caching API with specific cache, but do provide a sensible default (In-memory using Spray or Play's API)
 
 }
+
+trait Memoization[T] extends CachingSupport[T]
