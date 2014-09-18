@@ -22,7 +22,7 @@ Todo
 In your ```build.{sbt, scala}```:
 
 ```scala
-libraryDependencies += "au.com.onegeek" %% "respite-core" % "0.0.1"
+libraryDependencies += "au.com.onegeek" %% "respite-core" % "0.2.0"
 ```
 
 ### Create a Model
@@ -140,7 +140,7 @@ To get nightly/development versions, add the following snapshot repository and v
 ```scala
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-libraryDependencies += "au.com.onegeek" %% "respite" % "0.0.1-SNAPSHOT"
+libraryDependencies += "au.com.onegeek" %% "respite" % "0.3.0-SNAPSHOT"
 ```
 
 ## Contributing
