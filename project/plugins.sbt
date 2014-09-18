@@ -2,9 +2,7 @@ addSbtPlugin("com.mojolly.scalate" % "xsbt-scalate-generator" % "0.4.2")
 
 addSbtPlugin("org.scalatra.sbt" % "scalatra-sbt" % "0.3.2")
 
-//addSbtPlugin("com.typesafe.sbt" % "sbt-start-script" % "0.10.0")
-
-//addSbtPlugin("com.earldouglas" % "xsbt-web-plugin" % "0.8.0")
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.11.2")
 
 resolvers += Resolver.url(
   "bintray-sbt-plugin-releases",

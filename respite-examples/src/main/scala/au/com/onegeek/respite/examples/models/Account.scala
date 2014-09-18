@@ -37,7 +37,7 @@ import uk.gov.hmrc.mongo.{ReactiveMongoFormats, ReactiveRepository, MongoConnect
 import uk.gov.hmrc.mongo.ReactiveMongoFormats.objectIdFormats
 import au.com.onegeek.respite.models.ModelJsonExtensions._
 import scala.reflect.ClassTag
-import au.com.onegeek.respite.controllers.support.{MetricsSupport, MetricsRestSupport}
+import au.com.onegeek.respite.controllers.support.{CachingRouteSupport, MetricsSupport, MetricsRestSupport}
 
 /**
  * Created by mfellows on 16/07/2014.
@@ -94,29 +94,19 @@ class AccountRepository(implicit mc: MongoConnector)
 // Controllers
 
 // Authentication API with default keys
-
-object AuthenticationFoo {
-
-  object ConfigAuthStrategy extends ConfigAuthenticationStrategy {
-    override var keys = Map("testkey" -> ApiKey(application = "testapp", description = "Test application", key = "testkey")) ++
-                        Map("murray" -> ApiKey(application = "bill", description = "Test application", key = "murray"))
-
-
-  }
-
-  implicit val authenticationStrategy = ConfigAuthStrategy
+object ConfigAuthStrategy extends ConfigAuthenticationStrategy {
+  override var keys = Map("testkey" -> ApiKey(application = "testapp", description = "Test application", key = "testkey")) ++
+                      Map("murray" -> ApiKey(application = "bill", description = "Test application", key = "murray"))
 }
 
-import AuthenticationFoo._
-
 class SimpleAuthServlet extends AuthServlet with MetricsSupport {
+  override protected implicit def executor: ExecutionContext = ExecutionContext.global
   override implicit val authenticationStrategy = ConfigAuthStrategy
 }
 
 // Example of concrete sub-class of RestController
 
-class UserController(repository: ReactiveRepository[User, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[User, BSONObjectID]("users", User.format, repository) with MetricsRestSupport[User, BSONObjectID] with Authentication {
-  override protected implicit def executor: ExecutionContext = ExecutionContext.global
+class UserController(repository: ReactiveRepository[User, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[User, BSONObjectID]("users", User.format, repository) with MetricsRestSupport[User, BSONObjectID] with Authentication with CachingRouteSupport {
   override implicit val authenticationStrategy = ConfigAuthStrategy
 }
 

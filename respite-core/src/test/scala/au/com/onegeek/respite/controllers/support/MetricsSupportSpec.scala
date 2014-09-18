@@ -63,7 +63,7 @@ class MetricsSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
       }
     }
 
-    "Transparently instrument a 'get/:id' method (CRUD)" in {
+    "Instrument a 'get/:id' method (CRUD)" in {
       get("/users/53b62e370100000100af8ecd") {
         status should equal(200)
         body should equal("{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Matt\"}")

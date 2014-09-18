@@ -1,5 +1,5 @@
 import au.com.onegeek.respite.controllers.RestController
-import au.com.onegeek.respite.controllers.support.{MetricsRestSupport, MetricsSupport, MetricsController}
+import au.com.onegeek.respite.controllers.support.{CachingSupport, MetricsRestSupport, MetricsSupport, MetricsController}
 import au.com.onegeek.respite.examples._
 import au.com.onegeek.respite.config.{ApiDatasource, ProductionConfigurationModule}
 import au.com.onegeek.respite.examples.models._

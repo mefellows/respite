@@ -34,6 +34,7 @@ class AuthenticationTests extends ServletTestsBase with ScalaFutures {
   }
 
   class AuthServlet(implicit val bindingModule: BindingModule, implicit val tag: ClassTag[ApiKey]) extends ScalatraServlet with Authentication with Injectable {
+    protected implicit def executor: ExecutionContext = ExecutionContext.global
     override implicit val authenticationStrategy = ConfigAuthStrategy
 
     get("/") {

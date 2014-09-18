@@ -3,8 +3,6 @@ import com.typesafe.sbt.SbtGit._
 
 name := "respite-core"
 
-//libraryDependencies ++= Dependencies.Compile.
-
 resolvers += "Typesafe" at "http://repo.typesafe.com/typesafe/releases/"
 
 resolvers += "Akka Repo" at "http://repo.akka.io/repository"
@@ -35,6 +33,7 @@ libraryDependencies ++= Seq(
   Dependencies.Compile.jettyServlet,
   Dependencies.Compile.jettyWebapp,
   Dependencies.Compile.Test.scalatest,
+  Dependencies.Compile.Test.pegdown,
   Dependencies.Compile.Test.scalatestMongo,
   Dependencies.Compile.Test.scalatraTest,
   Dependencies.Compile.Test.scalaMock,
@@ -53,7 +52,7 @@ coverallsSettings
 
 licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
 
-// GitHub Pages
+// GitHub Pages, API Docu and Test Specs
 
 site.settings
 
@@ -62,3 +61,7 @@ ghpages.settings
 git.remoteRepo := "git@github.com:mefellows/respite.git"
 
 site.includeScaladoc()
+
+testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-reports")
+
+testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oDSI")

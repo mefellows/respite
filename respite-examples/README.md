@@ -55,5 +55,3 @@ Check API Health:
 ```sh
 curl -X GET -H"content-type: application/json" -H"x-api-key: murray" -H"x-api-application: bill" "http://localhost:8080/metrics/health"
 ```
-
-
