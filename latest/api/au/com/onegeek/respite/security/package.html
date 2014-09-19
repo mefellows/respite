@@ -58,8 +58,21 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.onegeek.respite.security.Authentication" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="AuthenticationextendsScalatraBasewithInjectablewithLoggingSupport"></a>
+              <ol><li name="au.com.onegeek.respite.security.AuthServlet" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="AuthServletextendsScalatraServletwithAuthenticationwithAuthenticationApi"></a>
+      <a id="AuthServlet:AuthServlet"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="AuthServlet.html"><span class="name">AuthServlet</span></a><span class="result"> extends <span class="extype" name="org.scalatra.ScalatraServlet">ScalatraServlet</span> with <a href="Authentication.html" class="extype" name="au.com.onegeek.respite.security.Authentication">Authentication</a> with <a href="AuthenticationApi.html" class="extype" name="au.com.onegeek.respite.security.AuthenticationApi">AuthenticationApi</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="au.com.onegeek.respite.security.Authentication" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="AuthenticationextendsScalatraBasewithLoggingSupport"></a>
       <a id="Authentication:Authentication"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -67,7 +80,7 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Authentication.html"><span class="name">Authentication</span></a><span class="result"> extends <span class="extype" name="org.scalatra.ScalatraBase">ScalatraBase</span> with <span class="extype" name="com.escalatesoft.subcut.inject.Injectable">Injectable</span> with <a href="../controllers/support/LoggingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.LoggingSupport">LoggingSupport</a></span>
+        <a href="Authentication.html"><span class="name">Authentication</span></a><span class="result"> extends <span class="extype" name="org.scalatra.ScalatraBase">ScalatraBase</span> with <a href="../controllers/support/LoggingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.LoggingSupport">LoggingSupport</a></span>
       </span>
       </h4>
       <p class="comment cmt">Authenticate Scalatra Servlets with an <a href="../models/ApiKey.html" class="extype" name="au.com.onegeek.respite.models.ApiKey">au.com.onegeek.respite.models.ApiKey</a> via the 'X-API-Key' and 'X-API_Application' headers.</p>
@@ -124,6 +137,19 @@
       </h4>
       <p class="comment cmt">This class implements a Database persisted Authentication Strategy, with
 programmatic / API hooks to add/revoke access at runtime.</p>
+    </li><li name="au.com.onegeek.respite.security.MongoDatabaseAuthServlet" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="MongoDatabaseAuthServletextendsAuthServlet"></a>
+      <a id="MongoDatabaseAuthServlet:MongoDatabaseAuthServlet"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="MongoDatabaseAuthServlet.html"><span class="name">MongoDatabaseAuthServlet</span></a><span class="result"> extends <a href="AuthServlet.html" class="extype" name="au.com.onegeek.respite.security.AuthServlet">AuthServlet</a></span>
+      </span>
+      </h4>
+      
     </li></ol>
             </div>
 
