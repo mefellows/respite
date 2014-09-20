@@ -62,6 +62,8 @@ git.remoteRepo := "git@github.com:mefellows/respite.git"
 
 site.includeScaladoc()
 
+site.jekyllSupport()
+
 testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-reports")
 
 testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oDSI")

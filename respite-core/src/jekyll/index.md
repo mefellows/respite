@@ -9,7 +9,7 @@ title: Home
   Version 0.2.0 Just released!
 </p>
 
-Respite is a micro-framework designed for creating RESTful services in micro-services architectures and reactive web applications. It is fairly opinionated, however built upon the excellent [Scalatra](http://www.scalatra.org/), it is also extensible.
+Respite is a micro-framework designed for creating RESTful services in micro-services architectures and reactive web applications. It is fairly opinionated, however built upon the excellent [Scalatra](http://www.scalatra.org/), it is also easily extended.
 
 ## Why use Respite?
 
@@ -21,7 +21,7 @@ Respite is not a fully featured framework like [Play](https://www.playframework.
 ## Getting Started
 
 <p class="message">
-  The recommended approach is using the Respite Generator, as it comes integrated with a scaffolding engine to continue .
+  The recommended approach is using the Respite Generator, as it comes integrated with a scaffolding engine to assist with rapid development.
 </p>
 
 ### Using the Respite Generator
@@ -38,7 +38,7 @@ Follow these steps to get a basic Respite project up and running.
 8. Execute `container:start` to launch the web application.
 9. Execute `browse` to see a default HTML template display in your browser - this is nothing exciting.
 
-Once you're up and running, you can use the giter8 [scaffolding](https://github.com/n8han/giter8#scaffolding-plugin) tool
+Once you're up and running, you can use the giter8 [scaffolding](https://github.com/n8han/giter8#scaffolding-plugin) tool to build our your services.
 
 #### Scaffolding
 
@@ -57,6 +57,8 @@ From within sbt run `g8Scaffold <TAB>` to see what can be auto-generated for you
 `g8Scaffold controller`
 
 ### Existing Scalatra Application
+
+If you already have an existing Scalatra application, you can extend it with Respite features:
 
 In your ```build.{sbt, scala}```:
 
