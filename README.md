@@ -120,7 +120,7 @@ This is early stages and subject to dramatic change - use at your own risk.
 ## Documentation
 
 * [Example Project](https://github.com/mefellows/respite/tree/master/respite-examples)
-* [Project Documentation](http://respite.onegeek.com.au/) - DRAFT
+* [Project Documentation](http://respite.onegeek.com.au/)
 * [API documentation](http://respite.onegeek.com.au/latest/api/#package)
 * [Test Specifications](http://respite.onegeek.com.au/latest/specifications/)
 
