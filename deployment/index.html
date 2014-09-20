@@ -52,7 +52,7 @@
       
         
           
-            <a class="sidebar-nav-item active" href="//deployment/">Deployment</a>
+            <a class="sidebar-nav-item active" href="/deployment/">Deployment</a>
           
         
       
@@ -79,11 +79,13 @@
 
 <p>Respite packages artifacts into an executable Jar. To create one, from within your project dir run <code>sbt assembly</code> to package theh application.</p>
 
-<p>Then, from your environment, Heroku, etc., ensure the appropriate <a href="http://12factor.net/config">environment</a> variables are set and run the Jar.</p>
+<p>Then, from your environment, Heroku, etc., ensure the appropriate <a href="http://12factor.net/config">environment</a> variables are set and run the Jar with <code>java -jar &lt;output-file&gt;.jar</code></p>
 
-<h2>Local Deployment Example</h2>
+<p><strong>Local Deployment Example</strong></p>
 
-<p><code>DATABASE_PORT=27017 DATABASE_HOST=127.0.0.1 DATABASE_NAME=test_foo java -jar target/scala-2.10/my-project.jar</code></p>
+<p>Assuming there is a local database running on port 17017, the following exports the required database environment variables and runs a local embedded Jetty container on port 8080:</p>
+
+<p><code>DATABASE_PORT=17017 DATABASE_HOST=127.0.0.1 DATABASE_NAME=test_foo PORT=8080 java -jar target/scala-2.10/my-project.jar</code></p>
 
 <h2>Deployment to Heroku</h2>
 
