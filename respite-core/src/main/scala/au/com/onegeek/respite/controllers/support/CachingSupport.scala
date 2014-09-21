@@ -47,10 +47,13 @@ trait SprayCache[T] extends Cache[T] {
  * Generic caching DSL for objects and Routes.
  */
 trait CachingSupport[T] {
+  val timeToLive = Duration.Inf
+  val timeToIdle = Duration.Inf
+
   implicit val cache: spray.caching.Cache[T] = new spray.caching.ExpiringLruCache[T](maxCapacity = 500,
     initialCapacity = 16,
-    timeToLive = Duration.Inf,
-    timeToIdle = Duration.Inf) //with Cache[T]
+    timeToLive = timeToLive,
+    timeToIdle = timeToIdle)
 }
 
 
@@ -62,8 +65,6 @@ trait CachingSupport[T] {
  *
  */
 trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingSupport[Any] { this: FutureSupport =>
-
-//  val listCache: spray.caching.Cache[Any] = LruCache()
 
   override protected def addRoute(method: HttpMethod, transformers: Seq[RouteTransformer], action: => Any): Route =  {
       val path = transformers.foldLeft("")((path, transformer) => path.concat(transformer.toString()))
@@ -92,11 +93,11 @@ trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingS
     }
 
 
-  delete("/cache/expire") {
+  delete("/cache/") {
     cache.clear()
   }
 
-  delete("/cache/expire/:key") {
+  delete("/cache/:key") {
     val key = params.get("key").get
     cache.remove(key)
   }
@@ -136,4 +137,4 @@ trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingS
 
 }
 
-trait Memoization[T] extends CachingSupport[T]
+//trait Memoization[T] extends CachingSupport[T]

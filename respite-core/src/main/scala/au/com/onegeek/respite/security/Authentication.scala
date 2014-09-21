@@ -131,7 +131,7 @@ trait AuthenticationApi extends Authentication with FutureSupport with PlayJsonS
   /**
    *
    */
-  delete("/token/:key") {
+  delete("/tokens/:key") {
     new AsyncResult {
     logger.debug("Removing a key")
 
@@ -151,7 +151,7 @@ trait AuthenticationApi extends Authentication with FutureSupport with PlayJsonS
     }
   }
 
-  post("/token/?") {
+  post("/tokens/?") {
     logger.debug("Creating a token")
     new AsyncResult() {
       val token = parsedModel[ApiKey]

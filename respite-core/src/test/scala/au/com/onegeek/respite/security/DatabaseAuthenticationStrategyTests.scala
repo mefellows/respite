@@ -20,7 +20,7 @@ import reactivemongo.api.indexes.Index
 import au.com.onegeek.respite.models.ApiKey
 import au.com.onegeek.respite.ServletTestsBase
 import uk.gov.hmrc.mongo.ReactiveMongoFormats._
-  import au.com.onegeek.respite.models.ModelJsonExtensions._
+import au.com.onegeek.respite.models.ModelJsonExtensions._
 
 class ApiKeyTestRepository(implicit mc: MongoConnector) extends ReactiveRepository[ApiKey, BSONObjectID]("testapikeys", mc.db, modelFormatForMongo {Json.format[ApiKey]}, ReactiveMongoFormats.objectIdFormats) {
 
@@ -113,7 +113,7 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
   "A Servlet secured with DatabaseAuthenticationStrategy with AuthenticationApi" should {
 
     "Provide a RESTful API to remove keys at runtime" in {
-      delete("/auth/token/key", headers = validHeaders) {
+      delete("/auth/tokens/key", headers = validHeaders) {
         status should equal (200)
         body should include ("\"application\":\"application-name\",\"description\":\"my description\",\"key\":\"key\"}")
       }
@@ -127,7 +127,7 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
     "Provide an API to create tokens at runtime" in {
       val json = "{\"application\":\"hacker\",\"description\":\"news for hackers\",\"key\":\"1234\"}"
 
-      post("/auth/token/", json.toString, validHeaders ++ Map("Content-Type" -> "application/json")) {
+      post("/auth/tokens/", json.toString, validHeaders ++ Map("Content-Type" -> "application/json")) {
         println(s"heres my body: ${body}")
         status should equal(200)
         body should include("\"application\":\"hacker\"")
@@ -137,7 +137,7 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
     "Reject invalid token creation requests" in {
       val json = "{\"application\":\"hacker\"}"
 
-      post("/auth/token/", json.toString, validHeaders ++ Map("Content-Type" -> "application/json")) {
+      post("/auth/tokens/", json.toString, validHeaders ++ Map("Content-Type" -> "application/json")) {
         println(s"heres my body: ${body}")
         status should equal(400)
         body should include("{\"obj.description\":[{\"msg\":\"error.path.missing\"")
@@ -152,7 +152,7 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
     }
 
     "Reject a request with incorrect key" in {
-      delete("/auth/token/notexist", headers = validHeaders) {
+      delete("/auth/tokens/notexist", headers = validHeaders) {
         status should equal (404)
       }
     }

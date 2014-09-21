@@ -23,7 +23,9 @@
 package au.com.onegeek.respite.security
 
 import au.com.onegeek.respite.controllers.support.{LoggingSupport}
-import uk.gov.hmrc.mongo.Repository
+import au.com.onegeek.respite.models.ModelJsonExtensions._
+import reactivemongo.api.indexes.{IndexType, Index}
+import uk.gov.hmrc.mongo.{ReactiveMongoFormats, ReactiveRepository, MongoConnector, Repository}
 import au.com.onegeek.respite.models.ApiKey
 import reactivemongo.bson.BSONObjectID
 import scala.concurrent.{ExecutionContext, Future}
@@ -78,5 +80,15 @@ class DatabaseAuthenticationStrategy[ObjectID] (repository: Repository[ApiKey, O
       for {
         result <- repository.findAll
       } yield result
+  }
+}
+/**
+ * Default implementation of an API Key Repository, for use with the `DatabaseAuthenticationStrategy`
+ */
+import uk.gov.hmrc.mongo.ReactiveMongoFormats._
+class ApiKeyRepository(implicit mc: MongoConnector) extends ReactiveRepository[ApiKey, BSONObjectID]("apikeys", mc.db, modelFormatForMongo {Json.format[ApiKey]}, ReactiveMongoFormats.objectIdFormats) {
+  override def ensureIndexes() = {
+    collection.indexesManager.ensure(Index(Seq("application" -> IndexType.Ascending), name = Some("applicationFieldUniqueIdx"), unique = true, sparse = true))
+    collection.indexesManager.ensure(Index(Seq("key" -> IndexType.Ascending), name = Some("keyFieldUniqueIdx"), unique = true, sparse = true))
   }
 }

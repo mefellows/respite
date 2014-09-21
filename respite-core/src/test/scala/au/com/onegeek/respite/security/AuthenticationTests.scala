@@ -106,7 +106,7 @@ class AuthenticationTests extends ServletTestsBase with ScalaFutures {
     }
 
     "Provide a RESTful API to remove keys at runtime" in {
-      delete("/auth/token/testkey2", headers = validHeaders) {
+      delete("/auth/tokens/testkey2", headers = validHeaders) {
         println(body)
         status should equal (200)
 
@@ -120,13 +120,13 @@ class AuthenticationTests extends ServletTestsBase with ScalaFutures {
     }
 
     "Provide a RESTful API to remove keys at runtime - return 404 if key doesn't exist" in {
-      delete("/auth/token/key", headers = validHeaders) {
+      delete("/auth/tokens/key", headers = validHeaders) {
         status should equal (404)
       }
     }
 
     "Provide a RESTful API to remove keys at runtime - return 405 if key not provided" in {
-      delete("/auth/token/", headers = validHeaders) {
+      delete("/auth/tokens/", headers = validHeaders) {
         status should equal (405)
       }
     }
@@ -134,7 +134,7 @@ class AuthenticationTests extends ServletTestsBase with ScalaFutures {
     "Provide an API to create tokens at runtime" in {
       val json = "{\"application\":\"hacker\",\"description\":\"news for hackers\",\"key\":\"1234\"}"
 
-      post("/auth/token/", json.toString, validHeaders ++ Map("Content-Type" -> "application/json")) {
+      post("/auth/tokens/", json.toString, validHeaders ++ Map("Content-Type" -> "application/json")) {
         println(s"heres my body: ${body}")
         status should equal(200)
         body should include("\"application\":\"hacker\"")
@@ -144,7 +144,7 @@ class AuthenticationTests extends ServletTestsBase with ScalaFutures {
     "Provide an API to create tokens at runtime - return 400 if key exists" in {
       val json = "{\"application\":\"test1\",\"description\":\"Test application\",\"key\":\"testkey\"}"
 
-      post("/auth/token/", json.toString, validHeaders ++ Map("Content-Type" -> "application/json")) {
+      post("/auth/tokens/", json.toString, validHeaders ++ Map("Content-Type" -> "application/json")) {
         println(s"heres my body: ${body}")
         status should equal(400)
       }
@@ -153,7 +153,7 @@ class AuthenticationTests extends ServletTestsBase with ScalaFutures {
     "Provide an API to create tokens at runtime - Reject invalid token creation requests" in {
       val json = "{\"application\":\"hacker\"}"
 
-      post("/auth/token/", json.toString, validHeaders ++ Map("Content-Type" -> "application/json")) {
+      post("/auth/tokens/", json.toString, validHeaders ++ Map("Content-Type" -> "application/json")) {
         println(s"heres my body: ${body}")
         status should equal(400)
         body should include("{\"obj.description\":[{\"msg\":\"error.path.missing\"")

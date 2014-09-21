@@ -155,7 +155,7 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
         myCache.size should equal(1)
       }
 
-      delete("/cache/cache/expire") {
+      delete("/cache/cache/") {
         status should equal(200)
         myCache.size should equal(0)
 
@@ -167,7 +167,7 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
 
       get("/cache") { }
 
-      delete("/cache/cache/expire/GET") {
+      delete("/cache/cache/GET") {
         status should equal(200)
         myCache.size should equal(0)
 

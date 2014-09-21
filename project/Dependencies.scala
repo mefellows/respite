@@ -15,7 +15,7 @@ object Dependencies {
     import Versions._
 
     val scalatra         = "org.scalatra"              %% "scalatra"                 % ScalatraVersion
-    val scalatraJson     = "org.scalatra"              %% "scalatra-json"            % "2.2.2"
+    val scalatraJson     = "org.scalatra"              %% "scalatra-json"            % ScalatraVersion
     val scalatraAuth     = "org.scalatra"              %% "scalatra-auth"            % ScalatraVersion
     val scalate          = "org.scalatra"              %% "scalatra-scalate"         % ScalatraVersion
     val specs2           = "org.scalatra"              %% "scalatra-specs2"          % ScalatraVersion             % "test"
