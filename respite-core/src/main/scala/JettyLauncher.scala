@@ -30,11 +30,12 @@ import org.eclipse.jetty.servlet.{ DefaultServlet, ServletContextHandler }
 import org.eclipse.jetty.webapp.WebAppContext
 import org.scalatra.servlet.ScalatraListener
 
-object JettyLauncher {
-  def main(args: Array[String]) {
-    val port = if(System.getenv("PORT") != null) System.getenv("PORT").toInt else 8080
+class JettyLauncher {
 
-    val server = new Server(port)
+  lazy val port = if (System.getenv("PORT") != null) System.getenv("PORT").toInt else 8080
+  lazy val server = new Server(port)
+
+  def main(args: Array[String]) {
     val context = new WebAppContext()
     context.setContextPath("/")
     context.setResourceBase("src/main/webapp")
@@ -43,10 +44,5 @@ object JettyLauncher {
 
     server.setHandler(context)
     server.start
-    server.join
-
-
-    // Setup Admin Servlet on a separate PORT for security
-    //context.setInitParameter(ScalatraListener.LifeCycleKey, "org.yourdomain.project.ScalatraBootstrap")
   }
 }
