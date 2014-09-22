@@ -58,7 +58,7 @@ class JettyLauncherSpec extends Suite with WordSpecLike with Matchers with Befor
     "Main" in {
 
       // Sorry, I hate arbitrary sleeps too...
-      Thread.sleep(1000);
+      Thread.sleep(2000);
       intercept[IOException] {
         socket.getLocalPort
       }
