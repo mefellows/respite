@@ -9,8 +9,6 @@ import org.scalatest.concurrent.ScalaFutures
 import scala.concurrent.ExecutionContext
 import scala.reflect.ClassTag
 
-//import com.github.simplyscala.MongoEmbedDatabase
-//import com.github.simplyscala.MongodProps
 import uk.gov.hmrc.mongo._
 import play.api.libs.json.{Json, JsValue}
 import reactivemongo.bson.BSONObjectID
@@ -22,20 +20,12 @@ import au.com.onegeek.respite.ServletTestsBase
 import uk.gov.hmrc.mongo.ReactiveMongoFormats._
 import au.com.onegeek.respite.models.ModelJsonExtensions._
 
-class ApiKeyTestRepository(implicit mc: MongoConnector) extends ReactiveRepository[ApiKey, BSONObjectID]("testapikeys", mc.db, modelFormatForMongo {Json.format[ApiKey]}, ReactiveMongoFormats.objectIdFormats) {
-
-  override def ensureIndexes() = {
-    collection.indexesManager.ensure(Index(Seq("application" -> IndexType.Ascending), name = Some("applicationFieldUniqueIdx"), unique = true, sparse = true))
-    collection.indexesManager.ensure(Index(Seq("key" -> IndexType.Ascending), name = Some("keyFieldUniqueIdx"), unique = true, sparse = true))
-  }
-}
-
 class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFutures with MongoSpecSupport with Awaiting {
   implicit val bindingModule = TestConfigurationModule
 
   class TestServlet(implicit val bindingModule: BindingModule) extends ScalatraServlet with Injectable
 
-  val repository = new ApiKeyTestRepository
+  val repository = new ApiKeyRepository
   val API_KEY_HEADER = "X-API-Key";
   val API_APP_HEADER = "X-API-Application";
   val validHeaders: Map[String, String] = Map(API_APP_HEADER -> "application-name", API_KEY_HEADER -> "key")
