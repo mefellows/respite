@@ -12,8 +12,3 @@ env:
   - secure: d+Jo3HwjYCnpHLWFr0bsauv0/5OhKl0iSFlGlRo0Ybnv6ii9jo5qYUSV9gVXRFlypOfEmu3gCNzv6GxTLZsTivV38qpVJypDV0N1cGUl7nRmTanU0Ba9LjtusD6dCRqbfOhggdk4mNf7KFNJ6DA1NQHCRuwmOBCLtebu6WaMC5Y=
   - secure: LumeI7Zr5Cpotm9pLv3F8116Vt5FwhITfnnqhTCA7iXcHVHVuUz+8mVk3PHuL45Nmbcpivc6B80DhFC5JqeXU3CCrftEETmH29A1uJlS6qkpfj6HjeN1yPVG4qCRWUM0Y/GlDkxH+DlTt5UCTPmRmR5OduLoZYT8iFnrE/74gfA=
   - secure: IcZGkHw+qgLT/fHvw7Ifae7SRFybRFLXmA5zsaXBhKTSVTLTd7aTHrEau0+bkEBzk1Nu7SZKZMthV0JDJ+wwPCky5F7KLVX/Tqo9zJK/IJRqVKNtIRLUqb/9HlWyl11AgyZhE+6RcOATaEfDk1ncqye2ZkoKDlhOnTNZSqxCYBc=
-after_success:
-  - >
-      test "${TRAVIS_PULL_REQUEST}" = 'false' &&
-      test "${TRAVIS_JDK_VERSION}" = 'oraclejdk7' &&
-      sbt 'project respite-core' 'set credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", System.getenv("SONATYPE_USER"), System.getenv("SONATYPE_PASS"))' publish
