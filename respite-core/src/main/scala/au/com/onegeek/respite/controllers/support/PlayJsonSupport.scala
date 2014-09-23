@@ -61,6 +61,15 @@ trait PlayJsonSupport[T] extends ScalatraBase with ApiFormats { this: ApiFormats
 
   private def shouldParseBody(fmt: String)(implicit request: HttpServletRequest) = fmt == "json"
 
+  def shouldPrettyPrintJson: Boolean = {
+    try {
+      request.parameters.getOrElse("pretty", sys.env.getOrElse("JSON_PRETTY_PRINT", "false")).toBoolean
+    } catch {
+      case _ => false
+    }
+  }
+//  def shouldPrettyPrintJson: Boolean = false
+
   override protected def invoke(matchedRoute: MatchedRoute) = {
 
     withRouteMultiParams(Some(matchedRoute)) {
@@ -119,15 +128,22 @@ trait PlayJsonSupport[T] extends ScalatraBase with ApiFormats { this: ApiFormats
 
   def renderJson[T](model: JsResult[T])(implicit fmt: Format[T]): String = {
     model match {
-      case model: JsSuccess[T] => Json.toJson[T](model.get).toString
+      case model: JsSuccess[T] => renderJson(Json.toJson[T](model.get))
       case e: JsError =>
         status = 400
-        JsError.toFlatJson(e).toString
+        renderJson(JsError.toFlatJson(e))
     }
   }
 
   def renderJson[T](model: T)(implicit fmt: Format[T]): String = {
-    Json.toJson[T](model).toString
+    renderJson(Json.toJson[T](model))
+  }
+
+  def renderJson(json: JsValue): String = {
+    shouldPrettyPrintJson match {
+      case true   => Json.prettyPrint(json)
+      case false  => json.toString
+    }
   }
 
   def parsedModel[T](implicit fmt: Format[T]): JsResult[T] = {

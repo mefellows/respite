@@ -153,5 +153,17 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoSp
 
     }
 
+    "Pretty print when environment variable is set" in {
+
+    }
+
+    "Pretty print when ?pretty=true is set" in {
+      get("/users/?pretty=true", headers = Map("Accept" -> "application/json")) {
+        status should equal(200)
+        println(body)
+        body should equal("[ {\n  \"id\" : {\n    \"$oid\" : \"53b62e370100000100af8ecd\"\n  },\n  \"username\" : \"mfellows\",\n  \"firstName\" : \"Matt\"\n}, {\n  \"id\" : {\n    \"$oid\" : \"53b62e370100000100af8ece\"\n  },\n  \"username\" : \"bmurray\",\n  \"firstName\" : \"Bill\"\n} ]")
+      }
+    }
+
   }
 }
