@@ -19,6 +19,7 @@ Respite is not a fully featured framework like [Play](https://www.playframework.
 * Speed: Respite is fully asynchronous from top-to-toe - including (MongoDB) database operations - meaning it has excellent parallel execution capabilities
 * As a backing REST API in a Reactive JavaScript Application (Angular, React, etc.)
 * Rapid, iterative deployment cycles: `idea->build->deploy->measure->learn->idea...`
+* Pre-configured for simple [deployment](http://respite.onegeek.com.au/deployment/) to [Heroku](http://www.heroku.com)
 
 <hr/>
 
