@@ -66,7 +66,11 @@ Running this command on the respite-examples sub-project shows the following out
 
 ## Deployment to Heroku
 
-Respite works on Heroku out-of-the-box and contains a pre-configured Procfile.
+<p class="message">Heroku is a great PaaS that makes deploying and managing applications a breeze. But best of all - you can deploy Respite Apps on Heroku <strong>for free</strong>! The following section assumes you have an Account on Heroku and have the <a href="https://toolbelt.heroku.com/">toolbelt</a> installed.
+
+</a>
+
+Respite works on Heroku out-of-the-box and contains a pre-configured [Procfile](https://devcenter.heroku.com/articles/procfile).
 
 The following creates a new Heroku App, configures a MongoDB instance and deploys a Respite project:
 
@@ -97,36 +101,11 @@ Total 60 (delta 6), reused 0 (delta 0)
        downloading http://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt/0.13.5/jars/sbt.jar ...
         [SUCCESSFUL ] org.scala-sbt#sbt;0.13.5!sbt.jar (61ms)
        downloading http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.10.4/scala-library-2.10.4.jar ...
-        [SUCCESSFUL ] org.scala-lang#scala-library;2.10.4!scala-library.jar (424ms)
-       downloading http://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/main/0.13.5/jars/main.jar ...
-        [SUCCESSFUL ] org.scala-sbt#main;0.13.5!main.jar (188ms)
-       [info]   [SUCCESSFUL ] com.escalatesoft.subcut#subcut_2.10;2.0!subcut_2.10.jar (93ms)
-       [info] downloading http://repo1.maven.org/maven2/org/eclipse/jetty/orbit/javax.servlet/3.0.0.v201112011016/javax.servlet-3.0.0.v201112011016.jar ...
-       [info]   [SUCCESSFUL ] org.eclipse.jetty.orbit#javax.servlet;3.0.0.v201112011016!javax.servlet.jar (153ms)
-       [info] downloading http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-webapp/8.1.10.v20130312/jetty-webapp-8.1.10.v20130312.jar ...
-       [info]   [SUCCESSFUL ] org.eclipse.jetty#jetty-webapp;8.1.10.v20130312!jetty-webapp.jar (100ms)
+
        ...
-       ... Downloading the Internet
+       ... Downloading the Internet, please wait...
        ...
-       [info] downloading http://repo1.maven.org/maven2/org/reactivemongo/reactivemongo_2.10/0.10.0/reactivemongo_2.10-0.10.0.jar ...
-       [info]   [SUCCESSFUL ] org.scala-lang#jline;2.10.3!jline.jar (102ms)
-       [info] downloading http://repo1.maven.org/maven2/com/mojolly/scalate/scalate-generator_2.10/0.4.2/scalate-generator_2.10-0.4.2.jar ...
-       [info]   [SUCCESSFUL ] com.mojolly.scalate#scalate-generator_2.10;0.4.2!scalate-generator_2.10.jar (113ms)
-       [info] Done updating.
-       [info] Generating /tmp/scala_buildpack_build_dir/target/scala-2.10/resource_managed/main/rebel.xml.
-       [info] Compiling Templates in Template Directory: /tmp/scala_buildpack_build_dir/src/main/webapp/WEB-INF/templates
-       SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
-       SLF4J: Defaulting to no-operation (NOP) logger implementation
-       SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
-       [info] Compiling 10 Scala sources to /tmp/scala_buildpack_build_dir/target/scala-2.10/classes...
-       [info] 'compiler-interface' not yet compiled for Scala 2.10.3. Compiling...
-       [info]   Compilation completed in 22.762 s
-       [success] Total time: 32 s, completed Sep 23, 2014 4:09:24 AM
-       [info] Generating /tmp/scala_buildpack_build_dir/target/scala-2.10/resource_managed/main/rebel.xml.
-       [info] Compiling Templates in Template Directory: /tmp/scala_buildpack_build_dir/src/main/webapp/WEB-INF/templates
-       SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
-       SLF4J: Defaulting to no-operation (NOP) logger implementation
-       SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+
        [info] Wrote start script for mainClass := Some(au.com.respite.JettyLauncher) to /tmp/scala_buildpack_build_dir/target/start
        [success] Total time: 1 s, completed Sep 23, 2014 4:09:26 AM
 -----> Discovering process types

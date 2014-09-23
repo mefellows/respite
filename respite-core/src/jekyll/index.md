@@ -3,22 +3,22 @@ layout: default
 title: Home
 ---
 
-# Respite - REST for micro-services
+# Respite - REST for microservices
 
 <p class="message">
-  Version 0.2.0 Just released!
+  Version 0.2.2 Just released - now with Sprinkles&trade;!
 </p>
 
-Respite is a micro-framework designed for creating RESTful services in micro-service architectures and reactive web applications. It is fairly opinionated, however built upon the excellent [Scalatra](http://www.scalatra.org/), it is also easily extended.
+Respite is a micro-framework designed for creating RESTful services in [microservices](http://martinfowler.com/articles/microservices.html) architectures and reactive web applications. It is fairly opinionated, however built upon the excellent [Scalatra](http://www.scalatra.org/), it is also easily extended.
 
 ## Why use Respite?
 
 Respite is not a fully featured framework like [Play](https://www.playframework.com/), [Lift](http://liftweb.net/), [Spring MVC](http://projects.spring.io/spring-framework/) etc. It is a micro-framework designed particularly well for:
 
-* Use in a [micro-services](http://martinfowler.com/articles/microservices.html) architecture
-* Speed: Respite is fully asynchronous from top-to-toe - including (MongoDB) database operations - meaning it has excellent parallel execution capabilities
+* Use in a [microservices](http://martinfowler.com/articles/microservices.html) architecture
+* Speed & Concurrency: Respite is fully asynchronous from top-to-toe - including (MongoDB) database operations - meaning it has excellent parallel execution capabilities
 * As a backing REST API in a Reactive JavaScript Application (Angular, React, etc.)
-* Rapid, iterative deployment cycles: `idea->build->deploy->measure->learn->idea...`
+* Rapid, iterative deployment cycles ala `idea->build->deploy->measure->learn->idea...`, including application scaffolding tools
 * Pre-configured for simple [deployment](http://respite.onegeek.com.au/deployment/) to [Heroku](http://www.heroku.com)
 
 <hr/>
@@ -82,7 +82,7 @@ If you already have an existing Scalatra application, you can extend it with Res
 In your ```build.{sbt, scala}```:
 
 ```scala
-libraryDependencies += "au.com.onegeek" %% "respite-core" % "0.2.0"
+libraryDependencies += "au.com.onegeek" %% "respite-core" % "0.2.2"
 ```
 
 #### Create a Model
