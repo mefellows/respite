@@ -75,8 +75,8 @@
         
       
 
-      <a class="sidebar-nav-item" href="https://github.com/mefellows/respite">GitHub project</a>
-      <span class="sidebar-nav-item">Currently v0.2.0</span>
+      <a class="sidebar-nav-item" href="https://github.com/mefellows/respite">GitHub</a>
+      <span class="sidebar-nav-item">Currently v0.2.2</span>
     </nav>
 
     <p>&copy; 2014. All rights reserved.</p>
@@ -85,23 +85,23 @@
 
 
     <div class="content container">
-      <h1>Respite - REST for micro-services</h1>
+      <h1>Respite - REST for microservices</h1>
 
 <p class="message">
-  Version 0.2.0 Just released!
+  Version 0.2.2 Just released - now with Sprinkles&trade;!
 </p>
 
-<p>Respite is a micro-framework designed for creating RESTful services in micro-service architectures and reactive web applications. It is fairly opinionated, however built upon the excellent <a href="http://www.scalatra.org/">Scalatra</a>, it is also easily extended.</p>
+<p>Respite is a micro-framework designed for creating RESTful services in <a href="http://martinfowler.com/articles/microservices.html">microservices</a> architectures and reactive web applications. It is fairly opinionated, however built upon the excellent <a href="http://www.scalatra.org/">Scalatra</a>, it is also easily extended.</p>
 
 <h2>Why use Respite?</h2>
 
 <p>Respite is not a fully featured framework like <a href="https://www.playframework.com/">Play</a>, <a href="http://liftweb.net/">Lift</a>, <a href="http://projects.spring.io/spring-framework/">Spring MVC</a> etc. It is a micro-framework designed particularly well for:</p>
 
 <ul>
-<li>Use in a <a href="http://martinfowler.com/articles/microservices.html">micro-services</a> architecture</li>
-<li>Speed: Respite is fully asynchronous from top-to-toe - including (MongoDB) database operations - meaning it has excellent parallel execution capabilities</li>
+<li>Use in a <a href="http://martinfowler.com/articles/microservices.html">microservices</a> architecture</li>
+<li>Speed &amp; Concurrency: Respite is fully asynchronous from top-to-toe - including (MongoDB) database operations - meaning it has excellent parallel execution capabilities</li>
 <li>As a backing REST API in a Reactive JavaScript Application (Angular, React, etc.)</li>
-<li>Rapid, iterative deployment cycles: <code>idea-&gt;build-&gt;deploy-&gt;measure-&gt;learn-&gt;idea...</code></li>
+<li>Rapid, iterative deployment cycles ala <code>idea-&gt;build-&gt;deploy-&gt;measure-&gt;learn-&gt;idea...</code>, including application scaffolding tools</li>
 <li>Pre-configured for simple <a href="http://respite.onegeek.com.au/deployment/">deployment</a> to <a href="http://www.heroku.com">Heroku</a></li>
 </ul>
 
@@ -166,7 +166,7 @@ Success :)
 <p>If you already have an existing Scalatra application, you can extend it with Respite features:</p>
 
 <p>In your <code>build.{sbt, scala}</code>:</p>
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">&quot;au.com.onegeek&quot;</span> <span class="o">%%</span> <span class="s">&quot;respite-core&quot;</span> <span class="o">%</span> <span class="s">&quot;0.2.0&quot;</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">&quot;au.com.onegeek&quot;</span> <span class="o">%%</span> <span class="s">&quot;respite-core&quot;</span> <span class="o">%</span> <span class="s">&quot;0.2.2&quot;</span>
 </code></pre></div>
 <h4>Create a Model</h4>
 <div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">User</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">BSONObjectID</span> <span class="o">=</span> <span class="nc">BSONObjectID</span><span class="o">.</span><span class="n">generate</span><span class="o">,</span> <span class="n">username</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">firstName</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Model</span><span class="o">[</span><span class="kt">BSONObjectID</span><span class="o">]</span>
