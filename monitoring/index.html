@@ -92,13 +92,13 @@
 <h2>Health Checks</h2>
 
 <p>Health checks are just that - they confirm if a service is available, healthy and ready to service clients or not.You can find them at <code>/metrics/health</code></p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">$ curl -X GET -H&quot;content-type: application/json&quot; &quot;http://localhost:8080/metrics/health&quot;
+<div class="highlight"><pre><code class="language-text" data-lang="text">$ curl -X GET -H&quot;content-type: application/json&quot; &quot;http://localhost:8080/metrics/health&quot;
 {&quot;com.example.app.controller.MyModelController.list&quot;:{&quot;healthy&quot;:true}}
 </code></pre></div>
 <h3>Creating custom Health Checks</h3>
 
 <p>By default, <code>RestController</code> objects contain a default health check that queries <code>&quot;/&quot;</code>(all) which is executed when the metrics, however if you would like to create a custom monitor simply wrap the check in a <code>healthCheck</code> call as per below:</p>
-<div class="highlight"><pre><code class="scala language-scala" data-lang="scala">  <span class="cm">/**</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala">  <span class="cm">/**</span>
 <span class="cm">   * Create default health check on REST controller - confirm CRUD pipelines are active</span>
 <span class="cm">   * (what exactly does &#39;active&#39; mean?)</span>
 <span class="cm">   */</span>
@@ -132,7 +132,7 @@
 <p>Respite by default will instrument &amp; measure calls to all <code>Routes</code> on a given <code>Controller</code> using things called <code>Timers</code>. For CRUD services (aka <code>RestController</code>s), it will give sensible names to each timer such as &#39;list&#39;, &#39;delete&#39; and &#39;get&#39;. For non-<code>RestController</code>s, it will use the path provided in the URL as the name of the <code>Timer</code>:</p>
 
 <p>Runtime metrics for instrumented Controllers are available at <code>/metrics/</code>:</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">$ curl -X GET -H&quot;content-type: application/json&quot; &quot;http://localhost:8080/metrics/&quot;
+<div class="highlight"><pre><code class="language-text" data-lang="text">$ curl -X GET -H&quot;content-type: application/json&quot; &quot;http://localhost:8080/metrics/&quot;
 {
     &quot;version&quot;: &quot;3.0.0&quot;,
     &quot;gauges&quot;: {},

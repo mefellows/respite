@@ -102,6 +102,7 @@
 <li>Speed: Respite is fully asynchronous from top-to-toe - including (MongoDB) database operations - meaning it has excellent parallel execution capabilities</li>
 <li>As a backing REST API in a Reactive JavaScript Application (Angular, React, etc.)</li>
 <li>Rapid, iterative deployment cycles: <code>idea-&gt;build-&gt;deploy-&gt;measure-&gt;learn-&gt;idea...</code></li>
+<li>Pre-configured for simple <a href="http://respite.onegeek.com.au/deployment/">deployment</a> to <a href="http://www.heroku.com">Heroku</a></li>
 </ul>
 
 <hr/>
@@ -141,7 +142,7 @@
 <p><strong>Creating CRUD Services</strong></p>
 
 <p>This command will generate for you a <code>Model</code> and accompanying <code>Repository</code> &amp; <code>Controller</code> classes along with stubbed test cases. It is the best way to get started learning Respite:</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">&gt; g8Scaffold crud-service
+<div class="highlight"><pre><code class="language-text" data-lang="text">&gt; g8Scaffold crud-service
 model_name [MyModel]: Car
 organisation [com.example.app]: com.example.app.carmaker
 Success :)
@@ -165,10 +166,10 @@ Success :)
 <p>If you already have an existing Scalatra application, you can extend it with Respite features:</p>
 
 <p>In your <code>build.{sbt, scala}</code>:</p>
-<div class="highlight"><pre><code class="scala language-scala" data-lang="scala"><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">&quot;au.com.onegeek&quot;</span> <span class="o">%%</span> <span class="s">&quot;respite-core&quot;</span> <span class="o">%</span> <span class="s">&quot;0.2.0&quot;</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">&quot;au.com.onegeek&quot;</span> <span class="o">%%</span> <span class="s">&quot;respite-core&quot;</span> <span class="o">%</span> <span class="s">&quot;0.2.0&quot;</span>
 </code></pre></div>
 <h4>Create a Model</h4>
-<div class="highlight"><pre><code class="scala language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">User</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">BSONObjectID</span> <span class="o">=</span> <span class="nc">BSONObjectID</span><span class="o">.</span><span class="n">generate</span><span class="o">,</span> <span class="n">username</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">firstName</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Model</span><span class="o">[</span><span class="kt">BSONObjectID</span><span class="o">]</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">User</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">BSONObjectID</span> <span class="o">=</span> <span class="nc">BSONObjectID</span><span class="o">.</span><span class="n">generate</span><span class="o">,</span> <span class="n">username</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">firstName</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Model</span><span class="o">[</span><span class="kt">BSONObjectID</span><span class="o">]</span>
 
 <span class="k">object</span> <span class="nc">User</span> <span class="o">{</span>
   <span class="k">import</span> <span class="nn">au.com.onegeek.respite.models.ModelJsonExtensions._</span>
@@ -178,7 +179,7 @@ Success :)
 <h4>Create a Repository</h4>
 
 <p>Here is a Repository definition that saves data to a Mongo Database (using the <a href="http://reactivemongo.org/">Reactive Mongo</a> library), creating an Index on the <code>username</code> field.</p>
-<div class="highlight"><pre><code class="scala language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">UserRepository</span><span class="o">(</span><span class="k">implicit</span> <span class="n">mc</span><span class="k">:</span> <span class="kt">MongoConnector</span><span class="o">)</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">UserRepository</span><span class="o">(</span><span class="k">implicit</span> <span class="n">mc</span><span class="k">:</span> <span class="kt">MongoConnector</span><span class="o">)</span>
   <span class="k">extends</span> <span class="nc">ReactiveRepository</span><span class="o">[</span><span class="kt">User</span>, <span class="kt">BSONObjectID</span><span class="o">](</span><span class="s">&quot;users&quot;</span><span class="o">,</span> <span class="n">mc</span><span class="o">.</span><span class="n">db</span><span class="o">,</span> <span class="n">modelFormatForMongo</span> <span class="o">{</span><span class="nc">Json</span><span class="o">.</span><span class="n">format</span><span class="o">[</span><span class="kt">User</span><span class="o">]},</span> <span class="nc">ReactiveMongoFormats</span><span class="o">.</span><span class="n">objectIdFormats</span><span class="o">)</span> <span class="o">{</span>
 
   <span class="k">override</span> <span class="k">def</span> <span class="n">ensureIndexes</span><span class="o">()</span> <span class="k">=</span> <span class="o">{</span>
@@ -191,7 +192,7 @@ Success :)
 <h4>Add RestController instance to your Scalatra Bootstrap file</h4>
 
 <p>Create an instance of RestController for a <code>User</code> in table &quot;users&quot; on path &quot;/users/*&quot;:</p>
-<div class="highlight"><pre><code class="scala language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">ScalatraBootstrap</span> <span class="k">extends</span> <span class="nc">LifeCycle</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">ScalatraBootstrap</span> <span class="k">extends</span> <span class="nc">LifeCycle</span> <span class="o">{</span>
   <span class="k">protected</span> <span class="k">implicit</span> <span class="k">def</span> <span class="n">executor</span><span class="k">:</span> <span class="kt">ExecutionContext</span> <span class="o">=</span> <span class="nc">ExecutionContext</span><span class="o">.</span><span class="n">global</span>
 
   <span class="k">override</span> <span class="k">def</span> <span class="n">init</span><span class="o">(</span><span class="n">context</span><span class="k">:</span> <span class="kt">ServletContext</span><span class="o">)</span> <span class="o">{</span>

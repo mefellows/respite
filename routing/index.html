@@ -111,24 +111,24 @@
 <p>The following examples highlight the two forms:</p>
 
 <p><strong>New Class</strong></p>
-<div class="highlight"><pre><code class="scala language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">ProductController</span><span class="o">(</span><span class="n">repository</span><span class="k">:</span> <span class="kt">ReactiveRepository</span><span class="o">[</span><span class="kt">Product</span>, <span class="kt">BSONObjectID</span><span class="o">])(</span><span class="k">override</span> <span class="k">implicit</span> <span class="k">val</span> <span class="n">bindingModule</span><span class="k">:</span> <span class="kt">BindingModule</span><span class="o">,</span> <span class="k">override</span> <span class="k">implicit</span> <span class="k">val</span> <span class="n">tag</span><span class="k">:</span> <span class="kt">ClassTag</span><span class="o">[</span><span class="kt">Product</span><span class="o">],</span> <span class="k">override</span> <span class="k">implicit</span> <span class="k">val</span> <span class="n">objectIdConverter</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=&gt;</span> <span class="nc">BSONObjectID</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">RestController</span><span class="o">[</span><span class="kt">Product</span>, <span class="kt">BSONObjectID</span><span class="o">](</span><span class="s">&quot;products&quot;</span><span class="o">,</span> <span class="nc">Product</span><span class="o">.</span><span class="n">format</span><span class="o">,</span> <span class="n">repository</span><span class="o">)</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">ProductController</span><span class="o">(</span><span class="n">repository</span><span class="k">:</span> <span class="kt">ReactiveRepository</span><span class="o">[</span><span class="kt">Product</span>, <span class="kt">BSONObjectID</span><span class="o">])(</span><span class="k">override</span> <span class="k">implicit</span> <span class="k">val</span> <span class="n">bindingModule</span><span class="k">:</span> <span class="kt">BindingModule</span><span class="o">,</span> <span class="k">override</span> <span class="k">implicit</span> <span class="k">val</span> <span class="n">tag</span><span class="k">:</span> <span class="kt">ClassTag</span><span class="o">[</span><span class="kt">Product</span><span class="o">],</span> <span class="k">override</span> <span class="k">implicit</span> <span class="k">val</span> <span class="n">objectIdConverter</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=&gt;</span> <span class="nc">BSONObjectID</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">RestController</span><span class="o">[</span><span class="kt">Product</span>, <span class="kt">BSONObjectID</span><span class="o">](</span><span class="s">&quot;products&quot;</span><span class="o">,</span> <span class="nc">Product</span><span class="o">.</span><span class="n">format</span><span class="o">,</span> <span class="n">repository</span><span class="o">)</span>
 </code></pre></div>
 <p><strong>Value Object</strong></p>
-<div class="highlight"><pre><code class="scala language-scala" data-lang="scala"><span class="k">def</span> <span class="n">route</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">RestController</span><span class="o">[</span><span class="kt">Product</span>, <span class="kt">BSONObjectID</span><span class="o">](</span><span class="s">&quot;products&quot;</span><span class="o">,</span> <span class="nc">Product</span><span class="o">.</span><span class="n">format</span><span class="o">,</span> <span class="k">new</span> <span class="nc">ProductRepository</span><span class="o">)</span> <span class="k">with</span> <span class="nc">MetricsRestSupport</span><span class="o">[</span><span class="kt">Product</span>, <span class="kt">BSONObjectID</span><span class="o">],</span> <span class="s">&quot;/products&quot;</span><span class="o">)</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">route</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">RestController</span><span class="o">[</span><span class="kt">Product</span>, <span class="kt">BSONObjectID</span><span class="o">](</span><span class="s">&quot;products&quot;</span><span class="o">,</span> <span class="nc">Product</span><span class="o">.</span><span class="n">format</span><span class="o">,</span> <span class="k">new</span> <span class="nc">ProductRepository</span><span class="o">)</span> <span class="k">with</span> <span class="nc">MetricsRestSupport</span><span class="o">[</span><span class="kt">Product</span>, <span class="kt">BSONObjectID</span><span class="o">],</span> <span class="s">&quot;/products&quot;</span><span class="o">)</span>
 </code></pre></div>
 <p>The latter form is generally only useful for fairly uninteresting CRUD services.</p>
 
 <h2>JSON Services</h2>
 
 <p>If you don&#39;t require <code>Model</code> persistence, mixin the <code>PlayJsonSupport[T]</code> Trait, specifying the type that will be converted to/from JSON.</p>
-<div class="highlight"><pre><code class="scala language-scala" data-lang="scala"><span class="k">val</span> <span class="n">playServlet</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">TestServlet</span> <span class="k">with</span> <span class="nc">PlayJsonSupport</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">playServlet</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">TestServlet</span> <span class="k">with</span> <span class="nc">PlayJsonSupport</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
 </code></pre></div>
 <p><a id="register"> </a></p>
 
 <h2>Registering Controllers</h2>
 
 <p>Once you have created your <code>Controller</code>, simply add an instance of one with the <code>context.mount()</code> method in your <code>ScalatraBootstrap</code> class:</p>
-<div class="highlight"><pre><code class="scala language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">ScalatraBootstrap</span> <span class="k">extends</span> <span class="nc">LifeCycle</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">ScalatraBootstrap</span> <span class="k">extends</span> <span class="nc">LifeCycle</span> <span class="o">{</span>
   <span class="k">protected</span> <span class="k">implicit</span> <span class="k">def</span> <span class="n">executor</span><span class="k">:</span> <span class="kt">ExecutionContext</span> <span class="o">=</span> <span class="nc">ExecutionContext</span><span class="o">.</span><span class="n">global</span>
 
   <span class="k">override</span> <span class="k">def</span> <span class="n">init</span><span class="o">(</span><span class="n">context</span><span class="k">:</span> <span class="kt">ServletContext</span><span class="o">)</span> <span class="o">{</span>
@@ -154,7 +154,7 @@
 <p>Useful during development, these keys are essentially an in-memory map that are not persisted between application restarts.</p>
 
 <p>Create an instance of a <code>ConfigAuthenticationStrategy</code> setting the keys in the map:</p>
-<div class="highlight"><pre><code class="scala language-scala" data-lang="scala"><span class="c1">// Authentication API with default keys</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="c1">// Authentication API with default keys</span>
 <span class="k">object</span> <span class="nc">ConfigAuthStrategy</span> <span class="k">extends</span> <span class="nc">ConfigAuthenticationStrategy</span> <span class="o">{</span>
   <span class="k">override</span> <span class="k">var</span> <span class="n">keys</span> <span class="k">=</span> <span class="nc">Map</span><span class="o">(</span><span class="s">&quot;admin&quot;</span> <span class="o">-&gt;</span> <span class="nc">ApiKey</span><span class="o">(</span><span class="n">application</span> <span class="k">=</span> <span class="s">&quot;admin&quot;</span><span class="o">,</span> <span class="n">description</span> <span class="k">=</span> <span class="s">&quot;Test App&quot;</span><span class="o">,</span> <span class="n">key</span> <span class="k">=</span> <span class="s">&quot;testkey&quot;</span><span class="o">))</span> <span class="o">++</span>
                       <span class="nc">Map</span><span class="o">(</span><span class="s">&quot;murray&quot;</span> <span class="o">-&gt;</span> <span class="nc">ApiKey</span><span class="o">(</span><span class="n">application</span> <span class="k">=</span> <span class="s">&quot;bill&quot;</span><span class="o">,</span> <span class="n">description</span> <span class="k">=</span> <span class="s">&quot;Foo App&quot;</span><span class="o">,</span> <span class="n">key</span> <span class="k">=</span> <span class="s">&quot;murray&quot;</span><span class="o">))</span>
@@ -163,7 +163,7 @@
 <h3>Database Persisted Keys</h3>
 
 <p>Ensure a local Mongo database is available with the table &#39;apikeys&#39; available. Respite provides a <code>ApiKeyRepository</code> class to persist keys, which you can use when creating the <code>DatabaseAuthenticationStrategy</code> object:</p>
-<div class="highlight"><pre><code class="scala language-scala" data-lang="scala"><span class="k">val</span> <span class="n">repository</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ApiKeyRepository</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">repository</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ApiKeyRepository</span>
 <span class="k">override</span> <span class="k">implicit</span> <span class="k">val</span> <span class="n">authenticationStrategy</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">DatabaseAuthenticationStrategy</span><span class="o">(</span><span class="n">repository</span><span class="o">)</span>
   <span class="o">...</span>
 <span class="o">}</span>
@@ -171,7 +171,7 @@
 <h3>Mixin the Authentication magic</h3>
 
 <p>Once you&#39;ve created the <code>AuthenticationStrategy</code> object, mixin the <code>Authentication</code> Trait to your <code>Controller</code> and set the <code>authenticationStrategy</code> to your new configuration object:</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">class UserController(repository: ReactiveRepository[User, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String =&gt; BSONObjectID) extends RestController[User, BSONObjectID](&quot;users&quot;, User.format, repository)[User, BSONObjectID] with Authentication {
+<div class="highlight"><pre><code class="language-text" data-lang="text">class UserController(repository: ReactiveRepository[User, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String =&gt; BSONObjectID) extends RestController[User, BSONObjectID](&quot;users&quot;, User.format, repository)[User, BSONObjectID] with Authentication {
   override implicit val authenticationStrategy = ConfigAuthStrategy
 }
 </code></pre></div>
@@ -213,7 +213,7 @@
 <h3>Creating Custom Cache entries</h3>
 
 <p>The caching DSL is fairly straightforward, wrapping a block with <code>cache(key)</code> will return a <code>Future[Any]</code>. The following example wraps the contents of a <code>POST</code> operation (something which is not automatically cached for obvious reasons):</p>
-<div class="highlight"><pre><code class="scala language-scala" data-lang="scala">  <span class="n">post</span><span class="o">(</span><span class="s">&quot;/foobar&quot;</span><span class="o">)</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala">  <span class="n">post</span><span class="o">(</span><span class="s">&quot;/foobar&quot;</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">cache</span><span class="o">(</span><span class="s">&quot;es&quot;</span><span class="o">)</span> <span class="o">{</span>
       <span class="nc">Future</span> <span class="o">{</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="o">(</span><span class="s">&quot;About to find all&quot;</span><span class="o">)</span>
@@ -229,7 +229,7 @@
 <h3>Overriding caching TTLs</h3>
 
 <p>By default, responses are cached forever, unless the cache is invalidated by way of a <code>DELETE</code> or <code>POST</code> operation.If you&#39;d like to change this behaviour, simply override the following properties of any class instrumented via <code>CachingSupport</code>.</p>
-<div class="highlight"><pre><code class="scala language-scala" data-lang="scala">  <span class="k">override</span> <span class="k">val</span> <span class="n">timeToLive</span> <span class="k">=</span> <span class="mi">300</span> <span class="n">seconds</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala">  <span class="k">override</span> <span class="k">val</span> <span class="n">timeToLive</span> <span class="k">=</span> <span class="mi">300</span> <span class="n">seconds</span>
   <span class="k">override</span> <span class="k">val</span> <span class="n">timeToIdle</span> <span class="k">=</span> <span class="mi">60</span> <span class="n">seconds</span>
 </code></pre></div>
 <p class="message">
@@ -241,7 +241,7 @@
 <h2>Logging</h2>
 
 <p>Mixin <code>LoggingSupport</code> to access a Logback <code>logger</code> object with the standard methods. By default, this will be sent to <code>stdout</code> (see <a href="http://12factor.net/logs">logs</a> for best practice on 12 factor apps) but can be easily <a href="http://logback.qos.ch/">configured</a> to log to another location.</p>
-<div class="highlight"><pre><code class="scala language-scala" data-lang="scala"><span class="c1">// Creates a route on &quot;/logme&quot; which will log to console on request</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="c1">// Creates a route on &quot;/logme&quot; which will log to console on request</span>
 <span class="n">get</span><span class="o">(</span><span class="s">&quot;/logme&quot;</span><span class="o">)</span> <span class="o">{</span>
   <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="o">(</span><span class="s">&quot;This is a debug log on path `/logme`&quot;</span><span class="o">)</span>
 <span class="o">}</span>
