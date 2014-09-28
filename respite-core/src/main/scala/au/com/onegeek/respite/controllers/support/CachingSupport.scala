@@ -31,6 +31,8 @@ import spray.caching.{LruCache, ExpiringLruCache}
 
 import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration._
+import org.joda.time.{DateTimeZone, DateTime}
+import org.joda.time.format.DateTimeFormat
 
 /**
  * Models a canonical Caching interface for use by the Caching Abstraction
@@ -47,11 +49,13 @@ trait SprayCache[T] extends Cache[T] {
  * Generic caching DSL for objects and Routes.
  */
 trait CachingSupport[T] {
-  val timeToLive = Duration.Inf
-  val timeToIdle = Duration.Inf
+  val timeToLive: Duration = Duration.Inf
+  val timeToIdle: Duration = Duration.Inf
+  val maxCapacity: Int = 500
+  val initialCapacity: Int = 16
 
-  implicit val cache: spray.caching.Cache[T] = new spray.caching.ExpiringLruCache[T](maxCapacity = 500,
-    initialCapacity = 16,
+  lazy val cache: spray.caching.Cache[T] = new spray.caching.ExpiringLruCache[T](maxCapacity = maxCapacity,
+    initialCapacity = initialCapacity,
     timeToLive = timeToLive,
     timeToIdle = timeToIdle)
 }
@@ -78,20 +82,35 @@ trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingS
             // Hash the request params? => This could be a security issue if known i.e. slam site with squillions of combinations of k/v and consume memory
 
             // Also, don't cache 40x/50x errors?
+
+            // TODO: Evaluate Cache Request Request Directives - i.e. ignore/bypass cache etc.
+
+            // Note: Sensitivity is reduced to minutes. TODO: What does this mean for 'infinite'?
             super.addRoute(method, transformers, {
+
 //              val key = s"${request.getMethod}${request.pathInfo}${request.parameters.foldLeft()}"
               val key = s"${request.getMethod}${request.pathInfo}"
               logger.debug(s"Returning cached route $path on path ${request.pathInfo} in class ${getClass} with key ${key}")
               cache(key) {
+
+                // Setup Caching Response Headers according to RFCs:
+                // http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9 and
+                // http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21
+                val fmt = DateTimeFormat.forPattern("E, d MMM y kk:mm:ss");
+                val minutes = if (!timeToLive.isFinite || timeToLive.toDays > 365) 365 * 24 * 60 else timeToLive.toMinutes.toInt
+                response.setHeader("Cache-Control", "Public")
+                response.setHeader("Expires", fmt.print(DateTime.now.plusMinutes(minutes).withZone(DateTimeZone.UTC)) + " GMT")
+
+                // Return Body
                 action
               }
             })
 
         case _ =>
+          // TODO: Invalidate cache entries?
           super.addRoute(method, transformers, action)
       }
     }
-
 
   delete("/cache/") {
     cache.clear()

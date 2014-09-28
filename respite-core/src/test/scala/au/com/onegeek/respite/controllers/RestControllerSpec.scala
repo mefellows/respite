@@ -145,6 +145,14 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoSp
       )
     }
 
+    "Not set \"Cache-Control: no-cache\" header when caching disabled" in {
+      get("/users/") {
+        intercept[NoSuchElementException] {
+          header.get("Cache-Control").get
+        }
+      }
+    }
+
     "Respond with 500 Internal Server error when Database is unavailable" in {
 
     }

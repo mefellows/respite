@@ -18,6 +18,8 @@ import org.scalatest.mock.MockitoSugar._
 import scala.concurrent.{Future, Await, Promise, ExecutionContext}
 import scala.concurrent.duration._
 import scala.reflect.ClassTag
+import org.joda.time.{Seconds, DateTimeZone, DateTime}
+import org.joda.time.format.DateTimeFormat
 
 /**
  * Created by mfellows on 29/06/2014.
@@ -32,9 +34,39 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
   val myCache: spray.caching.Cache[Any] = LruCache()
   val BLOCKING_TIMEOUT = 100 millis
 
+  class MockedCachingRouteSupport100Seconds extends ScalatraServlet with FutureSupport with CachingRouteSupport {
+    protected implicit def executor: ExecutionContext = ExecutionContext.global
+    override val timeToLive = 100 seconds
+    override val timeToIdle = 10 seconds
+
+    get("/") {
+      "OK"
+    }
+
+
+    post("/notcacheable") {
+      println("not cached")
+    }
+  }
+
+  class MockedCachingRouteSupport366Days extends ScalatraServlet with FutureSupport with CachingRouteSupport {
+    protected implicit def executor: ExecutionContext = ExecutionContext.global
+    override val timeToLive = 366 days
+    override val timeToIdle = 1 day
+
+    get("/") {
+      "OK"
+    }
+
+
+    post("/notcacheable") {
+      println("not cached")
+    }
+  }
+
   class MockedCachingRouteSupport extends ScalatraServlet with FutureSupport with CachingRouteSupport {
     protected implicit def executor: ExecutionContext = ExecutionContext.global
-    override implicit val cache = myCache
+    override lazy val cache = myCache
 
     get("/") {
       "OK"
@@ -47,6 +79,8 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
   }
 
   addServlet(new MockedCachingRouteSupport, "/cache/*")
+  addServlet(new MockedCachingRouteSupport100Seconds, "/cachesecs/*")
+  addServlet(new MockedCachingRouteSupport366Days, "/cachedays/*")
 
   before {
     // Clear out entries - only do this if you don't start/stop between tests
@@ -105,6 +139,56 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
       "expire GET requests (cache entries) on non-idempotent REST calls (POST, PUT, DELETE) for matching URLs" in {
 
       }
+    }
+
+    "When setting cache control headers" should {
+
+      "Set \"Cache-Control:public\" when caching is enabled" in {
+        get("/cache/") {
+          header.get("Cache-Control").get.toLowerCase should equal("public")
+        }
+      }
+
+      "Set accurate \"Expires\" header when caching is enabled" in {
+        get("/cache/") {
+          checkExpiryHeader(365 * 24 * 60)
+        }
+
+        get("/cachesecs/") {
+          checkExpiryHeader(100 / 60)
+        }
+
+        get("/cachedays/") {
+          checkExpiryHeader(365 * 24 * 60)
+        }
+      }
+
+      "Not set \"Expires\" header for non-cacheable requests" in {
+
+        post("/cachedays/notcacheable") {
+          intercept[NoSuchElementException] {
+            header.get("Cache-Control").get
+          }
+        }
+      }
+
+      def checkExpiryHeader(expiryInMinutes: Int, errorMargin: Int = 1): Unit = {
+        // RFC2616 Spec: http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
+        val fmt = DateTimeFormat.forPattern("E, d MMM y kk:mm:ss z");
+        val expiryHeader = header.get("Expires").get.replace("GMT", "UTC")
+        val expectedExpiryDate = DateTime.now.plusMinutes(expiryInMinutes).withZone(DateTimeZone.UTC)
+        val actualExpiry = fmt.withOffsetParsed.parseDateTime(expiryHeader)
+
+        println(s"${fmt.print(expectedExpiryDate)}")
+        println(s"${fmt.print(actualExpiry)}")
+
+        // As this test and the controller test can be out by millis, the date expected can slip into the next second.
+        // This is a way to ensure the date is within a second precision of accuracy
+        val secs = Seconds.secondsBetween(actualExpiry.toInstant, expectedExpiryDate.toInstant).getSeconds
+
+        if (secs > errorMargin) fail("Expiry date is out by at least 1 second: Expected \"" + fmt.print(expectedExpiryDate) + ", got \"" + fmt.print(actualExpiry) + "\"")
+      }
+
     }
 
     "with CRUD calls" should {
