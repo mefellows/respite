@@ -153,6 +153,14 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoSp
       }
     }
 
+    "Provide a sensible default CORS Route" in {
+      options("/users/", headers = Map("Access-Control-Request-Headers" -> "X-Foo")) {
+        status should equal(200)
+        header.get("Access-Control-Allow-Methods").get should equal ("GET, PUT, POST, DELETE, OPTIONS")
+        header.get("Access-Control-Allow-Headers").get should equal ("X-Foo")
+      }
+    }
+
     "Respond with 500 Internal Server error when Database is unavailable" in {
 
     }

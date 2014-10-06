@@ -8,13 +8,15 @@ import au.com.onegeek.respite.security.Authentication
 import au.com.onegeek.respite.test.{Awaiting, MongoSpecSupport}
 import com.escalatesoft.subcut.inject.{Injectable, BindingModule}
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatra.{FutureSupport, ScalatraServlet, Route}
+import org.scalatra.util.MultiMapHeadView
+import org.scalatra.{RouteMatcher, FutureSupport, ScalatraServlet, Route}
 import reactivemongo.bson.BSONObjectID
 import spray.caching.LruCache
 import uk.gov.hmrc.mongo._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.mock.MockitoSugar._
 
+import scala.collection.immutable.HashMap
 import scala.concurrent.{Future, Await, Promise, ExecutionContext}
 import scala.concurrent.duration._
 import scala.reflect.ClassTag
@@ -72,10 +74,38 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
       "OK"
     }
 
-    post("/notcacheable") {
-      println("not cached")
+    put("/") {
+      "Put"
     }
 
+    patch("/") {
+      "Patch"
+    }
+
+    post("/notcacheable") {
+      "Post"
+    }
+
+    get("/redirect") {
+      redirect(url("/"))
+    }
+
+    get("/explode") {
+      status = 500
+      throw new RuntimeException("shouldn't execute")
+    }
+
+//    get("/explode") {
+//      throw new RuntimeException("shouldn't execute")
+//    }
+
+    delete("/:id") {
+      "Delete"
+    }
+
+    options("/*") {
+      "Options"
+    }
   }
 
   addServlet(new MockedCachingRouteSupport, "/cache/*")
@@ -103,7 +133,7 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
     println(s"My cache size: ${myCache.size}")
   }
 
-  def assertCacheResult(key: String, result: Any, msg: String): Unit = {
+  def assertCacheResult(key: String, result: Any, msg: String, code: Int = 200): Unit = {
       val res = Await.result(myCache.get(key).get, BLOCKING_TIMEOUT)
       myCache.get(key) should not be Nil
       res should equal(result)
@@ -123,6 +153,10 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
           assertCacheResult("GET", "OK", "Future didn't return 'OK' Response")
         }
 
+        get("/cache/?foo=barman") {
+          fail("Not implemented yet")
+        }
+
         get("/cache") {
           body should equal("OK")
           status should equal(200)
@@ -136,8 +170,17 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
 
       }
 
-      "expire GET requests (cache entries) on non-idempotent REST calls (POST, PUT, DELETE) for matching URLs" in {
+      "Differentiate Cache entries based on k/v parameters in the request" in {
+        fail("Not implemented yet")
+      }
 
+      "Ensure requests with same query string k/v in different order is treated as single cache entry" in {
+        // Or, does that really matter? Mmm, probably does
+        fail("Not implemented yet")
+      }
+
+      "expire GET requests (cache entries) on non-idempotent REST calls (POST, PUT, DELETE) for matching URLs" in {
+        fail("Not implemented yet")
       }
     }
 
@@ -194,42 +237,90 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
     "with CRUD calls" should {
 
       "Cache HEAD requests " in {
-
-      }
-
-      "Cache OPTIONS requests " in {
-
-      }
-
-      "Cache GET requests " in {
-
-      }
-
-      "Cache DELETE requests" in {
-
-      }
-
-      "Not cache PUT requests" in {
-
-      }
-
-      "Not cache POST requests" in {
-        val size = myCache.size
-        post("/cache/notcacheable") {
-          myCache.size should equal(size)
+        myCache.size should equal (0)
+        head("/cache") {
+          println(body)
+          myCache.size should equal (1)
+          status should equal(200)
+          assertCacheResult("HEAD", "OK", "Expected 'OK'")
         }
       }
 
-      "Cache 40x" in {
-
+      "Cache OPTIONS requests " in {
+        myCache.size should equal (0)
+        options("/cache") {
+          myCache.size should equal (1)
+          status should equal(200)
+          assertCacheResult("OPTIONS", "Options", "Expected 'Options'")
+        }
       }
 
-      "Cache 30x" in {
-
+      "Not Cache DELETE requests" in {
+        myCache.size should equal (0)
+        delete("/cache/1") {
+          myCache.size should equal (0)
+          println(body)
+          status should equal(200)
+        }
       }
 
-      "Cache 50x" in {
+      "Not cache PUT requests" in {
+        myCache.size should equal (0)
+        put("/cache/") {
+          myCache.size should equal (0)
+          println(body)
+          status should equal(200)
+          body should equal("Put")
+        }
+      }
 
+      "Not cache PATCH requests" in {
+        myCache.size should equal (0)
+        patch("/cache/") {
+          myCache.size should equal (0)
+          println(body)
+          status should equal(200)
+          body should equal("Patch")
+        }
+      }
+
+      "Not cache POST requests" in {
+        myCache.size should equal (0)
+        post("/cache/notcacheable") {
+          myCache.size should equal (0)
+          println(body)
+          status should equal(200)
+          body should equal("Post")
+        }
+      }
+
+      "NOT Cache 40x" in {
+        myCache.size should equal (0)
+
+        get("/nothereman") {
+          myCache.size should equal (0)
+          status should equal(404)
+        }
+      }
+
+      "NOT Cache 30x" in {
+        myCache.size should equal (0)
+        get("/cache/redirect") {
+          println(body)
+          status should equal(302)
+          myCache.size should equal (0)
+          body should equal("")
+        }
+      }
+
+      "NOT Cache 50x" in {
+        myCache.size should equal (0)
+        get("/cache/explode") {
+          println(body)
+          status should equal(500)
+          myCache.size should equal (0)
+          body should equal("")
+        }
       }
     }
 
@@ -268,20 +359,18 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
 
       }
 
-      "" in {
+      "map into a nice key" in {
+//        get("/cache/?foo=bar&baz=bat") {
+//          val map = Map("foo" -> "bar") ++ Map("baz" -> "bat")
+//          val method = "GET"
+//
+//          val key = map.keys.foldLeft("start")((keyBuilder, k) => keyBuilder + k + "=" + map.get(k).get )
+//          print(key)
+//
+//        }
+
 
       }
-
-    }
-  }
-
-  "A Cache" should {
-    "Never consume more memory than allowed" in {
-
-    }
-
-    "Store high-use objects in memory and fall back to 2nd-level cache?" in {
-
     }
   }
 }

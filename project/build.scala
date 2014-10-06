@@ -11,7 +11,7 @@ import scoverage.ScoverageSbtPlugin.instrumentSettings
 object RespiteBuild extends Build {
   val Organization = "au.com.onegeek"
   val Name = "Respite REST Framework"
-  val Version = "0.2.3"
+  val Version = "0.3.0-SNAPSHOT"
 
   lazy val core = Project (
     "respite-core",
