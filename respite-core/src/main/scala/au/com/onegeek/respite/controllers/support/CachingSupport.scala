@@ -33,6 +33,7 @@ import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration._
 import org.joda.time.{DateTimeZone, DateTime}
 import org.joda.time.format.DateTimeFormat
+import au.com.onegeek.respite.controllers.RestController
 
 /**
  * Models a canonical Caching interface for use by the Caching Abstraction
@@ -73,11 +74,12 @@ trait CachingSupport[T] {
  *  The Cache can be set to 'auto-evict' meaning
  *
  */
-trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingSupport[Any] {
-  this: FutureSupport =>
-
+trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingSupport[Any] with FutureSupport {
   val YEAR_IN_MINUTES = 365 * 24 * 60
   val YEAR_IN_DAYS = 365
+
+  def getCacheKey() = s"${request.getMethod}${request.pathInfo}${request.parameters flatMap {case(k, v) => k + "=" + v} mkString}"
+  def getCacheKeyForEviction() = s"GET${request.pathInfo}${request.parameters flatMap {case(k, v) => k + "=" + v} mkString}"
 
   override protected def addRoute(method: HttpMethod, transformers: Seq[RouteTransformer], action: => Any): Route = {
     val path = transformers.foldLeft("")((path, transformer) => path.concat(transformer.toString()))
@@ -90,9 +92,7 @@ trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingS
 
         // How to map params etc.? Some Path's will be implemented where params aren't captured in signature.
 
-        // Hash the request params? => This could be a security issue if known i.e. slam site with squillions of combinations of k/v and consume memory
-
-        // Also, don't cache 40x/50x errors?
+        // Order the request params for consistent hashes? => This could be a security issue if known i.e. slam site with squillions of combinations of k/v and consume memory
 
         // TODO: Evaluate Cache Request Request Directives - i.e. ignore/bypass cache etc.
 
@@ -100,7 +100,7 @@ trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingS
         super.addRoute(method, transformers, {
 
           // Properly flatten k/v into the key
-          val key = s"${request.getMethod}${request.pathInfo}${request.parameters flatMap {case(k, v) => k + "=" + v} mkString}"
+          val key = getCacheKey()
 
           logger.debug(s"Returning cached route $path on path ${request.pathInfo} in class ${getClass} with key ${key}")
           cache(key) {
@@ -117,7 +117,14 @@ trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingS
             action
           }
         })
-
+      case Post | Put | Patch | Delete =>
+        super.addRoute(method, transformers, {
+            val key = getCacheKeyForEviction()
+            logger.info(s"Evicting cache ($key)due to unsafe op.")
+            cache.remove(key) // Async
+//          cache.clear()
+          action
+        })
       case _ =>
         // TODO: Invalidate cache entries on PUT/POST/DELETE?
         super.addRoute(method, transformers, action)
@@ -132,4 +139,26 @@ trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingS
     val key = params.get("key").get
     cache.remove(key)
   }
+}
+
+trait CachingCRUDSupport extends CachingRouteSupport {
+
+  // Another strategy - functional composition (routes are just variables, right?
+
+//  override protected def addRoute(method: HttpMethod, transformers: Seq[RouteTransformer], action: => Any): Route = {
+//    val path = transformers.foldLeft("")((path, transformer) => path.concat(transformer.toString()))
+//    logger.debug(s"UnCaching path $path on ${getClass}")
+//
+//      method match {
+//        case Post | Put | Patch | Delete =>
+//          super.addRoute(method, transformers, {
+//            logger.info("Evicting cache due to unsafe op.")
+//            cache.remove(getCacheKeyForEviction) // Async
+//            cache.clear()
+//            action
+//          })
+//        case _ => super.addRoute(method, transformers, action)
+//      }
+//
+//  }
 }

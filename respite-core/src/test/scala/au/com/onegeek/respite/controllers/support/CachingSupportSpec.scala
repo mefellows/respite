@@ -86,6 +86,10 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
       "Post"
     }
 
+
+    post("/") {
+      "Post"
+    }
     get("/redirect") {
       redirect(url("/"))
     }
@@ -153,10 +157,6 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
           assertCacheResult("GET", "OK", "Future didn't return 'OK' Response")
         }
 
-        get("/cache/?foo=barman") {
-          fail("Not implemented yet")
-        }
-
         get("/cache") {
           body should equal("OK")
           status should equal(200)
@@ -165,13 +165,17 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
 
         // Inject Mock Caching Strategy into CachingRouteSupport and count entries
 
-
         // Check that Actual method was not invoked more than once!!
-
       }
 
       "Differentiate Cache entries based on k/v parameters in the request" in {
-        fail("Not implemented yet")
+        myCache.size should equal (0)
+        get("/cache/?foo=barman") {
+          body should equal("OK")
+          status should equal(200)
+          assertCacheResult("GET/foo=barman", "OK", "Future didn't return 'OK' Response")
+          myCache.size should equal (1)
+        }
       }
 
       "Ensure requests with same query string k/v in different order is treated as single cache entry" in {
@@ -180,12 +184,31 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
       }
 
       "expire GET requests (cache entries) on non-idempotent REST calls (POST, PUT, DELETE) for matching URLs" in {
-        fail("Not implemented yet")
+        myCache.size should equal(0)
+        get("/cache") {
+          body should equal("OK")
+          status should equal(200)
+          myCache.size should equal(1)
+        }
+
+        post("/cache") {
+          myCache.size should equal(0)
+        }
+
+        get("/cache") {
+          body should equal("OK")
+          status should equal(200)
+          myCache.size should equal(1)
+        }
+
+        // Check varient on common CRUD keys
+        post("/cache/") {
+          myCache.size should equal(0)
+        }
       }
     }
 
     "When setting cache control headers" should {
-
       "Set \"Cache-Control:public\" when caching is enabled" in {
         get("/cache/") {
           header.get("Cache-Control").get.toLowerCase should equal("public")
@@ -207,7 +230,6 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
       }
 
       "Not set \"Expires\" header for non-cacheable requests" in {
-
         post("/cachedays/notcacheable") {
           intercept[NoSuchElementException] {
             header.get("Cache-Control").get
@@ -231,8 +253,13 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
 
         if (secs > errorMargin) fail("Expiry date is out by at least 1 second: Expected \"" + fmt.print(expectedExpiryDate) + ", got \"" + fmt.print(actualExpiry) + "\"")
       }
-
     }
+
+//    "When provided caching headers" should {
+//      "" in {
+//
+//      }
+//    }
 
     "with CRUD calls" should {
 
@@ -360,15 +387,6 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
       }
 
       "map into a nice key" in {
-//        get("/cache/?foo=bar&baz=bat") {
-//          val map = Map("foo" -> "bar") ++ Map("baz" -> "bat")
-//          val method = "GET"
-//
-//          val key = map.keys.foldLeft("start")((keyBuilder, k) => keyBuilder + k + "=" + map.get(k).get )
-//          print(key)
-//
-//        }
-
 
       }
     }
