@@ -99,10 +99,6 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
       throw new RuntimeException("shouldn't execute")
     }
 
-//    get("/explode") {
-//      throw new RuntimeException("shouldn't execute")
-//    }
-
     delete("/:id") {
       "Delete"
     }
@@ -162,10 +158,6 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
           status should equal(200)
           assertCacheResult("GET", "OK", "Future didn't return 'OK' Response")
         }
-
-        // Inject Mock Caching Strategy into CachingRouteSupport and count entries
-
-        // Check that Actual method was not invoked more than once!!
       }
 
       "Differentiate Cache entries based on k/v parameters in the request" in {
@@ -176,14 +168,34 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
           assertCacheResult("GET/foo=barman", "OK", "Future didn't return 'OK' Response")
           myCache.size should equal (1)
         }
+
+        myCache.size should equal (1)
+        get("/cache/?foo=barman&bar=fooman") {
+          body should equal("OK")
+          status should equal(200)
+          val key = "GET/bar=fooman,foo=barman"
+          assertCacheResult(key, "OK", s"No cache entry exists for $key")
+          myCache.size should equal (2)
+        }
       }
 
       "Ensure requests with same query string k/v in different order is treated as single cache entry" in {
-        // Or, does that really matter? Mmm, probably does
-        fail("Not implemented yet")
+        myCache.size should equal (0)
+        get("/cache/?foo=barman&bar=fooman") {
+          body should equal("OK")
+          status should equal(200)
+          assertCacheResult("GET/bar=fooman,foo=barman", "OK", "Future didn't return 'OK' Response")
+          myCache.size should equal (1)
+        }
+        get("/cache/?bar=fooman&foo=barman") {
+          body should equal("OK")
+          status should equal(200)
+          assertCacheResult("GET/bar=fooman,foo=barman", "OK", "Future didn't return 'OK' Response")
+          myCache.size should equal (1)
+        }
       }
 
-      "expire GET requests (cache entries) on non-idempotent REST calls (POST, PUT, DELETE) for matching URLs" in {
+      "expire GET/HEAD/Safe Operations requests (cache entries) on non-idempotent REST calls (POST, PUT, DELETE) for matching URLs" in {
         myCache.size should equal(0)
         get("/cache") {
           body should equal("OK")
@@ -199,11 +211,6 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
           body should equal("OK")
           status should equal(200)
           myCache.size should equal(1)
-        }
-
-        // Check varient on common CRUD keys
-        post("/cache/") {
-          myCache.size should equal(0)
         }
       }
     }
@@ -254,12 +261,6 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
         if (secs > errorMargin) fail("Expiry date is out by at least 1 second: Expected \"" + fmt.print(expectedExpiryDate) + ", got \"" + fmt.print(actualExpiry) + "\"")
       }
     }
-
-//    "When provided caching headers" should {
-//      "" in {
-//
-//      }
-//    }
 
     "with CRUD calls" should {
 

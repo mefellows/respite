@@ -34,17 +34,7 @@ import scala.concurrent.duration._
 import org.joda.time.{DateTimeZone, DateTime}
 import org.joda.time.format.DateTimeFormat
 import au.com.onegeek.respite.controllers.RestController
-
-/**
- * Models a canonical Caching interface for use by the Caching Abstraction
- */
-trait Cache[T] extends spray.caching.Cache[T] {
-
-}
-
-trait SprayCache[T] extends Cache[T] {
-
-}
+import org.scalatra.util.MultiMapHeadView
 
 /**
  * Generic caching DSL for objects and Routes.
@@ -60,7 +50,6 @@ trait CachingSupport[T] {
     timeToLive = timeToLive,
     timeToIdle = timeToIdle)
 }
-
 
 /**
  * Automatically cache CRUD and idempotent routes plus a handy Caching DSL.
@@ -78,8 +67,8 @@ trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingS
   val YEAR_IN_MINUTES = 365 * 24 * 60
   val YEAR_IN_DAYS = 365
 
-  def getCacheKey() = s"${request.getMethod}${request.pathInfo}${request.parameters flatMap {case(k, v) => k + "=" + v} mkString}"
-  def getCacheKeyForEviction() = s"GET${request.pathInfo}${request.parameters flatMap {case(k, v) => k + "=" + v} mkString}"
+  def sortRequestParameters(): Map[String, String] = request.parameters.toSeq.sortBy(_._1).toMap
+  def getCacheKey(): String = s"${request.getMethod}${request.pathInfo}" + (sortRequestParameters.foldLeft(""){ case(builder, (k, v)) => s"${builder},${k}=${v}" }).replaceAll("^,", "")
 
   override protected def addRoute(method: HttpMethod, transformers: Seq[RouteTransformer], action: => Any): Route = {
     val path = transformers.foldLeft("")((path, transformer) => path.concat(transformer.toString()))
@@ -89,17 +78,8 @@ trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingS
 
       // Equates to GET, HEAD, OPTIONS, CONNECT, TRACE
       case m: HttpMethod if m.isSafe =>
-
-        // How to map params etc.? Some Path's will be implemented where params aren't captured in signature.
-
-        // Order the request params for consistent hashes? => This could be a security issue if known i.e. slam site with squillions of combinations of k/v and consume memory
-
-        // TODO: Evaluate Cache Request Request Directives - i.e. ignore/bypass cache etc.
-
-        // Note: Sensitivity is reduced to minutes
         super.addRoute(method, transformers, {
 
-          // Properly flatten k/v into the key
           val key = getCacheKey()
 
           logger.debug(s"Returning cached route $path on path ${request.pathInfo} in class ${getClass} with key ${key}")
@@ -119,14 +99,14 @@ trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingS
         })
       case Post | Put | Patch | Delete =>
         super.addRoute(method, transformers, {
-            val key = getCacheKeyForEviction()
-            logger.info(s"Evicting cache ($key)due to unsafe op.")
-            cache.remove(key) // Async
-//          cache.clear()
+            HttpMethod.methods.filter(_.isSafe).foreach { m =>
+              val key = getCacheKey.replaceFirst(method.toString, m.toString)
+              logger.info(s"Evicting cache key ${key} due to unsafe op")
+              cache.remove(key)
+            }
           action
         })
       case _ =>
-        // TODO: Invalidate cache entries on PUT/POST/DELETE?
         super.addRoute(method, transformers, action)
     }
   }
@@ -139,26 +119,4 @@ trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingS
     val key = params.get("key").get
     cache.remove(key)
   }
-}
-
-trait CachingCRUDSupport extends CachingRouteSupport {
-
-  // Another strategy - functional composition (routes are just variables, right?
-
-//  override protected def addRoute(method: HttpMethod, transformers: Seq[RouteTransformer], action: => Any): Route = {
-//    val path = transformers.foldLeft("")((path, transformer) => path.concat(transformer.toString()))
-//    logger.debug(s"UnCaching path $path on ${getClass}")
-//
-//      method match {
-//        case Post | Put | Patch | Delete =>
-//          super.addRoute(method, transformers, {
-//            logger.info("Evicting cache due to unsafe op.")
-//            cache.remove(getCacheKeyForEviction) // Async
-//            cache.clear()
-//            action
-//          })
-//        case _ => super.addRoute(method, transformers, action)
-//      }
-//
-//  }
 }
