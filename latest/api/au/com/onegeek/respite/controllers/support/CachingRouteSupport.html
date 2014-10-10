@@ -35,16 +35,18 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">CachingRouteSupport</span><span class="result"> extends <span class="extype" name="org.scalatra.ScalatraBase">ScalatraBase</span> with <a href="LoggingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.LoggingSupport">LoggingSupport</a> with <a href="CachingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.CachingSupport">CachingSupport</a>[<span class="extype" name="scala.Any">Any</span>]</span>
+        <span class="name">CachingRouteSupport</span><span class="result"> extends <span class="extype" name="org.scalatra.ScalatraBase">ScalatraBase</span> with <a href="LoggingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.LoggingSupport">LoggingSupport</a> with <a href="CachingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.CachingSupport">CachingSupport</a>[<span class="extype" name="scala.Any">Any</span>] with <span class="extype" name="org.scalatra.FutureSupport">FutureSupport</span></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Automatically cache CRUD and idempotent routes plus a handy Caching DSL.</p><p>Note that use of this will automatically convert your routes into </p><pre>FutureSupport</pre><p> routes as cache retrieval
-is asynchronous.</p><p>FutureSupport
+is asynchronous.</p><p>NOTES:</p><p> If the caching is set to 365 days or greater (including 'infinity') the Expires header is set to exactly 365 days in the future.
+ The Cache can be set to 'auto-evict' meaning</p><p>FutureSupport
 }}}
-is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.onegeek.respite.controllers.support.CachingRouteSupport">CachingRouteSupport</a> with <span class="extype" name="org.scalatra.FutureSupport">FutureSupport</span></dd></dl><div class="toggleContainer block">
+is asynchronous.</p><p>NOTES:</p><p> If the caching is set to 365 days or greater (including 'infinity') the Expires header is set to exactly 365 days in the future.
+ The Cache can be set to 'auto-evict' meaning</p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="CachingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.CachingSupport">CachingSupport</a>[<span class="extype" name="scala.Any">Any</span>], <a href="LoggingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.LoggingSupport">LoggingSupport</a>, <span class="extype" name="org.scalatra.ScalatraBase">ScalatraBase</span>, <span class="extype" name="org.scalatra.CookieSupport">CookieSupport</span>, <span class="extype" name="org.scalatra.util.conversion.DefaultImplicitConversions">DefaultImplicitConversions</span>, <span class="extype" name="org.scalatra.util.conversion.LowPriorityImplicitConversions">LowPriorityImplicitConversions</span>, <span class="extype" name="org.scalatra.util.conversion.LowestPriorityImplicitConversions">LowestPriorityImplicitConversions</span>, <span class="extype" name="org.scalatra.util.conversion.TypeConverterSupport">TypeConverterSupport</span>, <span class="extype" name="org.scalatra.ScalatraParamsImplicits">ScalatraParamsImplicits</span>, <span class="extype" name="org.scalatra.Initializable">Initializable</span>, <span class="extype" name="org.scalatra.DynamicScope">DynamicScope</span>, <span class="extype" name="org.scalatra.RequestResponseScope">RequestResponseScope</span>, <span class="extype" name="org.scalatra.CoreDsl">CoreDsl</span>, <span class="extype" name="org.scalatra.Control">Control</span>, <span class="extype" name="org.scalatra.Handler">Handler</span>, <span class="extype" name="org.scalatra.ScalatraContext">ScalatraContext</span>, <span class="extype" name="org.scalatra.CookieContext">CookieContext</span>, <span class="extype" name="org.scalatra.SessionSupport">SessionSupport</span>, <span class="extype" name="org.scalatra.servlet.ServletApiImplicits">ServletApiImplicits</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="org.scalatra.FutureSupport">FutureSupport</span>, <span class="extype" name="org.scalatra.servlet.AsyncSupport">AsyncSupport</span>, <span class="extype" name="org.scalatra.servlet.ScalatraAsyncSupport">ScalatraAsyncSupport</span>, <span class="extype" name="org.scalatra.servlet.ServletBase">ServletBase</span>, <a href="CachingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.CachingSupport">CachingSupport</a>[<span class="extype" name="scala.Any">Any</span>], <a href="LoggingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.LoggingSupport">LoggingSupport</a>, <span class="extype" name="org.scalatra.ScalatraBase">ScalatraBase</span>, <span class="extype" name="org.scalatra.CookieSupport">CookieSupport</span>, <span class="extype" name="org.scalatra.util.conversion.DefaultImplicitConversions">DefaultImplicitConversions</span>, <span class="extype" name="org.scalatra.util.conversion.LowPriorityImplicitConversions">LowPriorityImplicitConversions</span>, <span class="extype" name="org.scalatra.util.conversion.LowestPriorityImplicitConversions">LowestPriorityImplicitConversions</span>, <span class="extype" name="org.scalatra.util.conversion.TypeConverterSupport">TypeConverterSupport</span>, <span class="extype" name="org.scalatra.ScalatraParamsImplicits">ScalatraParamsImplicits</span>, <span class="extype" name="org.scalatra.Initializable">Initializable</span>, <span class="extype" name="org.scalatra.DynamicScope">DynamicScope</span>, <span class="extype" name="org.scalatra.RequestResponseScope">RequestResponseScope</span>, <span class="extype" name="org.scalatra.CoreDsl">CoreDsl</span>, <span class="extype" name="org.scalatra.Control">Control</span>, <span class="extype" name="org.scalatra.Handler">Handler</span>, <span class="extype" name="org.scalatra.ScalatraContext">ScalatraContext</span>, <span class="extype" name="org.scalatra.CookieContext">CookieContext</span>, <span class="extype" name="org.scalatra.SessionSupport">SessionSupport</span>, <span class="extype" name="org.scalatra.servlet.ServletApiImplicits">ServletApiImplicits</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -62,7 +64,7 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.onegeek.respite.controllers.support.CachingRouteSupport"><span>CachingRouteSupport</span></li><li class="in" name="au.com.onegeek.respite.controllers.support.CachingSupport"><span>CachingSupport</span></li><li class="in" name="au.com.onegeek.respite.controllers.support.LoggingSupport"><span>LoggingSupport</span></li><li class="in" name="org.scalatra.ScalatraBase"><span>ScalatraBase</span></li><li class="in" name="org.scalatra.CookieSupport"><span>CookieSupport</span></li><li class="in" name="org.scalatra.util.conversion.DefaultImplicitConversions"><span>DefaultImplicitConversions</span></li><li class="in" name="org.scalatra.util.conversion.LowPriorityImplicitConversions"><span>LowPriorityImplicitConversions</span></li><li class="in" name="org.scalatra.util.conversion.LowestPriorityImplicitConversions"><span>LowestPriorityImplicitConversions</span></li><li class="in" name="org.scalatra.util.conversion.TypeConverterSupport"><span>TypeConverterSupport</span></li><li class="in" name="org.scalatra.ScalatraParamsImplicits"><span>ScalatraParamsImplicits</span></li><li class="in" name="org.scalatra.Initializable"><span>Initializable</span></li><li class="in" name="org.scalatra.DynamicScope"><span>DynamicScope</span></li><li class="in" name="org.scalatra.RequestResponseScope"><span>RequestResponseScope</span></li><li class="in" name="org.scalatra.CoreDsl"><span>CoreDsl</span></li><li class="in" name="org.scalatra.Control"><span>Control</span></li><li class="in" name="org.scalatra.Handler"><span>Handler</span></li><li class="in" name="org.scalatra.ScalatraContext"><span>ScalatraContext</span></li><li class="in" name="org.scalatra.CookieContext"><span>CookieContext</span></li><li class="in" name="org.scalatra.SessionSupport"><span>SessionSupport</span></li><li class="in" name="org.scalatra.servlet.ServletApiImplicits"><span>ServletApiImplicits</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.onegeek.respite.controllers.support.CachingRouteSupport"><span>CachingRouteSupport</span></li><li class="in" name="org.scalatra.FutureSupport"><span>FutureSupport</span></li><li class="in" name="org.scalatra.servlet.AsyncSupport"><span>AsyncSupport</span></li><li class="in" name="org.scalatra.servlet.ScalatraAsyncSupport"><span>ScalatraAsyncSupport</span></li><li class="in" name="org.scalatra.servlet.ServletBase"><span>ServletBase</span></li><li class="in" name="au.com.onegeek.respite.controllers.support.CachingSupport"><span>CachingSupport</span></li><li class="in" name="au.com.onegeek.respite.controllers.support.LoggingSupport"><span>LoggingSupport</span></li><li class="in" name="org.scalatra.ScalatraBase"><span>ScalatraBase</span></li><li class="in" name="org.scalatra.CookieSupport"><span>CookieSupport</span></li><li class="in" name="org.scalatra.util.conversion.DefaultImplicitConversions"><span>DefaultImplicitConversions</span></li><li class="in" name="org.scalatra.util.conversion.LowPriorityImplicitConversions"><span>LowPriorityImplicitConversions</span></li><li class="in" name="org.scalatra.util.conversion.LowestPriorityImplicitConversions"><span>LowestPriorityImplicitConversions</span></li><li class="in" name="org.scalatra.util.conversion.TypeConverterSupport"><span>TypeConverterSupport</span></li><li class="in" name="org.scalatra.ScalatraParamsImplicits"><span>ScalatraParamsImplicits</span></li><li class="in" name="org.scalatra.Initializable"><span>Initializable</span></li><li class="in" name="org.scalatra.DynamicScope"><span>DynamicScope</span></li><li class="in" name="org.scalatra.RequestResponseScope"><span>RequestResponseScope</span></li><li class="in" name="org.scalatra.CoreDsl"><span>CoreDsl</span></li><li class="in" name="org.scalatra.Control"><span>Control</span></li><li class="in" name="org.scalatra.Handler"><span>Handler</span></li><li class="in" name="org.scalatra.ScalatraContext"><span>ScalatraContext</span></li><li class="in" name="org.scalatra.CookieContext"><span>CookieContext</span></li><li class="in" name="org.scalatra.SessionSupport"><span>SessionSupport</span></li><li class="in" name="org.scalatra.servlet.ServletApiImplicits"><span>ServletApiImplicits</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -97,19 +99,19 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Initializable</dd></dl></div>
-    </li><li name="org.scalatra.Initializable.ConfigT" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="ConfigT"></a>
-      <a id="ConfigT:(CachingRouteSupport.this)#ConfigT"></a>
+    </li><li name="org.scalatra.servlet.ServletBase.ConfigT" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="ConfigT&lt;:AnyRef{defgetServletContext():javax.servlet.ServletContext;defgetInitParameter(name:String):String;defgetInitParameterNames():java.util.Enumeration[String]}"></a>
+      <a id="ConfigT:ConfigT"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">ConfigT</span>
+        <span class="name">ConfigT</span><span class="result"> &lt;: <span class="extype" name="scala.AnyRef">AnyRef</span> { ... /* 3 definitions in type refinement */ }</span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Initializable</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ServletBase → Initializable</dd></dl></div>
     </li><li name="org.scalatra.ScalatraParamsImplicits.TypedMultiParams" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="TypedMultiParamsextendsObject"></a>
       <a id="TypedMultiParams:(ScalatraParamsImplicits.this)#TypedMultiParams"></a>
@@ -141,20 +143,7 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
 
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
-              <ol><li name="org.scalatra.Initializable#configWrapper" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="configWrapper(config:Initializable.this.ConfigT):Initializable.this.Config"></a>
-      <a id="configWrapper((CachingRouteSupport.this)#ConfigT):(CachingRouteSupport.this)#Config"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit abstract </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">configWrapper</span><span class="params">(<span name="config">config: (<a href="" class="extype" name="au.com.onegeek.respite.controllers.support.CachingRouteSupport">CachingRouteSupport</a>.this)#<span class="extype" name="org.scalatra.servlet.ServletBase.ConfigT">ConfigT</span></span>)</span><span class="result">: (<a href="" class="extype" name="au.com.onegeek.respite.controllers.support.CachingRouteSupport">CachingRouteSupport</a>.this)#<span class="extype" name="org.scalatra.Initializable.Config">Config</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Initializable</dd></dl></div>
-    </li><li name="org.scalatra.ScalatraBase#doNotFound" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
+              <ol><li name="org.scalatra.ScalatraBase#doNotFound" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="doNotFound:()=&gt;Any"></a>
       <a id="doNotFound:()⇒Any"></a>
       <h4 class="signature">
@@ -167,6 +156,19 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ScalatraBase</dd></dl></div>
+    </li><li name="org.scalatra.FutureSupport#executor" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="executor:scala.concurrent.ExecutionContext"></a>
+      <a id="executor:ExecutionContext"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">executor</span><span class="result">: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>FutureSupport</dd></dl></div>
     </li><li name="org.scalatra.ScalatraBase#requestPath" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="requestPath(implicitrequest:javax.servlet.http.HttpServletRequest):String"></a>
       <a id="requestPath(HttpServletRequest):String"></a>
@@ -263,6 +265,32 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="au.com.onegeek.respite.controllers.support.CachingRouteSupport#YEAR_IN_DAYS" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="YEAR_IN_DAYS:Int"></a>
+      <a id="YEAR_IN_DAYS:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">YEAR_IN_DAYS</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="au.com.onegeek.respite.controllers.support.CachingRouteSupport#YEAR_IN_MINUTES" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="YEAR_IN_MINUTES:Int"></a>
+      <a id="YEAR_IN_MINUTES:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">YEAR_IN_MINUTES</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      
     </li><li name="au.com.onegeek.respite.controllers.support.CachingRouteSupport#addRoute" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="addRoute(method:org.scalatra.HttpMethod,transformers:Seq[org.scalatra.Route=&gt;org.scalatra.Route],action:=&gt;Any):org.scalatra.Route"></a>
       <a id="addRoute(HttpMethod,Seq[(Route)⇒Route],⇒Any):Route"></a>
@@ -432,6 +460,97 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="org.scalatra.servlet.AsyncSupport#asyncDelete" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="asyncDelete(transformers:org.scalatra.Route=&gt;org.scalatra.Route*)(block:=&gt;Any):org.scalatra.Route"></a>
+      <a id="asyncDelete((Route)⇒Route*)(⇒Any):Route"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">asyncDelete</span><span class="params">(<span name="transformers">transformers: (<span class="extype" name="org.scalatra.Route">Route</span>) ⇒ <span class="extype" name="org.scalatra.Route">Route</span>*</span>)</span><span class="params">(<span name="block">block: ⇒ <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="org.scalatra.Route">Route</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AsyncSupport</dd></dl></div>
+    </li><li name="org.scalatra.servlet.AsyncSupport#asyncGet" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="asyncGet(transformers:org.scalatra.Route=&gt;org.scalatra.Route*)(block:=&gt;Any):org.scalatra.Route"></a>
+      <a id="asyncGet((Route)⇒Route*)(⇒Any):Route"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">asyncGet</span><span class="params">(<span name="transformers">transformers: (<span class="extype" name="org.scalatra.Route">Route</span>) ⇒ <span class="extype" name="org.scalatra.Route">Route</span>*</span>)</span><span class="params">(<span name="block">block: ⇒ <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="org.scalatra.Route">Route</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AsyncSupport</dd></dl></div>
+    </li><li name="org.scalatra.servlet.AsyncSupport#asyncOptions" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="asyncOptions(transformers:org.scalatra.Route=&gt;org.scalatra.Route*)(block:=&gt;Any):org.scalatra.Route"></a>
+      <a id="asyncOptions((Route)⇒Route*)(⇒Any):Route"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">asyncOptions</span><span class="params">(<span name="transformers">transformers: (<span class="extype" name="org.scalatra.Route">Route</span>) ⇒ <span class="extype" name="org.scalatra.Route">Route</span>*</span>)</span><span class="params">(<span name="block">block: ⇒ <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="org.scalatra.Route">Route</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AsyncSupport</dd></dl></div>
+    </li><li name="org.scalatra.servlet.AsyncSupport#asyncPatch" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="asyncPatch(transformers:org.scalatra.Route=&gt;org.scalatra.Route*)(block:=&gt;Any):org.scalatra.Route"></a>
+      <a id="asyncPatch((Route)⇒Route*)(⇒Any):Route"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">asyncPatch</span><span class="params">(<span name="transformers">transformers: (<span class="extype" name="org.scalatra.Route">Route</span>) ⇒ <span class="extype" name="org.scalatra.Route">Route</span>*</span>)</span><span class="params">(<span name="block">block: ⇒ <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="org.scalatra.Route">Route</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AsyncSupport</dd></dl></div>
+    </li><li name="org.scalatra.servlet.AsyncSupport#asyncPost" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="asyncPost(transformers:org.scalatra.Route=&gt;org.scalatra.Route*)(block:=&gt;Any):org.scalatra.Route"></a>
+      <a id="asyncPost((Route)⇒Route*)(⇒Any):Route"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">asyncPost</span><span class="params">(<span name="transformers">transformers: (<span class="extype" name="org.scalatra.Route">Route</span>) ⇒ <span class="extype" name="org.scalatra.Route">Route</span>*</span>)</span><span class="params">(<span name="block">block: ⇒ <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="org.scalatra.Route">Route</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AsyncSupport</dd></dl></div>
+    </li><li name="org.scalatra.servlet.AsyncSupport#asyncPut" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="asyncPut(transformers:org.scalatra.Route=&gt;org.scalatra.Route*)(block:=&gt;Any):org.scalatra.Route"></a>
+      <a id="asyncPut((Route)⇒Route*)(⇒Any):Route"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">asyncPut</span><span class="params">(<span name="transformers">transformers: (<span class="extype" name="org.scalatra.Route">Route</span>) ⇒ <span class="extype" name="org.scalatra.Route">Route</span>*</span>)</span><span class="params">(<span name="block">block: ⇒ <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="org.scalatra.Route">Route</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AsyncSupport</dd></dl></div>
+    </li><li name="org.scalatra.FutureSupport#asynchronously" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="asynchronously(f:=&gt;Any):()=&gt;Any"></a>
+      <a id="asynchronously(⇒Any):()⇒Any"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">asynchronously</span><span class="params">(<span name="f">f: ⇒ <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: () ⇒ <span class="extype" name="scala.Any">Any</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>FutureSupport → AsyncSupport</dd></dl></div>
     </li><li name="org.scalatra.ScalatraBase#before" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="before(transformers:org.scalatra.Route=&gt;org.scalatra.Route*)(fun:=&gt;Any):Unit"></a>
       <a id="before((Route)⇒Route*)(⇒Any):Unit"></a>
@@ -460,14 +579,14 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ScalatraBase</dd></dl></div>
     </li><li name="au.com.onegeek.respite.controllers.support.CachingSupport#cache" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="cache:spray.caching.Cache[T]"></a>
-      <a id="cache:spray.caching.Cache[Any]"></a>
+      <a id="cache:Cache[Any]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">val</span>
+        <span class="modifier"></span>
+        <span class="kind">lazy val</span>
       </span>
       <span class="symbol">
-        <span class="name">cache</span><span class="result">: <span class="extype" name="spray.caching.Cache">spray.caching.Cache</span>[<span class="extype" name="scala.Any">Any</span>]</span>
+        <span class="name">cache</span><span class="result">: <span class="extype" name="spray.caching.Cache">Cache</span>[<span class="extype" name="scala.Any">Any</span>]</span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="CachingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.CachingSupport">CachingSupport</a></dd></dl></div>
@@ -492,17 +611,30 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
         </dd></dl></div>
     </li><li name="org.scalatra.ScalatraBase#config" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="config:ScalatraBase.this.ConfigT"></a>
-      <a id="config:(CachingRouteSupport.this)#ConfigT"></a>
+      <a id="config:ConfigT"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">var</span>
       </span>
       <span class="symbol">
-        <span class="name">config</span><span class="result">: (<a href="" class="extype" name="au.com.onegeek.respite.controllers.support.CachingRouteSupport">CachingRouteSupport</a>.this)#<span class="extype" name="org.scalatra.servlet.ServletBase.ConfigT">ConfigT</span></span>
+        <span class="name">config</span><span class="result">: <a href="#ConfigT&lt;:AnyRef{defgetServletContext():javax.servlet.ServletContext;defgetInitParameter(name:String):String;defgetInitParameterNames():java.util.Enumeration[String]}" class="extmbr" name="au.com.onegeek.respite.controllers.support.CachingRouteSupport.ConfigT">ConfigT</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ScalatraBase</dd></dl></div>
+    </li><li name="org.scalatra.servlet.ServletBase#configWrapper" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="configWrapper(config:ServletBase.this.ConfigT):ServletBase.this.Config{objectinitParameters}"></a>
+      <a id="configWrapper(ConfigT):Config{objectinitParameters}"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">configWrapper</span><span class="params">(<span name="config">config: <a href="#ConfigT&lt;:AnyRef{defgetServletContext():javax.servlet.ServletContext;defgetInitParameter(name:String):String;defgetInitParameterNames():java.util.Enumeration[String]}" class="extmbr" name="au.com.onegeek.respite.controllers.support.CachingRouteSupport.ConfigT">ConfigT</a></span>)</span><span class="result">: <a href="#ConfigextendsObject" class="extmbr" name="au.com.onegeek.respite.controllers.support.CachingRouteSupport.Config">Config</a> { object initParameters }</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ServletBase → Initializable</dd></dl></div>
     </li><li name="org.scalatra.ScalatraContext#contentType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="contentType:String"></a>
       <a id="contentType:String"></a>
@@ -834,6 +966,19 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ScalatraBase → CoreDsl</dd></dl></div>
+    </li><li name="au.com.onegeek.respite.controllers.support.CachingRouteSupport#getCacheKey" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="getCacheKey():String"></a>
+      <a id="getCacheKey():String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getCacheKey</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -873,7 +1018,7 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Control</dd></dl></div>
-    </li><li name="org.scalatra.ScalatraBase#handle" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="org.scalatra.servlet.ServletBase#handle" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="handle(request:javax.servlet.http.HttpServletRequest,response:javax.servlet.http.HttpServletResponse):Unit"></a>
       <a id="handle(HttpServletRequest,HttpServletResponse):Unit"></a>
       <h4 class="signature">
@@ -885,7 +1030,7 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
         <span class="name">handle</span><span class="params">(<span name="request">request: <span class="extype" name="javax.servlet.http.HttpServletRequest">HttpServletRequest</span></span>, <span name="response">response: <span class="extype" name="javax.servlet.http.HttpServletResponse">HttpServletResponse</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ScalatraBase → Handler</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ServletBase → ScalatraBase → Handler</dd></dl></div>
     </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="hashCode():Int"></a>
       <a id="hashCode():Int"></a>
@@ -912,16 +1057,29 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ScalatraBase</dd></dl></div>
+    </li><li name="au.com.onegeek.respite.controllers.support.CachingSupport#initialCapacity" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="initialCapacity:Int"></a>
+      <a id="initialCapacity:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">initialCapacity</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="CachingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.CachingSupport">CachingSupport</a></dd></dl></div>
     </li><li name="org.scalatra.ScalatraBase#initialize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="initialize(config:ScalatraBase.this.ConfigT):Unit"></a>
-      <a id="initialize((CachingRouteSupport.this)#ConfigT):Unit"></a>
+      <a id="initialize(ConfigT):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">initialize</span><span class="params">(<span name="config">config: (<a href="" class="extype" name="au.com.onegeek.respite.controllers.support.CachingRouteSupport">CachingRouteSupport</a>.this)#<span class="extype" name="org.scalatra.servlet.ServletBase.ConfigT">ConfigT</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">initialize</span><span class="params">(<span name="config">config: <a href="#ConfigT&lt;:AnyRef{defgetServletContext():javax.servlet.ServletContext;defgetInitParameter(name:String):String;defgetInitParameterNames():java.util.Enumeration[String]}" class="extmbr" name="au.com.onegeek.respite.controllers.support.CachingRouteSupport.ConfigT">ConfigT</a></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ScalatraBase → Initializable</dd></dl></div>
@@ -938,7 +1096,7 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ScalatraBase</dd></dl></div>
-    </li><li name="org.scalatra.ScalatraBase#isAsyncExecutable" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="org.scalatra.FutureSupport#isAsyncExecutable" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isAsyncExecutable(result:Any):Boolean"></a>
       <a id="isAsyncExecutable(Any):Boolean"></a>
       <h4 class="signature">
@@ -950,7 +1108,7 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
         <span class="name">isAsyncExecutable</span><span class="params">(<span name="result">result: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ScalatraBase</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>FutureSupport → ScalatraBase</dd></dl></div>
     </li><li name="org.scalatra.ScalatraBase#isDevelopmentMode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isDevelopmentMode:Boolean"></a>
       <a id="isDevelopmentMode:Boolean"></a>
@@ -1016,6 +1174,19 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>LowestPriorityImplicitConversions</dd></dl></div>
+    </li><li name="au.com.onegeek.respite.controllers.support.CachingSupport#maxCapacity" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="maxCapacity:Int"></a>
+      <a id="maxCapacity:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">maxCapacity</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="CachingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.CachingSupport">CachingSupport</a></dd></dl></div>
     </li><li name="org.scalatra.ScalatraBase#methodNotAllowed" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="methodNotAllowed(f:Set[org.scalatra.HttpMethod]=&gt;Any):Unit"></a>
       <a id="methodNotAllowed((Set[HttpMethod])⇒Any):Unit"></a>
@@ -1120,6 +1291,19 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="org.scalatra.servlet.AsyncSupport#onAsyncEvent" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="onAsyncEvent(event:javax.servlet.AsyncEvent)(thunk:=&gt;Any):Unit"></a>
+      <a id="onAsyncEvent(AsyncEvent)(⇒Any):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">onAsyncEvent</span><span class="params">(<span name="event">event: <span class="extype" name="javax.servlet.AsyncEvent">AsyncEvent</span></span>)</span><span class="params">(<span name="thunk">thunk: ⇒ <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>AsyncSupport</dd></dl></div>
     </li><li name="org.scalatra.ScalatraBase#options" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="options(transformers:org.scalatra.Route=&gt;org.scalatra.Route*)(action:=&gt;Any):org.scalatra.Route"></a>
       <a id="options((Route)⇒Route*)(⇒Any):Route"></a>
@@ -1328,7 +1512,7 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ScalatraBase</dd></dl></div>
-    </li><li name="org.scalatra.ScalatraBase#renderResponse" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="org.scalatra.FutureSupport#renderResponse" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="renderResponse(actionResult:Any):Unit"></a>
       <a id="renderResponse(Any):Unit"></a>
       <h4 class="signature">
@@ -1340,7 +1524,7 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
         <span class="name">renderResponse</span><span class="params">(<span name="actionResult">actionResult: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ScalatraBase</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>FutureSupport → ScalatraBase</dd></dl></div>
     </li><li name="org.scalatra.ScalatraBase#renderResponseBody" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="renderResponseBody(actionResult:Any):Unit"></a>
       <a id="renderResponseBody(Any):Unit"></a>
@@ -1601,6 +1785,19 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Initializable</dd></dl></div>
+    </li><li name="au.com.onegeek.respite.controllers.support.CachingRouteSupport#sortRequestParameters" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="sortRequestParameters():Map[String,String]"></a>
+      <a id="sortRequestParameters():Map[String,String]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">sortRequestParameters</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      </h4>
+      
     </li><li name="org.scalatra.ScalatraContext#status" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="status:Int"></a>
       <a id="status:Int"></a>
@@ -1797,28 +1994,28 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.onegeek.respite.controllers.support.CachingSupport#timeToIdle" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="timeToIdle:scala.concurrent.duration.Duration.Infinite"></a>
-      <a id="timeToIdle:Infinite"></a>
+      <a id="timeToIdle:scala.concurrent.duration.Duration"></a>
+      <a id="timeToIdle:Duration"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">timeToIdle</span><span class="result">: <span class="extype" name="scala.concurrent.duration.Duration.Infinite">Infinite</span></span>
+        <span class="name">timeToIdle</span><span class="result">: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="CachingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.CachingSupport">CachingSupport</a></dd></dl></div>
     </li><li name="au.com.onegeek.respite.controllers.support.CachingSupport#timeToLive" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="timeToLive:scala.concurrent.duration.Duration.Infinite"></a>
-      <a id="timeToLive:Infinite"></a>
+      <a id="timeToLive:scala.concurrent.duration.Duration"></a>
+      <a id="timeToLive:Duration"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">timeToLive</span><span class="result">: <span class="extype" name="scala.concurrent.duration.Duration.Infinite">Infinite</span></span>
+        <span class="name">timeToLive</span><span class="result">: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="CachingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.CachingSupport">CachingSupport</a></dd></dl></div>
@@ -1837,27 +2034,27 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="org.scalatra.ScalatraParamsImplicits#toTypedMultiParams" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toTypedMultiParams(params:org.scalatra.MultiParams):ScalatraParamsImplicits.this.TypedMultiParams"></a>
-      <a id="toTypedMultiParams(MultiParams):(CachingRouteSupport.this)#TypedMultiParams"></a>
+      <a id="toTypedMultiParams(MultiParams):TypedMultiParams"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">toTypedMultiParams</span><span class="params">(<span name="params">params: <span class="extype" name="org.scalatra.MultiParams">MultiParams</span></span>)</span><span class="result">: (<a href="" class="extype" name="au.com.onegeek.respite.controllers.support.CachingRouteSupport">CachingRouteSupport</a>.this)#<span class="extype" name="org.scalatra.ScalatraParamsImplicits.TypedMultiParams">TypedMultiParams</span></span>
+        <span class="name">toTypedMultiParams</span><span class="params">(<span name="params">params: <span class="extype" name="org.scalatra.MultiParams">MultiParams</span></span>)</span><span class="result">: <a href="#TypedMultiParamsextendsObject" class="extmbr" name="au.com.onegeek.respite.controllers.support.CachingRouteSupport.TypedMultiParams">TypedMultiParams</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ScalatraParamsImplicits</dd></dl></div>
     </li><li name="org.scalatra.ScalatraParamsImplicits#toTypedParams" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toTypedParams(params:org.scalatra.Params):ScalatraParamsImplicits.this.TypedParams"></a>
-      <a id="toTypedParams(Params):(CachingRouteSupport.this)#TypedParams"></a>
+      <a id="toTypedParams(Params):TypedParams"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">toTypedParams</span><span class="params">(<span name="params">params: <span class="extype" name="org.scalatra.Params">Params</span></span>)</span><span class="result">: (<a href="" class="extype" name="au.com.onegeek.respite.controllers.support.CachingRouteSupport">CachingRouteSupport</a>.this)#<span class="extype" name="org.scalatra.ScalatraParamsImplicits.TypedParams">TypedParams</span></span>
+        <span class="name">toTypedParams</span><span class="params">(<span name="params">params: <span class="extype" name="org.scalatra.Params">Params</span></span>)</span><span class="result">: <a href="#TypedParamsextendsObject" class="extmbr" name="au.com.onegeek.respite.controllers.support.CachingRouteSupport.TypedParams">TypedParams</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ScalatraParamsImplicits</dd></dl></div>
@@ -2009,6 +2206,19 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ScalatraBase</dd></dl></div>
+    </li><li name="org.scalatra.servlet.AsyncSupport#withinAsyncContext" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="withinAsyncContext(context:javax.servlet.AsyncContext)(thunk:=&gt;Any):Unit"></a>
+      <a id="withinAsyncContext(AsyncContext)(⇒Any):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">withinAsyncContext</span><span class="params">(<span name="context">context: <span class="extype" name="javax.servlet.AsyncContext">AsyncContext</span></span>)</span><span class="params">(<span name="thunk">thunk: ⇒ <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>AsyncSupport</dd></dl></div>
     </li></ol>
             </div>
 
@@ -2064,6 +2274,22 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
                 <span class="name">@deprecated</span>
               
         </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 2.1.0)</i> Use servletContext instead</p></dd></dl></div>
+    </li><li name="org.scalatra.FutureSupport#asyncTimeout" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="asyncTimeout:scala.concurrent.duration.Duration"></a>
+      <a id="asyncTimeout:Duration"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name deprecated" title="Deprecated: (Since version 2.2) Override the timeout method on a org.scalatra.AsyncResult instead.">asyncTimeout</span><span class="result">: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>FutureSupport</dd><dt>Annotations</dt><dd>
+                <span class="name">@deprecated</span>
+              
+        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 2.2)</i> Override the <code>timeout</code> method on a <code>org.scalatra.AsyncResult</code> instead.</p></dd></dl></div>
     </li><li name="org.scalatra.ScalatraContext#status" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="status(code:Int):Unit"></a>
       <a id="status(Int):Unit"></a>
@@ -2085,7 +2311,15 @@ is asynchronous.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="au.com.onegeek.respite.controllers.support.CachingSupport">
+        <div class="parent" name="org.scalatra.FutureSupport">
+              <h3>Inherited from <span class="extype" name="org.scalatra.FutureSupport">FutureSupport</span></h3>
+            </div><div class="parent" name="org.scalatra.servlet.AsyncSupport">
+              <h3>Inherited from <span class="extype" name="org.scalatra.servlet.AsyncSupport">AsyncSupport</span></h3>
+            </div><div class="parent" name="org.scalatra.servlet.ScalatraAsyncSupport">
+              <h3>Inherited from <span class="extype" name="org.scalatra.servlet.ScalatraAsyncSupport">ScalatraAsyncSupport</span></h3>
+            </div><div class="parent" name="org.scalatra.servlet.ServletBase">
+              <h3>Inherited from <span class="extype" name="org.scalatra.servlet.ServletBase">ServletBase</span></h3>
+            </div><div class="parent" name="au.com.onegeek.respite.controllers.support.CachingSupport">
               <h3>Inherited from <a href="CachingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.CachingSupport">CachingSupport</a>[<span class="extype" name="scala.Any">Any</span>]</h3>
             </div><div class="parent" name="au.com.onegeek.respite.controllers.support.LoggingSupport">
               <h3>Inherited from <a href="LoggingSupport.html" class="extype" name="au.com.onegeek.respite.controllers.support.LoggingSupport">LoggingSupport</a></h3>
