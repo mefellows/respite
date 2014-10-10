@@ -86,6 +86,11 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
 
   implicit val tOut = Timeout(Duration.create(1, SECONDS))
 
+  options("/*") {
+    response setHeader("Access-Control-Allow-Headers", request.getHeader("Access-Control-Request-Headers"));
+    response setHeader("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
+  }
+
   get("/") {
     logger.debug("Getting all")
       new AsyncResult {

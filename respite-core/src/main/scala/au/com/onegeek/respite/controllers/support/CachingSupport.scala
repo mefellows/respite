@@ -31,31 +31,25 @@ import spray.caching.{LruCache, ExpiringLruCache}
 
 import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration._
-
-/**
- * Models a canonical Caching interface for use by the Caching Abstraction
- */
-trait Cache[T] extends spray.caching.Cache[T] {
-
-}
-
-trait SprayCache[T] extends Cache[T] {
-
-}
+import org.joda.time.{DateTimeZone, DateTime}
+import org.joda.time.format.DateTimeFormat
+import au.com.onegeek.respite.controllers.RestController
+import org.scalatra.util.MultiMapHeadView
 
 /**
  * Generic caching DSL for objects and Routes.
  */
 trait CachingSupport[T] {
-  val timeToLive = Duration.Inf
-  val timeToIdle = Duration.Inf
+  val timeToLive: Duration = Duration.Inf
+  val timeToIdle: Duration = Duration.Inf
+  val maxCapacity: Int = 500
+  val initialCapacity: Int = 16
 
-  implicit val cache: spray.caching.Cache[T] = new spray.caching.ExpiringLruCache[T](maxCapacity = 500,
-    initialCapacity = 16,
+  lazy val cache: spray.caching.Cache[T] = new spray.caching.ExpiringLruCache[T](maxCapacity = maxCapacity,
+    initialCapacity = initialCapacity,
     timeToLive = timeToLive,
     timeToIdle = timeToIdle)
 }
-
 
 /**
  * Automatically cache CRUD and idempotent routes plus a handy Caching DSL.
@@ -63,35 +57,59 @@ trait CachingSupport[T] {
  * Note that use of this will automatically convert your routes into {{{FutureSupport}}} routes as cache retrieval
  * is asynchronous.
  *
+ * NOTES:
+ *
+ *  If the caching is set to 365 days or greater (including 'infinity') the Expires header is set to exactly 365 days in the future.
+ *  The Cache can be set to 'auto-evict' meaning
+ *
  */
-trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingSupport[Any] { this: FutureSupport =>
+trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingSupport[Any] with FutureSupport {
+  val YEAR_IN_MINUTES = 365 * 24 * 60
+  val YEAR_IN_DAYS = 365
 
-  override protected def addRoute(method: HttpMethod, transformers: Seq[RouteTransformer], action: => Any): Route =  {
-      val path = transformers.foldLeft("")((path, transformer) => path.concat(transformer.toString()))
-      logger.debug(s"Caching path $path on ${getClass}")
+  def sortRequestParameters(): Map[String, String] = request.parameters.toSeq.sortBy(_._1).toMap
+  def getCacheKey(): String = s"${request.getMethod}${request.pathInfo}" + (sortRequestParameters.foldLeft(""){ case(builder, (k, v)) => s"${builder},${k}=${v}" }).replaceAll("^,", "")
 
-      method match {
-        case Get | Options | Head =>
+  override protected def addRoute(method: HttpMethod, transformers: Seq[RouteTransformer], action: => Any): Route = {
+    val path = transformers.foldLeft("")((path, transformer) => path.concat(transformer.toString()))
+    logger.debug(s"Caching path $path on ${getClass}")
 
-            // How to map params etc.? Some Path's will be implemented where params aren't captured in signature.
+    method match {
 
-            // Hash the request params? => This could be a security issue if known i.e. slam site with squillions of combinations of k/v and consume memory
+      // Equates to GET, HEAD, OPTIONS, CONNECT, TRACE
+      case m: HttpMethod if m.isSafe =>
+        super.addRoute(method, transformers, {
 
-            // Also, don't cache 40x/50x errors?
-            super.addRoute(method, transformers, {
-//              val key = s"${request.getMethod}${request.pathInfo}${request.parameters.foldLeft()}"
-              val key = s"${request.getMethod}${request.pathInfo}"
-              logger.debug(s"Returning cached route $path on path ${request.pathInfo} in class ${getClass} with key ${key}")
-              cache(key) {
-                action
-              }
-            })
+          val key = getCacheKey()
 
-        case _ =>
-          super.addRoute(method, transformers, action)
-      }
+          logger.debug(s"Returning cached route $path on path ${request.pathInfo} in class ${getClass} with key ${key}")
+          cache(key) {
+
+            // Setup Caching Response Headers according to RFCs:
+            // http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9 and
+            // http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21
+            val fmt = DateTimeFormat.forPattern("E, d MMM y kk:mm:ss");
+            val minutes = if (!timeToLive.isFinite || timeToLive.toDays > YEAR_IN_DAYS) YEAR_IN_MINUTES else timeToLive.toMinutes.toInt
+            response.setHeader("Cache-Control", "Public")
+            response.setHeader("Expires", fmt.print(DateTime.now.plusMinutes(minutes).withZone(DateTimeZone.UTC)) + " GMT")
+
+            // Return Body
+            action
+          }
+        })
+      case Post | Put | Patch | Delete =>
+        super.addRoute(method, transformers, {
+            HttpMethod.methods.filter(_.isSafe).foreach { m =>
+              val key = getCacheKey.replaceFirst(method.toString, m.toString)
+              logger.info(s"Evicting cache key ${key} due to unsafe op")
+              cache.remove(key)
+            }
+          action
+        })
+      case _ =>
+        super.addRoute(method, transformers, action)
     }
-
+  }
 
   delete("/cache/") {
     cache.clear()
@@ -101,40 +119,4 @@ trait CachingRouteSupport extends ScalatraBase with LoggingSupport with CachingS
     val key = params.get("key").get
     cache.remove(key)
   }
-
-//    super.addRoute(method, transformers, action)
-//  }
-
-//  implicit val cacheProvider: CachingStrategy = SprayCachingStrategy
-
-
-
-  // Review the cruddy Cache implementation in the Controllers
-
-  // Add in pluggable caching implementation (default - in-memory Spray caching. Make sure it manages itself. Allow EHCache or Memcached etc.
-
-
-  // See below for inspiration / example
-  // https://github.com/playframework/playframework/blob/026e28348c92dab1f7967089bd40631b98f9d2e2/framework/src/play-cache/src/main/scala/play/api/cache/Cache.scala
-
-
-//  /**
-//   * Retrieve a value from the cache, or set it from a default function.
-//   *
-//   * @param key Item key.
-//   * @param expiration expiration period in seconds.
-//   * @param orElse The default function to invoke if the value was not found in cache.
-//   */
-//  def getOrElse[A](key: String, expiration: Int = 0)(orElse: => A)(implicit app: Application, ct: ClassTag[A]): A = {
-//    getAs[A](key).getOrElse {
-//      val value = orElse
-//      set(key, value, expiration)
-//      value
-//    }
-//  }
-
-  // don't couple the caching API with specific cache, but do provide a sensible default (In-memory using Spray or Play's API)
-
 }
-
-//trait Memoization[T] extends CachingSupport[T]

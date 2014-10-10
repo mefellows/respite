@@ -1,3 +1,4 @@
+import java.io.File
 import respite.Dependencies
 import com.typesafe.sbt.SbtGit._
 
@@ -55,6 +56,14 @@ licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
 // GitHub Pages, API Docu and Test Specs
 
 site.settings
+
+lazy val specFile = taskKey[File]("File path to test output")
+
+specFile in Test := file("target/test-reports")
+
+mappings in Test := Seq(file("target/test-reports") -> "latest/specifications")
+
+site.addMappingsToSiteDir(mappings in(Test, specFile), "latest/specifications")
 
 ghpages.settings
 

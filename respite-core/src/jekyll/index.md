@@ -6,7 +6,7 @@ title: Home
 # Respite - REST for microservices
 
 <p class="message">
-  Version 0.2.2 Just released - now with Sprinkles&trade;!
+  Version 0.2.3 Just released - now with Sprinkles&trade;!
 </p>
 
 Respite is a micro-framework designed for creating RESTful services in [microservices](http://martinfowler.com/articles/microservices.html) architectures and reactive web applications. It is fairly opinionated, however built upon the excellent [Scalatra](http://www.scalatra.org/), it is also easily extended.

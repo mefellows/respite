@@ -19,7 +19,7 @@ author:
 paginate:         5
 
 # Custom vars
-version:          0.2.2
+version:          0.2.3
 
 github:
   repo:           https://github.com/mefellows/respite
