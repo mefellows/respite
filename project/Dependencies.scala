@@ -31,7 +31,7 @@ object Dependencies {
     val sprayUtil        = "io.spray"                  %  "spray-util"               % "1.2.1"
     val playJson         = "com.typesafe.play"         %% "play-json"                % "2.4.3"
     val metrics          = "nl.grons"                  %% "metrics-scala"            % "3.5.2_a2.3"
-    val metricsAdmin     = "io.dropwizard.metrics"     %  "metrics-servlet"          % "3.1.0"
+    val metricsAdmin     = "io.dropwizard.metrics"     %  "metrics-servlets"          % "3.1.2"
     val simpleMongo      = "uk.gov.hmrc"               %% "simple-reactivemongo"     % "2.3.0"
 //    val simpleMongo      = "uk.gov.hmrc"               % "simple-reactivemongo_2.11"     % "2.3.0"
 //    val simpleMongo      = "uk.gov.hmrc"               %% "simple-reactivemongo"     % "2.1.2"
