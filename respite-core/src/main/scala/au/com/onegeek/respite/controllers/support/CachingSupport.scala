@@ -22,19 +22,11 @@
  */
 package au.com.onegeek.respite.controllers.support
 
-import java.util.concurrent.TimeUnit
-import javax.servlet.http.HttpServletRequest
-
-import nl.grons.metrics.scala.Timer
-import org.scalatra._
-import spray.caching.{LruCache, ExpiringLruCache}
-
-import scala.concurrent.{Await, ExecutionContext}
-import scala.concurrent.duration._
-import org.joda.time.{DateTimeZone, DateTime}
 import org.joda.time.format.DateTimeFormat
-import au.com.onegeek.respite.controllers.RestController
-import org.scalatra.util.MultiMapHeadView
+import org.joda.time.{DateTime, DateTimeZone}
+import org.scalatra._
+
+import scala.concurrent.duration._
 
 /**
  * Generic caching DSL for objects and Routes.

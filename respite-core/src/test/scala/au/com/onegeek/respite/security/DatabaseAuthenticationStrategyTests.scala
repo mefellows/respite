@@ -17,7 +17,7 @@ import reactivemongo.api.indexes.IndexType
 import reactivemongo.api.indexes.Index
 import au.com.onegeek.respite.models.ApiKey
 import au.com.onegeek.respite.ServletTestsBase
-import uk.gov.hmrc.mongo.ReactiveMongoFormats._
+import uk.gov.hmrc.mongo.json.ReactiveMongoFormats._
 import au.com.onegeek.respite.models.ModelJsonExtensions._
 
 class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFutures with MongoSpecSupport with Awaiting {

@@ -17,7 +17,7 @@ libraryDependencies ++= Seq(
   Dependencies.Compile.scalate,
   Dependencies.Compile.specs2,
   Dependencies.Compile.logback,
-  Dependencies.Compile.reactiveMongo,
+//  Dependencies.Compile.reactiveMongo,
   Dependencies.Compile.scalatraAuth,
   Dependencies.Compile.scalatraJson,
   Dependencies.Compile.jackson4s,
@@ -38,7 +38,8 @@ libraryDependencies ++= Seq(
   Dependencies.Compile.Test.scalatestMongo,
   Dependencies.Compile.Test.scalatraTest,
   Dependencies.Compile.Test.scalaMock,
-  Dependencies.Compile.Test.mockito
+  Dependencies.Compile.Test.mockito//,
+//  "org.reactivemongo" %% "play2-reactivemongo" % "0.10.5.0.akka23"
 )
 
 instrumentSettings

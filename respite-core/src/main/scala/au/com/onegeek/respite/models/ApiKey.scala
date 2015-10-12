@@ -24,8 +24,8 @@ package au.com.onegeek.respite.models
 
 import java.security.MessageDigest
 
-import uk.gov.hmrc.mongo.JsonExtensions._
-import uk.gov.hmrc.mongo.{JsonExtensions, ReactiveMongoFormats}
+import uk.gov.hmrc.mongo.json.JsonExtensions._
+import uk.gov.hmrc.mongo.json.{JsonExtensions, ReactiveMongoFormats}
 import play.api.libs.json._
 import reactivemongo.bson.BSONObjectID
 import au.com.onegeek.respite.models.ModelJsonExtensions._
@@ -39,7 +39,7 @@ case class ApiKey(id: BSONObjectID = BSONObjectID.generate, application: String,
 object ApiKey {
 
   import au.com.onegeek.respite.models.ModelJsonExtensions._
-  import uk.gov.hmrc.mongo.ReactiveMongoFormats.objectIdFormats
+  import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
 
   implicit val format = //modelFormatForApiKey {
     modelFormat {
@@ -61,7 +61,7 @@ object ApiKey {
 //   * @return
 //   */
 //  def modelFormatForApiKey[A](baseFormat: Format[A]): Format[A] = {
-//    import uk.gov.hmrc.mongo.ReactiveMongoFormats._
+//    import uk.gov.hmrc.mongo.json.ReactiveMongoFormats._
 //    import JsonExtensions._
 //
 //    new Format[A] {

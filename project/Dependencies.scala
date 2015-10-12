@@ -20,8 +20,8 @@ object Dependencies {
     val scalate          = "org.scalatra"              %% "scalatra-scalate"         % ScalatraVersion
     val specs2           = "org.scalatra"              %% "scalatra-specs2"          % ScalatraVersion             % "test"
     val logback          = "ch.qos.logback"            %  "logback-classic"          % "1.0.6"                     % "runtime"
-    val reactiveMongo    = "org.reactivemongo"         %% "reactivemongo"            % "0.10.0"
-    val playMongoDep     = "org.reactivemongo"         %% "play2-reactivemongo"      % "0.10.2"
+//    val reactiveMongo    = "org.reactivemongo"         %% "reactivemongo"            % "0.11.7"
+    val playMongoDep     = "org.reactivemongo"         %% "play2-reactivemongo"      % "0.10.5.0.akka23"
     val playMongo        = playMongoDep.exclude        ("org.apache.logging.log4j",    "log4j-to-slf4j")
     val jackson4s        = "org.json4s"                %% "json4s-jackson"           % "3.1.0"
     val commonsCodec     = "commons-codec"             %  "commons-codec"            % "1.2"
@@ -31,7 +31,8 @@ object Dependencies {
     val playJson         = "com.typesafe.play"         %% "play-json"                % "2.2.3"
     val metrics          = "nl.grons"                  %% "metrics-scala"            % "3.2.0_a2.2"
     val metricsAdmin     = "com.codahale.metrics"      %  "metrics-servlets"         % "3.0.1"
-    val simpleMongo      = "uk.gov.hmrc"               %% "simple-reactivemongo"     % "1.1.0"
+//    val simpleMongo      = "uk.gov.hmrc"               % "simple-reactivemongo_2.11"     % "2.3.0"
+    val simpleMongo      = "uk.gov.hmrc"               %% "simple-reactivemongo"     % "2.1.2"
     val ehCacheCore      = "net.sf.ehcache"            %  "ehcache-core"             % "2.6.8"
     val jettyWebapp      = "org.eclipse.jetty"         %  "jetty-webapp"             % "8.1.10.v20130312"          % "compile"
     val jettyServlet     = "org.eclipse.jetty.orbit"   %  "javax.servlet"            % "3.0.0.v201112011016"       % "compile;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar"))

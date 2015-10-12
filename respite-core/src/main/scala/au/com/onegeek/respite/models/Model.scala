@@ -24,8 +24,8 @@ package au.com.onegeek.respite.models
 
 import play.api.libs.json._
 import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.mongo.JsonExtensions
-import uk.gov.hmrc.mongo.ReactiveMongoFormats._
+import uk.gov.hmrc.mongo.json.JsonExtensions
+import uk.gov.hmrc.mongo.json.ReactiveMongoFormats._
 
 /**
  * A canonical representation of a Persisted Model.
@@ -40,9 +40,9 @@ trait Model[ObjectID] {
  * Model Extensions for Handling JSON and Mongo formats.
  */
 object ModelJsonExtensions {
-  import uk.gov.hmrc.mongo.ReactiveMongoFormats.objectIdFormats
-  import uk.gov.hmrc.mongo.ReactiveMongoFormats.dateTimeFormats
-  import uk.gov.hmrc.mongo.ReactiveMongoFormats.localDateTimeFormats
+  import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
+  import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.dateTimeFormats
+  import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.localDateTimeFormats
 
   implicit def StringToBSONObjectId(s: String): BSONObjectID = BSONObjectID(s)
   implicit def BSONObjectIdToString(s: BSONObjectID): String = s.stringify
@@ -60,7 +60,7 @@ object ModelJsonExtensions {
    * @return
    */
   def modelFormatForMongo[A](baseFormat: Format[A]): Format[A] = {
-    import uk.gov.hmrc.mongo.ReactiveMongoFormats._
+    import uk.gov.hmrc.mongo.json.ReactiveMongoFormats._
     import JsonExtensions._
 
     val publicIdPath: JsPath = JsPath \ '_id

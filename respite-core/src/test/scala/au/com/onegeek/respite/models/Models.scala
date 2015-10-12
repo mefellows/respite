@@ -2,7 +2,7 @@ package au.com.onegeek.respite.models
 
 import play.api.libs.json._
 import reactivemongo.bson._
-import uk.gov.hmrc.mongo.ReactiveMongoFormats.objectIdFormats
+import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
 
 //object AccountComponents {
 //

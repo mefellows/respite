@@ -25,7 +25,8 @@ package au.com.onegeek.respite.security
 import au.com.onegeek.respite.controllers.support.{LoggingSupport}
 import au.com.onegeek.respite.models.ModelJsonExtensions._
 import reactivemongo.api.indexes.{IndexType, Index}
-import uk.gov.hmrc.mongo.{ReactiveMongoFormats, ReactiveRepository, MongoConnector, Repository}
+import uk.gov.hmrc.mongo.{ReactiveRepository, MongoConnector, Repository}
+import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import au.com.onegeek.respite.models.ApiKey
 import reactivemongo.bson.BSONObjectID
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,23 +38,23 @@ import play.api.libs.json.Json
  *
  * Created by mfellows on 1/07/2014.
  */
-class DatabaseAuthenticationStrategy[ObjectID] (repository: Repository[ApiKey, ObjectID]) extends AuthenticationStrategy with LoggingSupport {
+class DatabaseAuthenticationStrategy[ObjectID](repository: Repository[ApiKey, ObjectID]) extends AuthenticationStrategy with LoggingSupport {
 
   val API_TOKENS_COLLECTION = "apitokens"
 
   override def authenticate(appName: String, apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = {
     logger.debug(s"Authenticating key: ${apiKey} and app: ${appName}")
-      for {
-        keys <- repository.find("key" -> apiKey, "application" -> appName)
-      } yield keys.headOption
+    for {
+      keys <- repository.find("key" -> apiKey, "application" -> appName)
+    } yield keys.headOption
   }
 
   override def revokeKey(apiKey: String)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = {
     logger.debug(s"Revoking key: ${apiKey}")
-      for {
-        keys <- repository.find("key" -> apiKey)
-        result <- repository.remove("key" -> apiKey)
-      } yield keys.headOption
+    for {
+      keys <- repository.find("key" -> apiKey)
+      result <- repository.remove("key" -> apiKey)
+    } yield keys.headOption
   }
 
   /**
@@ -64,12 +65,12 @@ class DatabaseAuthenticationStrategy[ObjectID] (repository: Repository[ApiKey, O
    */
   override def createKey(apiKey: ApiKey)(implicit ec: ExecutionContext): Future[Option[ApiKey]] = {
     logger.debug(s"Creating key: ${apiKey}")
-      for {
-        result <- repository.insert(apiKey)
-      } yield result.ok match {
-        case true => Some(apiKey)
-        case false => None
-      }
+    for {
+      result <- repository.insert(apiKey)
+    } yield result.ok match {
+      case true => Some(apiKey)
+      case false => None
+    }
   }
 
   /**
@@ -77,18 +78,23 @@ class DatabaseAuthenticationStrategy[ObjectID] (repository: Repository[ApiKey, O
    */
   override def getKeys(implicit ec: ExecutionContext): Future[List[ApiKey]] = {
     logger.debug(s"Fetchinng all keys")
-      for {
-        result <- repository.findAll
-      } yield result
+    for {
+      result <- repository.findAll
+    } yield result
   }
 }
+
 /**
  * Default implementation of an API Key Repository, for use with the `DatabaseAuthenticationStrategy`
  */
-import uk.gov.hmrc.mongo.ReactiveMongoFormats._
-class ApiKeyRepository(implicit mc: MongoConnector) extends ReactiveRepository[ApiKey, BSONObjectID]("apikeys", mc.db, modelFormatForMongo {Json.format[ApiKey]}, ReactiveMongoFormats.objectIdFormats) {
-  override def ensureIndexes() = {
-    collection.indexesManager.ensure(Index(Seq("application" -> IndexType.Ascending), name = Some("applicationFieldUniqueIdx"), unique = true, sparse = true))
-    collection.indexesManager.ensure(Index(Seq("key" -> IndexType.Ascending), name = Some("keyFieldUniqueIdx"), unique = true, sparse = true))
-  }
+
+import uk.gov.hmrc.mongo.json.ReactiveMongoFormats._
+
+class ApiKeyRepository(implicit mc: MongoConnector) extends ReactiveRepository[ApiKey, BSONObjectID]("apikeys", mc.db, modelFormatForMongo {
+  Json.format[ApiKey]
+}, ReactiveMongoFormats.objectIdFormats) {
+  override def indexes: Seq[Index] = Seq(
+    Index(Seq("application" -> IndexType.Ascending), name = Some("applicationFieldUniqueIdx"), unique = true, sparse = true),
+    Index(Seq("key" -> IndexType.Ascending), name = Some("keyFieldUniqueIdx"), unique = true, sparse = true)
+  )
 }
