@@ -347,7 +347,6 @@ class CachingSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
           println(body)
           status should equal(500)
           myCache.size should equal (0)
-          body should equal("")
         }
       }
     }
