@@ -34,7 +34,7 @@ object Dependencies {
     val playJson         = "com.typesafe.play"         %% "play-json"                % "2.3.10"
     val metrics          = "nl.grons"                  %% "metrics-scala"            % "3.5.2_a2.3"
     val metricsAdmin     = "io.dropwizard.metrics"     %  "metrics-servlets"          % "3.1.2"
-     val simpleMongo      = "uk.gov.hmrc"               %% "simple-reactivemongo"     % "3.1.0"
+     val simpleMongo      = "uk.gov.hmrc"               %% "simple-reactivemongo"     % "3.0.1"
     // val simpleMongo      = "uk.gov.hmrc"              %% "simple-reactivemongo"      % "3.0.1-1-g4c93457"
 //    val simpleMongo      = "uk.gov.hmrc"              %% "simple-reactivemongo"      % "4.2.1-0-g0000000"
 
