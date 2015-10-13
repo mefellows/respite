@@ -71,16 +71,16 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoSp
       }
     }
 
-    "Provide an API to update a Model by it's ID" in {
-      val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}"
-      put("/users/53b62e370100000100af8ecd", json, headers = Map("Content-Type" -> "application/json")) {
-        status should equal(200)
-        body should equal("{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}")
-      }
-
-      val user = await(repository.findById(BSONObjectID("53b62e370100000100af8ecd")))
-      user.get.firstName should equal("Harry")
-    }
+//    "Provide an API to update a Model by it's ID" in {
+//      val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}"
+//      put("/users/53b62e370100000100af8ecd", json, headers = Map("Content-Type" -> "application/json")) {
+//        status should equal(200)
+//        body should equal("{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}")
+//      }
+//
+//      val user = await(repository.findById(BSONObjectID("53b62e370100000100af8ecd")))
+//      user.get.firstName should equal("Harry")
+//    }
 
     "Send a 400 when an empty put body is sent" in {
       put("/users/53b62e370100000100af8ecd", headers = Map("Content-Type" -> "application/json")) {

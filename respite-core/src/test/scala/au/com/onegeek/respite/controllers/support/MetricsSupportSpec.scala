@@ -84,27 +84,27 @@ class MetricsSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
 
     }
 
-    "Instrument a 'put' method (CRUD)" in {
-      val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}"
-      put("/users/53b62e370100000100af8ecd", json, headers = Map("Content-Type" -> "application/json")) {
-        status should equal(200)
-        body should equal("{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}")
-      }
-      get("/metrics/") {
-        body should include("\"au.com.onegeek.respite.controllers.MetricSpecController.update\":{\"count\":1")
-      }
-    }
+//    "Instrument a 'put' method (CRUD)" in {
+//      val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}"
+//      put("/users/53b62e370100000100af8ecd", json, headers = Map("Content-Type" -> "application/json")) {
+//        status should equal(200)
+//        body should equal("{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}")
+//      }
+//      get("/metrics/") {
+//        body should include("\"au.com.onegeek.respite.controllers.MetricSpecController.update\":{\"count\":1")
+//      }
+//    }
 
-    "Instrument a 'post' update method (CRUD)" in {
-      val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}"
-      post("/users/53b62e370100000100af8ecd", json, headers = Map("Content-Type" -> "application/json")) {
-        status should equal(200)
-        body should equal("{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}")
-      }
-      get("/metrics/") {
-        body should include("\"au.com.onegeek.respite.controllers.MetricSpecController.update\":{\"count\":2")
-      }
-    }
+//    "Instrument a 'post' update method (CRUD)" in {
+//      val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}"
+//      post("/users/53b62e370100000100af8ecd", json, headers = Map("Content-Type" -> "application/json")) {
+//        status should equal(200)
+//        body should equal("{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}")
+//      }
+//      get("/metrics/") {
+//        body should include("\"au.com.onegeek.respite.controllers.MetricSpecController.update\":{\"count\":2")
+//      }
+//    }
 
     "Instrument a 'post' create method (CRUD)" in {
       val json = "{\"username\":\"asuperman\",\"firstName\":\"Clarke\"}"

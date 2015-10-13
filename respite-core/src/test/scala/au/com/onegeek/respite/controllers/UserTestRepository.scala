@@ -27,7 +27,7 @@ import com.escalatesoft.subcut.inject.BindingModule
 import play.api.libs.json.Json
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.mongo.{MongoConnector, ReactiveRepository}
+import uk.gov.hmrc.mongo.{MongoConnector, ReactiveRepository, AtomicUpdate}
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import au.com.onegeek.respite.models.ModelJsonExtensions._
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
@@ -37,12 +37,15 @@ import nl.grons.metrics.scala.MetricName
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class UserTestRepository(implicit mc: MongoConnector)
-  extends ReactiveRepository[User, BSONObjectID]("users", mc.db, modelFormatForMongo {Json.format[User]}, ReactiveMongoFormats.objectIdFormats) {
-
+  extends ReactiveRepository[User, BSONObjectID]("users", mc.db, modelFormatForMongo {Json.format[User]}, ReactiveMongoFormats.objectIdFormats)
+with AtomicUpdate[User] {
+  override def isInsertion(suppliedId: BSONObjectID, returned: User): Boolean = !suppliedId.equals(returned.id)
   override def indexes = Seq(Index(Seq("username" -> IndexType.Ascending), name = Some("keyFieldUniqueIdx"), unique = true, sparse = true))
 }
 class CatTestRepository(implicit mc: MongoConnector)
-  extends ReactiveRepository[Cat, BSONObjectID]("cats", mc.db, modelFormatForMongo {Json.format[Cat]}, ReactiveMongoFormats.objectIdFormats) {
+  extends ReactiveRepository[Cat, BSONObjectID]("cats", mc.db, modelFormatForMongo {Json.format[Cat]}, ReactiveMongoFormats.objectIdFormats)
+with AtomicUpdate[Cat] {
+  override def isInsertion(suppliedId: BSONObjectID, returned: Cat): Boolean = !suppliedId.equals(returned.id)
 
   override def indexes = Seq(Index(Seq("name" -> IndexType.Ascending), name = Some("keyFieldUniqueIdx"), unique = true, sparse = true))
 }

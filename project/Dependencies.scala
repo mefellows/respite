@@ -34,13 +34,13 @@ object Dependencies {
     val playJson         = "com.typesafe.play"         %% "play-json"                % "2.3.10"
     val metrics          = "nl.grons"                  %% "metrics-scala"            % "3.5.2_a2.3"
     val metricsAdmin     = "io.dropwizard.metrics"     %  "metrics-servlets"          % "3.1.2"
-     val simpleMongo      = "uk.gov.hmrc"               %% "simple-reactivemongo"     % "3.0.1"
+     // val simpleMongo      = "uk.gov.hmrc"               %% "simple-reactivemongo"     % "3.0.1"
     // val simpleMongo      = "uk.gov.hmrc"              %% "simple-reactivemongo"      % "3.0.1-1-g4c93457"
-//    val simpleMongo      = "uk.gov.hmrc"              %% "simple-reactivemongo"      % "4.2.1-0-g0000000"
-
+   val simpleMongo      = "uk.gov.hmrc"              %% "simple-reactivemongo"      % "4.2.1-0-g0000000"
+//    https://bintray.com/artifact/download/mefellows/mfellows/uk/gov/hmrc/simple-reactivemongo_2.11/4.2.1-0-g0000000/simple-reactivemongo_2.11-4.2.1-0-g0000000.jar
     val ehCacheCore      = "net.sf.ehcache"            %  "ehcache-core"             % "2.6.8"
 //    val jettyWebapp      = "org.eclipse.jetty"         %  "jetty-webapp"             % "9.2.10.v20150310"          % "compile"
-//    val jettyWebapp        = "org.eclipse.jetty"       % "jetty-webapp"              % "8.1.8.v20121106"           % "compile"
+//    val jettyWebrapp        = "org.eclipse.jetty"       % "jetty-webapp"              % "8.1.8.v20121106"           % "compile"
 //    val jettyServlet     = "org.eclipse.jetty.orbit"   %  "javax.servlet"            % "3.0.0.v201112011016"       % "compile;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar"))
 //    val jettyWebapp      = "org.eclipse.jetty" % "jetty-webapp" % "9.2.10.v20150310"
 //    val jettyServlet     = "javax.servlet" % "javax.servlet-api" % "3.1.0" % "compile;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar"))

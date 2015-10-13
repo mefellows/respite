@@ -14,6 +14,8 @@ resolvers += Resolver.jcenterRepo
 
 resolvers += Resolver.bintrayRepo("hmrc", "releases")
 
+resolvers += Resolver.bintrayRepo("mefellows", "mfellows")
+
 resolvers += Classpaths.typesafeReleases
 
 libraryDependencies ++= Seq(
