@@ -33,8 +33,9 @@ import reactivemongo.api.indexes.{IndexType, Index}
 import reactivemongo.bson.BSONObjectID
 import scala.concurrent.ExecutionContext
 import scala.reflect._
-import uk.gov.hmrc.mongo.{ReactiveMongoFormats, ReactiveRepository, MongoConnector}
-import uk.gov.hmrc.mongo.ReactiveMongoFormats.objectIdFormats
+import uk.gov.hmrc.mongo.{ReactiveRepository, MongoConnector}
+import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
+import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
 import au.com.onegeek.respite.models.ModelJsonExtensions._
 import scala.reflect.ClassTag
 import au.com.onegeek.respite.controllers.support.{CachingRouteSupport, MetricsSupport, MetricsRestSupport}
@@ -65,9 +66,9 @@ object Account { implicit val format = modelFormat { Json.format[Account] } }
 class UserRepository(implicit mc: MongoConnector)
   extends ReactiveRepository[User, BSONObjectID]("users", mc.db, modelFormatForMongo {Json.format[User]}, ReactiveMongoFormats.objectIdFormats) {
 
-  override def ensureIndexes() = {
-    collection.indexesManager.ensure(Index(Seq("username" -> IndexType.Ascending), name = Some("usernameUnq"), unique = true, sparse = true))
-  }
+  override def indexes = Seq(
+    Index(Seq("username" -> IndexType.Ascending), name = Some("usernameUnq"), unique = true, sparse = true)
+  )
 }
 
 class ProductRepository(implicit mc: MongoConnector)

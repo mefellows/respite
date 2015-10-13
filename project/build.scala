@@ -11,7 +11,7 @@ import scoverage.ScoverageSbtPlugin.instrumentSettings
 object RespiteBuild extends Build {
   val Organization = "au.com.onegeek"
   val Name = "Respite REST Framework"
-  val Version = "0.3.3"
+  val Version = "0.3.4"
 
   lazy val core = Project (
     "respite-core",
@@ -24,28 +24,28 @@ object RespiteBuild extends Build {
     )
   )
 
-  lazy val examples = Project (
-     "respite-examples",
-     file("respite-examples"),
-     settings = net.virtualvoid.sbt.graph.Plugin.graphSettings ++ Defaults.defaultSettings ++ ScalatraPlugin.scalatraWithJRebel ++ scalateSettings ++ Seq(
-
-       organization := Organization,
-       name := Name,
-       version := Version,
-       scalaVersion := Dependencies.Versions.ScalaVersion,
-       scalateTemplateConfig in Compile <<= (sourceDirectory in Compile){ base =>
-         Seq(
-           TemplateConfig(
-             base / "webapp" / "WEB-INF" / "templates",
-             Seq.empty,  /* default imports should be added here */
-             Seq(
-               Binding("context", "_root_.org.scalatra.scalate.ScalatraRenderContext", importMembers = true, isImplicit = true)
-             ),  /* add extra bindings here */
-             Some("templates")
-           )
-         )
-       }
-     ),
-  dependencies = Seq(core)
-  )
+//  lazy val examples = Project (
+//     "respite-examples",
+//     file("respite-examples"),
+//     settings = net.virtualvoid.sbt.graph.Plugin.graphSettings ++ Defaults.defaultSettings ++ ScalatraPlugin.scalatraWithJRebel ++ scalateSettings ++ Seq(
+//
+//       organization := Organization,
+//       name := Name,
+//       version := Version,
+//       scalaVersion := Dependencies.Versions.ScalaVersion,
+//       scalateTemplateConfig in Compile <<= (sourceDirectory in Compile){ base =>
+//         Seq(
+//           TemplateConfig(
+//             base / "webapp" / "WEB-INF" / "templates",
+//             Seq.empty,  /* default imports should be added here */
+//             Seq(
+//               Binding("context", "_root_.org.scalatra.scalate.ScalatraRenderContext", importMembers = true, isImplicit = true)
+//             ),  /* add extra bindings here */
+//             Some("templates")
+//           )
+//         )
+//       }
+//     ),
+//  dependencies = Seq(core)
+//  )
 }
