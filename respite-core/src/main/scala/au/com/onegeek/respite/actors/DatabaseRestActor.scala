@@ -30,6 +30,7 @@ import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
 import org.slf4j.LoggerFactory
 import play.api.libs.json.Json.JsValueWrapper
 import play.api.libs.json._
+import reactivemongo.api.ReadPreference
 import spray.caching.{Cache, LruCache}
 import uk.gov.hmrc.mongo.Repository
 
@@ -190,7 +191,7 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
    *
    * @return
    */
-  def doList: Future[List[ModelType]] = repository.findAll
+  def doList: Future[List[ModelType]] = repository.findAll(ReadPreference.primaryPreferred)
 
   def doGetSingle(id: String): Future[Option[ModelType]] = {
     logger.info(s"Fetching records by id ${id}")

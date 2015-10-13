@@ -1,10 +1,12 @@
 package au.com.onegeek.respite.test
 
+import reactivemongo.api.collections.bson.BSONCollection
 import uk.gov.hmrc.mongo.MongoConnector
 import reactivemongo.api.FailoverStrategy
-import reactivemongo.api.collections.default.BSONCollection
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
+
 /**
  * Created by mfellows on 2/07/2014.
  */

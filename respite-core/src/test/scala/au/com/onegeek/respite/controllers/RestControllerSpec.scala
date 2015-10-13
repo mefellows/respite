@@ -26,8 +26,8 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoSp
     //mongoProps = mongoStart(17123) // by default port = 12345 & version = Version.2.3.0
 
     // Clear out entries - only do this if you don't start/stop between tests
-    await(repository.removeAll)
-    await(catRepository.removeAll)
+    await(repository.removeAll(reactivemongo.api.commands.WriteConcern.Unacknowledged))
+    await(catRepository.removeAll(reactivemongo.api.commands.WriteConcern.Unacknowledged))
 
     // Add some keys to test against
     val key = User(id = BSONObjectID("53b62e370100000100af8ecd"), username = "mfellows", firstName = "Matt")
@@ -38,13 +38,13 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoSp
     await(catRepository.insert(cat))
 
     println("Users in repo: ")
-    val users = await(repository.findAll)
+    val users = await(repository.findAll(reactivemongo.api.ReadPreference.primaryPreferred))
     users foreach(u =>
       println(u)
     )
 
     println("Cats in repo: ")
-    val cats = await(catRepository.findAll)
+    val cats = await(catRepository.findAll(reactivemongo.api.ReadPreference.primaryPreferred))
     cats foreach(u =>
       println(u)
     )
@@ -83,7 +83,6 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoSp
     }
 
     "Send a 400 when an empty put body is sent" in {
-      val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}"
       put("/users/53b62e370100000100af8ecd", headers = Map("Content-Type" -> "application/json")) {
         status should equal(400)
       }
@@ -119,7 +118,7 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoSp
       }
 
       // Get response and then query
-      await(repository.findAll).find(_.username.equals("superman")).size should equal (1)
+      await(repository.findAll(reactivemongo.api.ReadPreference.primaryPreferred)).find(_.username.equals("superman")).size should equal (1)
     }
 
     "Send a 400 bad request on invalid JSON Model" in {
@@ -139,7 +138,7 @@ class RestControllerSpec extends ServletTestsBase with ScalaFutures with MongoSp
       }
 
       // Get response and then query
-      val users = await(repository.findAll)
+      val users = await(repository.findAll(reactivemongo.api.ReadPreference.primaryPreferred))
       users foreach(u =>
         u.username shouldNot equal("mfellows")
       )

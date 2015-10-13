@@ -24,6 +24,7 @@ package au.com.onegeek.respite.security
 
 import au.com.onegeek.respite.controllers.support.{LoggingSupport}
 import au.com.onegeek.respite.models.ModelJsonExtensions._
+import reactivemongo.api.ReadPreference
 import reactivemongo.api.indexes.{IndexType, Index}
 import uk.gov.hmrc.mongo.{ReactiveRepository, MongoConnector, Repository}
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
@@ -79,7 +80,7 @@ class DatabaseAuthenticationStrategy[ObjectID](repository: Repository[ApiKey, Ob
   override def getKeys(implicit ec: ExecutionContext): Future[List[ApiKey]] = {
     logger.debug(s"Fetchinng all keys")
     for {
-      result <- repository.findAll
+      result <- repository.findAll(ReadPreference.primaryPreferred)
     } yield result
   }
 }
@@ -89,6 +90,8 @@ class DatabaseAuthenticationStrategy[ObjectID](repository: Repository[ApiKey, Ob
  */
 
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats._
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class ApiKeyRepository(implicit mc: MongoConnector) extends ReactiveRepository[ApiKey, BSONObjectID]("apikeys", mc.db, modelFormatForMongo {
   Json.format[ApiKey]

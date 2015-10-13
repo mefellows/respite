@@ -10,6 +10,10 @@ resolvers += "Akka Repo" at "http://repo.akka.io/repository"
 
 resolvers += "spray repo" at "http://repo.spray.io"
 
+resolvers += Resolver.jcenterRepo
+
+resolvers += Resolver.bintrayRepo("hmrc", "releases")
+
 resolvers += Classpaths.typesafeReleases
 
 libraryDependencies ++= Seq(
@@ -51,6 +55,8 @@ licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
 // GitHub Pages, API Docu and Test Specs
 
 site.settings
+
+scalacOptions += "-target:jvm-1.8"
 
 lazy val specFile = taskKey[File]("File path to test output")
 

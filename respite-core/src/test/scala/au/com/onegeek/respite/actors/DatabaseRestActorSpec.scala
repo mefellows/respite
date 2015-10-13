@@ -29,7 +29,7 @@ class DatabaseRestActorSpec extends ServletTestsBase with ScalaFutures with Awai
 
   before {
     // Clear out entries - only do this if you don't start/stop between tests
-    await(repository.removeAll)
+    await(repository.removeAll(reactivemongo.api.commands.WriteConcern.Unacknowledged))
 
     // Add some keys to test against
     val user1 = User(id = BSONObjectID("53b62e370100000100af8ecd"), username = "mfellows", firstName = "Matt")
@@ -38,7 +38,7 @@ class DatabaseRestActorSpec extends ServletTestsBase with ScalaFutures with Awai
     await(repository.insert(user2))
 
     println("Users in repo: ")
-    val users = await(repository.findAll)
+    val users = await(repository.findAll(reactivemongo.api.ReadPreference.primaryPreferred))
     users foreach(u =>
       println(u)
     )
@@ -120,7 +120,7 @@ class DatabaseRestActorSpec extends ServletTestsBase with ScalaFutures with Awai
    * @param username
    */
   def assertUserNotExists(username: String): Unit = {
-    val users = await(repository.findAll)
+    val users = await(repository.findAll(reactivemongo.api.ReadPreference.primaryPreferred))
 
     users foreach(u =>
       u.username shouldNot equal(username)

@@ -13,7 +13,7 @@ class RepositorySpec extends UnitSpec with ScalaFutures with MongoSpecSupport wi
   val repository = new UserTestRepository
 
   before {
-    repository.removeAll
+    repository.removeAll(reactivemongo.api.commands.WriteConcern.Unacknowledged)
   }
 
   "A Repository " should {
@@ -24,7 +24,7 @@ class RepositorySpec extends UnitSpec with ScalaFutures with MongoSpecSupport wi
       await(repository.insert(key2))
 
       println("Users in repo: ")
-      val users = await(repository.findAll)
+      val users = await(repository.findAll(reactivemongo.api.ReadPreference.primaryPreferred))
       users foreach(u =>
         println(u)
         )

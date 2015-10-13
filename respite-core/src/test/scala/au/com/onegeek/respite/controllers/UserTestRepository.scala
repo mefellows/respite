@@ -34,6 +34,7 @@ import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
 import scala.reflect._
 import au.com.onegeek.respite.controllers.support.{MetricsRestSupport, MetricsSupport}
 import nl.grons.metrics.scala.MetricName
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class UserTestRepository(implicit mc: MongoConnector)
   extends ReactiveRepository[User, BSONObjectID]("users", mc.db, modelFormatForMongo {Json.format[User]}, ReactiveMongoFormats.objectIdFormats) {

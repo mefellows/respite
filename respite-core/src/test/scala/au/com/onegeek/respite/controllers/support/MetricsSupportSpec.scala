@@ -30,7 +30,7 @@ class MetricsSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
 
   before {
     // Clear out entries - only do this if you don't start/stop between tests
-    await(repository.removeAll)
+    await(repository.removeAll(reactivemongo.api.commands.WriteConcern.Unacknowledged))
 
     // Add some keys to test against
     val key = User(id = BSONObjectID("53b62e370100000100af8ecd"), username = "mfellows", firstName = "Matt")
@@ -40,7 +40,7 @@ class MetricsSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
     await(repository.insert(key2))
 
     println("Users in repo: ")
-    val users = await(repository.findAll)
+    val users = await(repository.findAll(reactivemongo.api.ReadPreference.primaryPreferred))
     users foreach(u =>
       println(u)
     )

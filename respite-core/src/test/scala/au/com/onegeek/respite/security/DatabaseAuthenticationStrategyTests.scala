@@ -46,7 +46,7 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
 
   before {
     // Clear out entries
-    await(repository.removeAll)
+    await(repository.removeAll(reactivemongo.api.commands.WriteConcern.Unacknowledged))
 
     // Add some keys to test against
     val key = ApiKey(id = BSONObjectID.generate, application = "application-name", description = "my description", key = "key")
@@ -89,7 +89,7 @@ class DatabaseAuthenticationStrategyTests extends ServletTestsBase with ScalaFut
 
       await(created) shouldBe 4
 
-      val result: List[ApiKey] = await(repository.findAll)
+      val result: List[ApiKey] = await(repository.findAll(reactivemongo.api.ReadPreference.primaryPreferred))
       result.foreach (println)
       result.size shouldBe 4
       result should contain(e1)

@@ -34,9 +34,10 @@ object Dependencies {
     val playJson         = "com.typesafe.play"         %% "play-json"                % "2.3.10"
     val metrics          = "nl.grons"                  %% "metrics-scala"            % "3.5.2_a2.3"
     val metricsAdmin     = "io.dropwizard.metrics"     %  "metrics-servlets"          % "3.1.2"
-    val simpleMongo      = "uk.gov.hmrc"               %% "simple-reactivemongo"     % "2.3.0"
-//    val simpleMongo      = "uk.gov.hmrc"               % "simple-reactivemongo_2.11"     % "2.3.0"
-//    val simpleMongo      = "uk.gov.hmrc"               %% "simple-reactivemongo"     % "2.1.2"
+     val simpleMongo      = "uk.gov.hmrc"               %% "simple-reactivemongo"     % "3.1.0"
+    // val simpleMongo      = "uk.gov.hmrc"              %% "simple-reactivemongo"      % "3.0.1-1-g4c93457"
+//    val simpleMongo      = "uk.gov.hmrc"              %% "simple-reactivemongo"      % "4.2.1-0-g0000000"
+
     val ehCacheCore      = "net.sf.ehcache"            %  "ehcache-core"             % "2.6.8"
 //    val jettyWebapp      = "org.eclipse.jetty"         %  "jetty-webapp"             % "9.2.10.v20150310"          % "compile"
 //    val jettyWebapp        = "org.eclipse.jetty"       % "jetty-webapp"              % "8.1.8.v20121106"           % "compile"
