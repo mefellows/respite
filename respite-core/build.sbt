@@ -13,6 +13,7 @@ resolvers += "spray repo" at "http://repo.spray.io"
 resolvers += Classpaths.typesafeReleases
 
 libraryDependencies ++= Seq(
+  Dependencies.Compile.logback,
   Dependencies.Compile.scalatra,
   Dependencies.Compile.scalate,
   Dependencies.Compile.specs2,
@@ -34,8 +35,7 @@ libraryDependencies ++= Seq(
   Dependencies.Compile.Test.pegdown,
   Dependencies.Compile.Test.scalatestMongo,
   Dependencies.Compile.Test.scalatraTest,
-  Dependencies.Compile.Test.scalaMock,
-  Dependencies.Compile.Test.mockito//,
+  Dependencies.Compile.Test.scalaMock
 )
 
 coverageEnabled := true
