@@ -132,6 +132,7 @@ class RestController[ObjectType <: Model[ObjectID], ObjectID]
   }
 
   val updateEntity = put("/:id") {
+    println("PUT called!")
     update
   }
 

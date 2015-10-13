@@ -63,7 +63,7 @@ object Dependencies {
 //      val scalatest        = "org.scalatest"           %%  "scalatest"                  % "2.3.4"                     % "test"
       val pegdown          = "org.pegdown"             %  "pegdown"                     % "1.0.2"                     // Need this lib to remove error: java.lang.NoClassDefFoundError: org/pegdown/PegDownProcessor
       val scalatraTest     = "org.scalatra"            %% "scalatra-scalatest"          % ScalatraVersion             % "test" //exclude("org.scalatra", "scalatra-scalatest_2.10")
-      val scalatestMongo   = "com.github.simplyscala"  % "scalatest-embedmongo_2.10"    % "0.2.2"                     % "test"
+//      val scalatestMongo   = "com.github.simplyscala"  % "scalatest-embedmongo_2.10"    % "0.2.2"                     % "test"
       val scalaMock        = "org.scalamock"           %% "scalamock-scalatest-support" % "3.2.2"                     % "test"
       val mockito          = "org.mockito"             %  "mockito-core"                % "1.9.5"                     % "test"
     }

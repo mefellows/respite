@@ -180,6 +180,7 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
   }
 
   def updateEntity(obj: ModelType): Future[ModelType] = {
+    println(s"sPutting this guy ${obj}")
     for {
       saved <- repository.save(obj)
       if saved.ok

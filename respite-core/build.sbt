@@ -37,7 +37,7 @@ libraryDependencies ++= Seq(
   Dependencies.Compile.jettyServlet,
   Dependencies.Compile.jettyWebapp,
   Dependencies.Compile.Test.pegdown,
-  Dependencies.Compile.Test.scalatestMongo,
+//  Dependencies.Compile.Test.scalatestMongo,
   Dependencies.Compile.Test.scalatraTest,
   Dependencies.Compile.Test.scalaMock
 )
