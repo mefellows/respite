@@ -6,7 +6,6 @@ import sbt._
 import org.scalatra.sbt.PluginKeys._
 import com.mojolly.scalate.ScalatePlugin._
 import ScalateKeys._
-import scoverage.ScoverageSbtPlugin.instrumentSettings
 
 object RespiteBuild extends Build {
   val Organization = "au.com.onegeek"

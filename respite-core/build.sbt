@@ -16,8 +16,6 @@ libraryDependencies ++= Seq(
   Dependencies.Compile.scalatra,
   Dependencies.Compile.scalate,
   Dependencies.Compile.specs2,
-//  Dependencies.Compile.logback,
-//  Dependencies.Compile.reactiveMongo,
   Dependencies.Compile.scalatraAuth,
   Dependencies.Compile.scalatraJson,
   Dependencies.Compile.jackson4s,
@@ -33,24 +31,20 @@ libraryDependencies ++= Seq(
   Dependencies.Compile.simpleMongo,
   Dependencies.Compile.jettyServlet,
   Dependencies.Compile.jettyWebapp,
-//  Dependencies.Compile.Test.scalatest,
   Dependencies.Compile.Test.pegdown,
   Dependencies.Compile.Test.scalatestMongo,
   Dependencies.Compile.Test.scalatraTest,
   Dependencies.Compile.Test.scalaMock,
   Dependencies.Compile.Test.mockito//,
-//  "org.reactivemongo" %% "play2-reactivemongo" % "0.10.5.0.akka23"
 )
 
-instrumentSettings
+coverageEnabled := true
 
-ScoverageKeys.minimumCoverage := 90
+coverageMinimum := 80
 
-ScoverageKeys.failOnMinimumCoverage := true
+coverageFailOnMinimum := true
 
-ScoverageKeys.highlighting := true
-
-coverallsSettings
+coverageHighlighting := false
 
 licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
 

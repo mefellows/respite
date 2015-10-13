@@ -1,11 +1,12 @@
 language: scala
 scala:
-- 2.10.4
+- 2.11.7
 jdk:
 - oraclejdk8
 - oraclejdk7
 services: mongodb
-script: sbt 'scoverage:test' 'coveralls'
+script: sbt 'clean coverage test'
+after_success: 'sbt coveralls'
 env:
   global:
   - MONGO_PORT=27017

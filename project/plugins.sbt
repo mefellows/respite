@@ -9,15 +9,17 @@ resolvers += Resolver.url(
   url("http://dl.bintray.com/content/sbt/sbt-plugin-releases"))(
     Resolver.ivyStylePatterns)
 
+resolvers += Resolver.url("scoverage-bintray", url("https://dl.bintray.com/sksamuel/sbt-plugins/"))(Resolver.ivyStylePatterns)
+
 addSbtPlugin("me.lessis" % "bintray-sbt" % "0.1.1")
 
 resolvers += Classpaths.sbtPluginReleases
 
 resolvers += Classpaths.typesafeReleases
 
-addSbtPlugin("org.scoverage" %% "sbt-scoverage" % "0.99.5.1")
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.3.3")
 
-addSbtPlugin("com.sksamuel.scoverage" %% "sbt-coveralls" % "0.0.5")
+addSbtPlugin("org.scoverage" % "sbt-coveralls" % "1.0.0")
 
 addSbtPlugin("au.com.onegeek" % "sbt-dotenv" % "1.0.21")
 
