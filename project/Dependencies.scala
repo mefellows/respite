@@ -37,6 +37,7 @@ object Dependencies {
      // val simpleMongo      = "uk.gov.hmrc"               %% "simple-reactivemongo"     % "3.0.1"
     // val simpleMongo      = "uk.gov.hmrc"              %% "simple-reactivemongo"      % "3.0.1-1-g4c93457"
    val simpleMongo      = "uk.gov.hmrc"              %% "simple-reactivemongo"      % "4.2.1-0-g0000000"
+
 //    https://bintray.com/artifact/download/mefellows/mfellows/uk/gov/hmrc/simple-reactivemongo_2.11/4.2.1-0-g0000000/simple-reactivemongo_2.11-4.2.1-0-g0000000.jar
     val ehCacheCore      = "net.sf.ehcache"            %  "ehcache-core"             % "2.6.8"
 //    val jettyWebapp      = "org.eclipse.jetty"         %  "jetty-webapp"             % "9.2.10.v20150310"          % "compile"

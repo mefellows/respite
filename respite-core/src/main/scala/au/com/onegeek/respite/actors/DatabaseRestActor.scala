@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory
 import play.api.libs.json.Json.JsValueWrapper
 import play.api.libs.json._
 import reactivemongo.api.ReadPreference
+import reactivemongo.bson.{BSONString, BSONDocument}
 import spray.caching.{Cache, LruCache}
 import uk.gov.hmrc.mongo.Repository
 
@@ -48,7 +49,7 @@ import au.com.onegeek.respite.controllers.support.LoggingSupport
  *
  * Inspects the sender's message and returns a serializable object or List.
  */
-class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](repository: Repository[ModelType, ObjectIDType])
+class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](repository: Repository[ModelType, ObjectIDType] with uk.gov.hmrc.mongo.AtomicUpdate[ModelType])
 //                                                 (implicit val bindingModule: BindingModule, implicit val format: Format[ModelType], implicit val stringToId: String => ObjectIDType) extends Actor with Injectable {
                                                  (implicit val format: Format[ModelType], implicit val stringToId: String => ObjectIDType) extends Actor with LoggingSupport {
 
@@ -181,8 +182,15 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
 
   def updateEntity(obj: ModelType): Future[ModelType] = {
     println(s"sPutting this guy ${obj}")
+
+    val b = format.writes(obj)
+
+
     for {
-      saved <- repository.save(obj)
+      repository.save()
+//      saved <- repository.atomicUpsert(BSONDocument("_id" -> obj.id), obj)
+//      saved <- repository.atomicUpsert(repository.findById(obj.id), obj)
+      saved <- repository.collection.findAndModify()
       if saved.ok
     } yield obj
   }

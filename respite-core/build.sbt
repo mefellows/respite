@@ -43,9 +43,10 @@ libraryDependencies ++= Seq(
 //  Dependencies.Compile.Test.scalatestMongo,
   Dependencies.Compile.Test.scalatraTest,
   Dependencies.Compile.Test.scalaMock
+  //"org.scoverage" %% "scalac-scoverage-runtime" % "1.0.4"
 )
 
-coverageEnabled := true
+coverageEnabled := false
 
 coverageMinimum := 80
 

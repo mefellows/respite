@@ -33,12 +33,13 @@ import reactivemongo.api.indexes.{IndexType, Index}
 import reactivemongo.bson.BSONObjectID
 import scala.concurrent.ExecutionContext
 import scala.reflect._
-import uk.gov.hmrc.mongo.{ReactiveRepository, MongoConnector}
+import uk.gov.hmrc.mongo.{AtomicUpdate, ReactiveRepository, MongoConnector}
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
 import au.com.onegeek.respite.models.ModelJsonExtensions._
 import scala.reflect.ClassTag
 import au.com.onegeek.respite.controllers.support.{CachingRouteSupport, MetricsSupport, MetricsRestSupport}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * Created by mfellows on 16/07/2014.
@@ -64,7 +65,10 @@ object Account { implicit val format = modelFormat { Json.format[Account] } }
 // Repositories
 
 class UserRepository(implicit mc: MongoConnector)
-  extends ReactiveRepository[User, BSONObjectID]("users", mc.db, modelFormatForMongo {Json.format[User]}, ReactiveMongoFormats.objectIdFormats) {
+  extends ReactiveRepository[User, BSONObjectID]("users", mc.db, modelFormatForMongo {Json.format[User]}, ReactiveMongoFormats.objectIdFormats)
+  with uk.gov.hmrc.mongo.AtomicUpdate[User] {
+
+  override def isInsertion(suppliedId: BSONObjectID, returned: User): Boolean = suppliedId.equals(returned.id)
 
   override def indexes = Seq(
     Index(Seq("username" -> IndexType.Ascending), name = Some("usernameUnq"), unique = true, sparse = true)
@@ -72,23 +76,43 @@ class UserRepository(implicit mc: MongoConnector)
 }
 
 class ProductRepository(implicit mc: MongoConnector)
-  extends ReactiveRepository[Product, BSONObjectID]("products", mc.db, modelFormatForMongo {Json.format[Product]}, ReactiveMongoFormats.objectIdFormats) {
+  extends ReactiveRepository[Product, BSONObjectID]("products", mc.db, modelFormatForMongo {Json.format[Product]}, ReactiveMongoFormats.objectIdFormats)
+  with uk.gov.hmrc.mongo.AtomicUpdate[Product] {
+
+  override def isInsertion(suppliedId: BSONObjectID, returned: Product): Boolean = suppliedId.equals(returned.id)
+
 }
 
 class OrderItemRepository(implicit mc: MongoConnector)
-  extends ReactiveRepository[OrderItem, BSONObjectID]("orderItems", mc.db, modelFormatForMongo {Json.format[OrderItem]}, ReactiveMongoFormats.objectIdFormats) {
+  extends ReactiveRepository[OrderItem, BSONObjectID]("orderItems", mc.db, modelFormatForMongo {Json.format[OrderItem]}, ReactiveMongoFormats.objectIdFormats)
+  with uk.gov.hmrc.mongo.AtomicUpdate[Order] {
+
+  override def isInsertion(suppliedId: BSONObjectID, returned: Order): Boolean = suppliedId.equals(returned.id)
+
 }
 
 class PromotionCodeRepository(implicit mc: MongoConnector)
-  extends ReactiveRepository[PromotionCode, BSONObjectID]("promotionCodes", mc.db, modelFormatForMongo {Json.format[PromotionCode]}, ReactiveMongoFormats.objectIdFormats) {
+  extends ReactiveRepository[PromotionCode, BSONObjectID]("promotionCodes", mc.db, modelFormatForMongo {Json.format[PromotionCode]}, ReactiveMongoFormats.objectIdFormats)
+  with uk.gov.hmrc.mongo.AtomicUpdate[PromotionCode] {
+
+  override def isInsertion(suppliedId: BSONObjectID, returned: PromotionCode): Boolean = suppliedId.equals(returned.id)
+
 }
 
 class OrderRepository(implicit mc: MongoConnector)
-  extends ReactiveRepository[Order, BSONObjectID]("orders", mc.db, modelFormatForMongo {Json.format[Order]}, ReactiveMongoFormats.objectIdFormats) {
+  extends ReactiveRepository[Order, BSONObjectID]("orders", mc.db, modelFormatForMongo {Json.format[Order]}, ReactiveMongoFormats.objectIdFormats)
+  with uk.gov.hmrc.mongo.AtomicUpdate[Order] {
+
+  override def isInsertion(suppliedId: BSONObjectID, returned: Order): Boolean = suppliedId.equals(returned.id)
+
 }
 
 class AccountRepository(implicit mc: MongoConnector)
-  extends ReactiveRepository[Account, BSONObjectID]("accounts", mc.db, modelFormatForMongo {Json.format[Account]}, ReactiveMongoFormats.objectIdFormats) {
+  extends ReactiveRepository[Account, BSONObjectID]("accounts", mc.db, modelFormatForMongo {Json.format[Account]}, ReactiveMongoFormats.objectIdFormats)
+  with uk.gov.hmrc.mongo.AtomicUpdate[Account] {
+
+  override def isInsertion(suppliedId: BSONObjectID, returned: Account): Boolean = suppliedId.equals(returned.id)
+
 }
 
 
@@ -107,16 +131,16 @@ class SimpleAuthServlet extends AuthServlet with MetricsSupport {
 
 // Example of concrete sub-class of RestController
 
-class UserController(repository: ReactiveRepository[User, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[User, BSONObjectID]("users", User.format, repository) with MetricsRestSupport[User, BSONObjectID] with Authentication with CachingRouteSupport {
+class UserController(repository: ReactiveRepository[User, BSONObjectID] with AtomicUpdate[User])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[User, BSONObjectID]("users", User.format, repository) with MetricsRestSupport[User, BSONObjectID] with Authentication with CachingRouteSupport {
   override implicit val authenticationStrategy = ConfigAuthStrategy
 }
 
-class ProductController(repository: ReactiveRepository[Product, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[Product], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[Product, BSONObjectID]("products", Product.format, repository) with MetricsRestSupport[Product, BSONObjectID] {}
+class ProductController(repository: ReactiveRepository[Product, BSONObjectID] with AtomicUpdate[Product])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[Product], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[Product, BSONObjectID]("products", Product.format, repository) with MetricsRestSupport[Product, BSONObjectID] {}
 
-class OrderItemController(repository: ReactiveRepository[OrderItem, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[OrderItem], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[OrderItem, BSONObjectID]("orderItems", OrderItem.format, repository) {}
+class OrderItemController(repository: ReactiveRepository[OrderItem, BSONObjectID]  with AtomicUpdate[OrderItem])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[OrderItem], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[OrderItem, BSONObjectID]("orderItems", OrderItem.format, repository) {}
 
-class PromotionCodeController(repository: ReactiveRepository[PromotionCode, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[PromotionCode], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[PromotionCode, BSONObjectID]("promotionCodes", PromotionCode.format, repository) {}
+class PromotionCodeController(repository: ReactiveRepository[PromotionCode, BSONObjectID] with AtomicUpdate[PromotionCode])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[PromotionCode], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[PromotionCode, BSONObjectID]("promotionCodes", PromotionCode.format, repository) {}
 
-class OrderController(repository: ReactiveRepository[Order, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[Order], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[Order, BSONObjectID]("Orders", Order.format, repository) {}
+class OrderController(repository: ReactiveRepository[Order, BSONObjectID] with AtomicUpdate[Order])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[Order], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[Order, BSONObjectID]("Orders", Order.format, repository) {}
 
-class AccountController(repository: ReactiveRepository[Account, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[Account], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[Account, BSONObjectID]("Accounts", Account.format, repository) {}
+class AccountController(repository: ReactiveRepository[Account, BSONObjectID] with AtomicUpdate[Account])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[Account], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[Account, BSONObjectID]("Accounts", Account.format, repository) {}

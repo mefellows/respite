@@ -31,7 +31,7 @@ import au.com.onegeek.respite.models.Model
 import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
 import org.scalatra._
 import play.api.libs.json._
-import uk.gov.hmrc.mongo.Repository
+import uk.gov.hmrc.mongo.{AtomicUpdate, Repository}
 
 import scala.concurrent.{Future, ExecutionContext}
 import scala.concurrent.duration.{Duration, SECONDS}
@@ -68,7 +68,7 @@ import scala.reflect.ClassTag
  * @tparam ObjectID
  */
 class RestController[ObjectType <: Model[ObjectID], ObjectID]
-    (val collectionName: String, jsonFormatter: Format[ObjectType], repository: Repository[ObjectType, ObjectID])
+    (val collectionName: String, jsonFormatter: Format[ObjectType], repository: Repository[ObjectType, ObjectID] with AtomicUpdate[ObjectType])
     (implicit val bindingModule: BindingModule, implicit val tag: ClassTag[ObjectType], implicit val objectIdConverter: String => ObjectID)
     extends RespiteApiStack[ObjectType]
     with MethodOverride

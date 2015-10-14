@@ -51,11 +51,11 @@ with AtomicUpdate[Cat] {
 }
 
 // Example of concrete sub-class of RestController
-class CatController(repository: ReactiveRepository[Cat, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[Cat], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[Cat, BSONObjectID]("cats", Cat.format, repository) {
+class CatController(repository: ReactiveRepository[Cat, BSONObjectID] with AtomicUpdate[Cat])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[Cat], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[Cat, BSONObjectID]("cats", Cat.format, repository) {
   // Do stuff, extend me!
 }
 
-class MetricSpecController(repository: ReactiveRepository[User, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[User, BSONObjectID]("users", User.format, repository) with MetricsRestSupport[User, BSONObjectID] {
+class MetricSpecController(repository: ReactiveRepository[User, BSONObjectID] with AtomicUpdate[User])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[User, BSONObjectID]("users", User.format, repository) with MetricsRestSupport[User, BSONObjectID] {
   get("/fooeyfoobar") {
     "foo"
   }
@@ -69,7 +69,7 @@ class MetricSpecController(repository: ReactiveRepository[User, BSONObjectID])(o
   }
 }
 
-class MetricSpecControllerWithCustomName(repository: ReactiveRepository[User, BSONObjectID])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[User, BSONObjectID]("users", User.format, repository) with MetricsRestSupport[User, BSONObjectID] {
+class MetricSpecControllerWithCustomName(repository: ReactiveRepository[User, BSONObjectID] with AtomicUpdate[User])(override implicit val bindingModule: BindingModule, override implicit val tag: ClassTag[User], override implicit val objectIdConverter: String => BSONObjectID) extends RestController[User, BSONObjectID]("users", User.format, repository) with MetricsRestSupport[User, BSONObjectID] {
   override lazy val metricBaseName = {
     MetricName("MyAwesomeName")
   }
