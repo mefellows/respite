@@ -10,7 +10,8 @@ resolvers += "Akka Repo" at "http://repo.akka.io/repository"
 
 resolvers += "spray repo" at "http://repo.spray.io"
 
-resolvers += Resolver.jcenterRepo
+// This seems to be slower than sonatype??
+// resolvers += Resolver.jcenterRepo
 
 resolvers += Resolver.bintrayRepo("hmrc", "releases")
 
