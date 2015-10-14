@@ -10,7 +10,7 @@ import ScalateKeys._
 object RespiteBuild extends Build {
   val Organization = "au.com.onegeek"
   val Name = "Respite REST Framework"
-  val Version = "0.3.5"
+  val Version = "0.3.5  "
 
   lazy val core = Project (
     "respite-core",

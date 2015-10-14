@@ -24,10 +24,6 @@ mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) => {
 }
 }
 
-coverageEnabled := false
-
-mainClass in assembly := Some("au.com.respite.JettyLauncher")
-
 jarName in assembly := "example.jar"
 
 versionWithGit

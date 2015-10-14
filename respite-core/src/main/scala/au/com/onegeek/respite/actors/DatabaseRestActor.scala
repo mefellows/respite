@@ -50,7 +50,6 @@ import au.com.onegeek.respite.controllers.support.LoggingSupport
  * Inspects the sender's message and returns a serializable object or List.
  */
 class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](repository: Repository[ModelType, ObjectIDType] with uk.gov.hmrc.mongo.AtomicUpdate[ModelType])
-//                                                 (implicit val bindingModule: BindingModule, implicit val format: Format[ModelType], implicit val stringToId: String => ObjectIDType) extends Actor with Injectable {
                                                  (implicit val format: Format[ModelType], implicit val stringToId: String => ObjectIDType) extends Actor with LoggingSupport {
 
   protected implicit def executor: ExecutionContext = ExecutionContext.global
@@ -102,7 +101,6 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
     case Seq("update", modelInstance: ModelType)  => doUpdate(modelInstance)
     case Seq("delete", modelInstance: ModelType)  => doDeleteEntity(modelInstance)
     case Seq("delete", objectID: String)          => doDeleteEntity(objectID)
-    //case Seq("search", search: List[(String, JsValue)]) => println("yo, actor search something"); doSearch(search: _*)
     case o: Any                                   => logger.debug(s"Received invalid message: $o"); None
   }
 
@@ -116,7 +114,6 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
     for {
       e <- doGetSingle(id)
       d <- deleteEntityFromDB(id)
-//      c <- deleteItemFromCache(e)
     } yield e.orElse(None)
 
   }
@@ -124,34 +121,23 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
   /**
    * Deletes an entity from the Database
    *
-   * @param id
+   * @param obj
    * @return
    */
   def deleteEntity(obj: ModelType): Future[Option[ModelType]] = {
-    println(s"Id: ${obj.id.toString}")
+    logger.debug(s"Deleting Entity: ${obj}")
     for {
       e <- doGetSingle(obj.id)
       d <- deleteEntityFromDB(obj)
-//      c <- deleteItemFromCache(e)
     } yield e.orElse(None)
-
   }
-
-  /**
-   * TODO: Wouldn't it be nice if I could do this....?
-   *
-   * @param user The ModelType to remove.
-   */
-  //  def deleteEntity(user: ModelType): Unit = cache.remove(user) {
-  //    deleteEntityFromDB(user)
-  //  }
 
   def deleteEntityFromDB(obj: ModelType): Future[Option[ModelType]] = {
     repository.removeById(obj.id).map { e => Some(obj) }
   }
 
   def deleteEntityFromDB(id: String): Future[Option[ModelType]] = {
-    println(s"Deleting object ${id}" )
+    logger.debug(s"Deleting Entity by id: ${id}")
 
     for {
       entity <- doGetSingle(id)
@@ -160,39 +146,23 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
 
   }
 
-//  def deleteItemFromCache(key: Option[Any]): Future[Option[Any]] = {
-//    Future {
-//      key match {
-//        case None => None
-//        case Some(key) => {
-//          cache.remove(key)
-//          Some(key)
-//        }
-//      }
-//    }
-//  }
-
-  def createEntity(obj: ModelType): Future[ModelType] = {
-    println(s"Saving this guy ${obj}")
+  def createEntity(obj: ModelType): Future[Option[ModelType]] = {
+    logger.debug(s"Creating Entity: ${obj}")
     for {
       saved <- repository.insert(obj)
       if saved.ok
-    } yield obj
+    } yield Some(obj)
   }
 
-  def updateEntity(obj: ModelType): Future[ModelType] = {
-    println(s"sPutting this guy ${obj}")
-
-    val b = format.writes(obj)
-
-
-    for {
-      repository.save()
-//      saved <- repository.atomicUpsert(BSONDocument("_id" -> obj.id), obj)
-//      saved <- repository.atomicUpsert(repository.findById(obj.id), obj)
-      saved <- repository.collection.findAndModify()
-      if saved.ok
-    } yield obj
+  // TODO: This is all bad... Not atomicity!
+  def updateEntity(obj: ModelType): Future[Option[ModelType]] = {
+    logger.debug(s"Updating Entity: ${obj}")
+      for {
+        e <- doGetSingle(obj.id)
+        d <- deleteEntityFromDB(obj)
+        saved <- repository.insert(obj)
+        if saved.ok
+      } yield Some(obj)
   }
 
   /**
@@ -211,8 +181,4 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
     logger.info(s"Fetching records by id ${id}")
     repository.findById(id)
   }
-
-//  def doSearch(search: (String, JsValueWrapper)*) {
-//    repository.find(search: _*)
-//  }
 }

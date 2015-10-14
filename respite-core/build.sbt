@@ -1,6 +1,7 @@
 import java.io.File
 import respite.Dependencies
 import com.typesafe.sbt.SbtGit._
+import org.scoverage.coveralls.Imports.CoverallsKeys._
 
 name := "respite-core"
 
@@ -46,13 +47,13 @@ libraryDependencies ++= Seq(
   //"org.scoverage" %% "scalac-scoverage-runtime" % "1.0.4"
 )
 
-coverageEnabled := false
+coverallsToken := Some("CtyKcaPDc2rvkFuqCCgUGlNaCGu63WLo5")
 
-coverageMinimum := 80
+ScoverageSbtPlugin.ScoverageKeys.coverageMinimum := 80
 
-coverageFailOnMinimum := true
+ScoverageSbtPlugin.ScoverageKeys.coverageFailOnMinimum := true
 
-coverageHighlighting := false
+ScoverageSbtPlugin.ScoverageKeys.coverageHighlighting := false
 
 licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
 
