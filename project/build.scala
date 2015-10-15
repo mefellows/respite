@@ -26,7 +26,7 @@ object RespiteBuild extends Build {
  lazy val examples = Project (
     "respite-examples",
     file("respite-examples"),
-    settings = net.virtualvoid.sbt.graph.Plugin.graphSettings ++ Defaults.defaultSettings ++ ScalatraPlugin.scalatraWithJRebel ++ scalateSettings ++ Seq(
+    settings = Defaults.defaultSettings ++ ScalatraPlugin.scalatraWithJRebel ++ scalateSettings ++ Seq(
 
       organization := Organization,
       name := Name,
