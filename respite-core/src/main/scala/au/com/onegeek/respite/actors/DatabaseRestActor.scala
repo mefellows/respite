@@ -25,13 +25,14 @@ package au.com.onegeek.respite.actors
 import java.util.concurrent.TimeUnit
 
 import akka.actor.Actor
-import au.com.onegeek.respite.models.Model
+import au.com.onegeek.respite.models.{Model}
 import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
 import org.slf4j.LoggerFactory
 import play.api.libs.json.Json.JsValueWrapper
 import play.api.libs.json._
 import reactivemongo.api.ReadPreference
-import reactivemongo.bson.{BSONString, BSONDocument}
+import reactivemongo.api.commands.WriteResult
+import reactivemongo.bson.{BSONObjectID, BSONString, BSONDocument}
 import spray.caching.{Cache, LruCache}
 import uk.gov.hmrc.mongo.Repository
 
@@ -155,14 +156,22 @@ class DatabaseRestActor[ModelType <: Model[ObjectIDType], ObjectIDType](reposito
   }
 
   // TODO: This is all bad... Not atomicity!
-  def updateEntity(obj: ModelType): Future[Option[ModelType]] = {
+  def updateEntity(obj: ModelType)(): Future[Option[ModelType]] = {
     logger.debug(s"Updating Entity: ${obj}")
-      for {
-        e <- doGetSingle(obj.id)
-        d <- deleteEntityFromDB(obj)
-        saved <- repository.insert(obj)
-        if saved.ok
-      } yield Some(obj)
+    
+    import play.modules.reactivemongo.json._
+    format.writes(obj) match {
+      case o@JsObject(_) =>
+        for {
+          maybeSaved <- repository.collection.findAndUpdate(BSONDocument("_id" -> obj.id.asInstanceOf[BSONObjectID]), BSONDocument("$set" -> o), fetchNewObject = true)
+          res <- maybeSaved.result(format) match {
+            case Some(update) =>
+              Future { Some(update) }
+            case None =>
+              Future { None }
+          }
+        } yield res
+    }
   }
 
   /**
