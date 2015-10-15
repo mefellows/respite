@@ -3,12 +3,17 @@ package au.com.onegeek.respite.controllers.support
 import au.com.onegeek.respite.ServletTestsBase
 import au.com.onegeek.respite.models.{Cat, User}
 import au.com.onegeek.respite.test.{MongoSpecSupport, Awaiting}
+import org.joda.time.DateTime
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatra.ScalatraServlet
 import play.api.libs.json.{JsSuccess, _}
-import reactivemongo.bson.BSONObjectID
+import reactivemongo.api.commands.WriteResult
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import reactivemongo.core.commands.{FindAndModify, Update}
 import uk.gov.hmrc.mongo._
+import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 
+import scala.concurrent.Future
 import scala.reflect._
 import au.com.onegeek.respite.controllers._
 import au.com.onegeek.respite.config.TestConfigurationModule
@@ -47,6 +52,76 @@ class MetricsSupportSpec extends ServletTestsBase with ScalaFutures with Awaitin
   }
 
   "A MetricsSupport-ed RestController servlet" should {
+
+    "Update a mongo object" in {
+//      val json = "{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}"
+//      post("/users/53b62e370100000100af8ecd", json, headers = Map("Content-Type" -> "application/json")) {
+//        status should equal(200)
+//        body should equal("{\"id\":{\"$oid\":\"53b62e370100000100af8ecd\"},\"username\":\"mfellows\",\"firstName\":\"Harry\"}")
+//      }
+
+//      val u = User(username = "mfellows2", firstName = "Harry")
+//
+//      val foo = await(insert(u))
+//      println(s"inserted something: ${foo}")
+//
+//      val foo2 = await(find(u))
+//      println(s"found something: ${foo2}")
+
+      val u2 = User(id = BSONObjectID("53b62e370100000100af8ecd"), firstName = "baggins", username = "mfellows")
+      val foo3 = await(update(u2, BSONObjectID("53b62e370100000100af8ecd")))
+      println(s"updated something: ${foo3}")
+
+      val foo4 = await(findAll)
+      println(s"found something: ${foo4}")
+
+
+    }
+
+    def update(u: User, id: BSONObjectID) = {
+      import play.modules.reactivemongo.json._
+      User.format.writes(u) match {
+        case d @ JsObject(_) =>
+
+//          val command = FindAndModify(repository.collection.name,
+//            BSONDocument("_id" -> id),
+//            Update(
+//              BSONDocument("$set" -> d),
+//              fetchNewObject = true
+//            ),
+//            upsert = false
+//          )
+//
+//          repository.collection.db.command(command)
+
+          repository.collection.findAndUpdate(BSONDocument("_id" -> id), BSONDocument("$set" -> d), fetchNewObject = true)
+        case _ =>
+          Future.failed[WriteResult](new Exception("cannot write object"))
+      }
+    }
+
+    def find(u: User) = {
+      import play.modules.reactivemongo.json._
+      User.format.writes(u) match {
+        case d @ JsObject(_) => repository.collection.find(d).cursor[User].collect[List]()
+        case _ =>
+          Future.failed[WriteResult](new Exception("cannot write object"))
+      }
+    }
+
+    def findAll = {
+      import play.modules.reactivemongo.json._
+      repository.collection.find(Json.obj()).cursor[User].collect[List]()
+    }
+
+    def insert(u: User) = {
+      import play.modules.reactivemongo.json._
+      User.format.writes(u) match {
+        case d @ JsObject(_) => repository.collection.insert(d)
+        case _ =>
+          Future.failed[WriteResult](new Exception("cannot write object"))
+      }
+    }
 
     "Instrument a 'get' method (CRUD)" in {
       get("/users/") {

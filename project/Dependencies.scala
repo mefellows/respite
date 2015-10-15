@@ -22,8 +22,7 @@ object Dependencies {
     val specs2           = "org.scalatra"              %% "scalatra-specs2"          % ScalatraVersion             % "test"
     val logback          = "ch.qos.logback"            % "logback-classic"           % "1.1.3"                     % "runtime"
 
-//    val reactiveMongo    = "org.reactivemongo"         %% "reactivemongo"            % "0.11.7"
-    val playMongoDep     = "org.reactivemongo"         %% "play2-reactivemongo"      % "0.10.5.0.akka23"
+    val playMongoDep     = "org.reactivemongo"         %% "play2-reactivemongo"      % "0.11.5.play23"
     val playMongo        = playMongoDep.exclude        ("org.apache.logging.log4j",    "log4j-to-slf4j")
     val jackson4s        = "org.json4s"                %% "json4s-jackson"           % "3.2.11"
     val commonsCodec     = "commons-codec"             %  "commons-codec"            % "1.2"

@@ -41,13 +41,9 @@ libraryDependencies ++= Seq(
   Dependencies.Compile.jettyServlet,
   Dependencies.Compile.jettyWebapp,
   Dependencies.Compile.Test.pegdown,
-//  Dependencies.Compile.Test.scalatestMongo,
   Dependencies.Compile.Test.scalatraTest,
   Dependencies.Compile.Test.scalaMock
-  //"org.scoverage" %% "scalac-scoverage-runtime" % "1.0.4"
 )
-
-coverallsToken := Some("CtyKcaPDc2rvkFuqCCgUGlNaCGu63WLo5")
 
 ScoverageSbtPlugin.ScoverageKeys.coverageMinimum := 80
 
