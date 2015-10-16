@@ -38,13 +38,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class UserTestRepository(implicit mc: MongoConnector)
   extends ReactiveRepository[User, BSONObjectID]("users", mc.db, modelFormatForMongo {Json.format[User]}, ReactiveMongoFormats.objectIdFormats)
-with AtomicUpdate[User] {
+    with AtomicUpdate[User] {
   override def isInsertion(suppliedId: BSONObjectID, returned: User): Boolean = !suppliedId.equals(returned.id)
   override def indexes = Seq(Index(Seq("username" -> IndexType.Ascending), name = Some("keyFieldUniqueIdx"), unique = true, sparse = true))
 }
 class CatTestRepository(implicit mc: MongoConnector)
   extends ReactiveRepository[Cat, BSONObjectID]("cats", mc.db, modelFormatForMongo {Json.format[Cat]}, ReactiveMongoFormats.objectIdFormats)
-with AtomicUpdate[Cat] {
+    with AtomicUpdate[Cat] {
   override def isInsertion(suppliedId: BSONObjectID, returned: Cat): Boolean = !suppliedId.equals(returned.id)
 
   override def indexes = Seq(Index(Seq("name" -> IndexType.Ascending), name = Some("keyFieldUniqueIdx"), unique = true, sparse = true))
